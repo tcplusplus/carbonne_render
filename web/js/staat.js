@@ -28,6 +28,8 @@ export function nieuweAfwerking(type, vorige = {}, onderkant = false) {
   const kleur = vorige.color ?? "#b22222";
   switch (type) {
     case "paint": return { type, color: kleur, kind: vorige.kind ?? "glossy", roughness: null, candy_base: "metallic" };
+    case "paintstack": return { type, lagen: vorige.type === "paintstack" ? vorige.lagen
+      : [{ type: "paint", color: kleur, kind: "matte", roughness: null, candy_base: "metallic", dekking: 1 }] };
     case "clearcoat": return { type, roughness: 0.3 };
     case "plate": return { type, color: kleur, gap_mm: 0.1, kind: vorige.kind ?? "matte", roughness: null, candy_base: "metallic" };
     default: return { type: "bare" };
@@ -52,6 +54,7 @@ export function hqAanvraag(cfg, opties, camera, herkomst = false) {
 
 /** Een geladen config bevat lineaire kleurdrietallen voor verf; de UI bewerkt ze als hex. */
 export function normaliseerGeladen(cfg, kleurNaarHex) {
-  for (const f of [cfg.zijkant, cfg.onderkant]) if (f.color && Array.isArray(f.color)) f.color = kleurNaarHex(f.color);
+  for (const f of [cfg.zijkant, cfg.onderkant, ...(cfg.zijkant.lagen ?? []), ...(cfg.onderkant.lagen ?? [])])
+    if (f.color && Array.isArray(f.color)) f.color = kleurNaarHex(f.color);
   return cfg;
 }

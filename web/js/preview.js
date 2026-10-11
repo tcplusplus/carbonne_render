@@ -139,6 +139,7 @@ export class Preview {
       color: 0xffffff, transmission: 1, ior: cfg.epoxy.cauchy_a + cfg.epoxy.cauchy_b / 0.347, thickness: cfg.hoogte,
       roughness: ruw, metalness: 0,
     });
+    if (f.type === "paintstack") f = f.lagen[f.lagen.length - 1];  // de preview toont de buitenste laag (T24)
     if (f.type === "paint" || f.type === "plate") {
       const c = new THREE.Color(waardeNaarHex(f.color, this.ral));
       const ruw = f.roughness ? Math.sqrt(f.roughness) : null;

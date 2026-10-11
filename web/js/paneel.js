@@ -112,11 +112,30 @@ export class Paneel {
       velden.push(this.num("Ruwheid (alpha, leeg = standaard)", () => f.roughness ?? 0, (v) => { f.roughness = v > 0 ? v : null; },
         { min: 0, max: 1, step: 0.01, soort: "materiaal" }));
     }
+    if (f.type === "paintstack") velden.push(...this.verflagen(f));
     if (f.type === "clearcoat") velden.push(this.num("Ruwheid (alpha)", () => f.roughness, (v) => { f.roughness = Math.max(v, 0.01); }, { min: 0.01, max: 1, step: 0.01, soort: "materiaal" }));
     if (f.type === "plate") velden.push(this.num("Luchtspleet", () => f.gap_mm, (v) => { f.gap_mm = Math.max(v, 0.01); }, { min: 0.01, max: 5, step: 0.01, eenheid: "mm", soort: "materiaal" }));
     const s = schets(f);
     return h("details", { open: true }, h("summary", {}, titel), keuze, ...velden,
       s ? h("figure", { class: "schets" }, h("img", { src: `uitleg/${s[0]}`, alt: s[1] }), h("figcaption", {}, s[1])) : null);
+  }
+
+  /** T24: lijst verflagen, van binnen (epoxy) naar buiten (lucht): kleur, type, dekking, + laag, verwijder, volgorde. */
+  verflagen(f) {
+    const nieuw = () => ({ type: "paint", color: "#ffffff", kind: "matte", roughness: null, candy_base: "metallic", dekking: 1 });
+    const ververs = () => { this.bouw(); this.wijzig("materiaal"); };
+    const rijen = f.lagen.map((l, i) => h("div", { class: "laag" },
+      h("div", { class: "laagkop" }, h("b", {}, i === 0 ? "Laag 1 (tegen de epoxy)" : i === f.lagen.length - 1 ? `Laag ${i + 1} (buiten)` : `Laag ${i + 1}`),
+        h("span", {},
+          h("button", { class: "klein", disabled: i === 0, onclick: () => { [f.lagen[i - 1], f.lagen[i]] = [f.lagen[i], f.lagen[i - 1]]; ververs(); } }, "naar binnen"),
+          h("button", { class: "klein", disabled: i === f.lagen.length - 1, onclick: () => { [f.lagen[i + 1], f.lagen[i]] = [f.lagen[i], f.lagen[i + 1]]; ververs(); } }, "naar buiten"),
+          h("button", { class: "klein", disabled: f.lagen.length < 2, onclick: () => { f.lagen.splice(i, 1); ververs(); } }, "Verwijder"))),
+      this.kleur("Kleur", () => l.color, (v) => { l.color = v; }, { ral: true }),
+      this.sel("Verftype", [["matte", "mat"], ["glossy", "glanzend"], ["metallic", "metallic"], ["candy", "candy"]], () => l.kind, (v) => { l.kind = v; if (v === "metallic" || v === "candy") l.dekking = 1; }, "materiaal", true),
+      l.kind === "matte" || l.kind === "glossy"
+        ? this.num("Dekking (1 = ondoorzichtig)", () => l.dekking, (v) => { l.dekking = Math.min(Math.max(v, 0), 1); }, { min: 0, max: 1, step: 0.05, soort: "materiaal" })
+        : null));
+    return [...rijen, h("button", { class: "klein", onclick: () => { f.lagen.push(nieuw()); ververs(); } }, "+ laag")];
   }
 
   lagen() {
@@ -166,8 +185,8 @@ export class Paneel {
         this.num("Diameter", () => c.diameter, (v) => { c.diameter = v; }, { min: 0.2, max: 0.7, step: 5, schaal: 1000, eenheid: "mm" }),
         this.num("Dikte (hoogte)", () => c.hoogte, (v) => { c.hoogte = v; }, { min: 0.02, max: 0.06, step: 1, schaal: 1000, eenheid: "mm" }),
         this.num("Brekingsindex epoxy (A)", () => c.epoxy.cauchy_a, (v) => { c.epoxy.cauchy_a = v; }, { min: 1.4, max: 1.65, step: 0.001, soort: "materiaal" })),
-      this.afwerking("Zijkant", "zijkant", [["bare", "onbehandeld"], ["paint", "verf"], ["clearcoat", "matte lak"]], afwSchets.zijkant),
-      this.afwerking("Onderkant", "onderkant", [["bare", "onbehandeld"], ["paint", "verf"], ["clearcoat", "matte lak"], ["plate", "plaat met luchtspleet"]], afwSchets.onderkant),
+      this.afwerking("Zijkant", "zijkant", [["bare", "onbehandeld"], ["paint", "verf"], ["paintstack", "gestapelde verf"], ["clearcoat", "matte lak"]], afwSchets.zijkant),
+      this.afwerking("Onderkant", "onderkant", [["bare", "onbehandeld"], ["paint", "verf"], ["paintstack", "gestapelde verf"], ["clearcoat", "matte lak"], ["plate", "plaat met luchtspleet"]], afwSchets.onderkant),
       this.lagen(),
       h("details", { open: true }, h("summary", {}, "Omgeving en camera"),
         this.sel("Omgeving", [["", "geen (witte constante omgeving)"], ...p.omgevingen.map((x) => [x.naam, `${x.naam} - ${x.omschrijving}`])],
