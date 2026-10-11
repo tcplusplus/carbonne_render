@@ -27,3 +27,4 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 ## Valkuilen
 - Bij het laden meldt Dr.Jit een waarschuwing over de te lage compute capability; die is onschuldig.
 - `mi.Bitmap(img)` dwingt de evaluatie af; meet rendertijd altijd inclusief die stap.
+- Mitsuba `dielectric` kent alleen een scalaire IOR (geen dispersie); `mi.Mesh` + `set_bsdf` werkt in een scenedict. Eigen meshes: let op windingrichting (test in tests/test_t02.py).
