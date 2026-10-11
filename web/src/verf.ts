@@ -1,47 +1,83 @@
 // Paneel Verven (T20): bibliotheek, formulier "nieuwe verf" met live vertaling, en de ChatGPT-brug.
-import * as api from "./api.js";
-import { lineairNaarHex } from "./kleur.js";
-import { h } from "./paneel.js";
+import * as api from "./api.ts";
+import { lineairNaarHex } from "./kleur.ts";
+import { h } from "./paneel.ts";
+import type { SchemaKnoop } from "./schema.ts";
+import type { ApiFout } from "./api.ts";
+import type { VerfLijstItem, VerfVertaling } from "./types/api.ts";
+import type { VerfEigenschappen } from "./types/verf.ts";
 
 const GLANSTERMEN = ["mat", "zijdemat", "zijdeglans", "satijn", "glans", "hoogglans"];
-const BRON_TEKST = { standaard: "standaard", model: "model" };
+const BRON_TEKST: Record<string, string> = { standaard: "standaard", model: "model" };
 // Groepering van de velden uit GET /api/verven/schema.
-const GROEPEN = [
+const GROEPEN: readonly (readonly [string, readonly string[]])[] = [
   ["Identiteit", ["merk", "product", "kleurnaam"]],
   ["Kleur", ["kleurcode", "hex"]],
   ["Glans", ["glansgraad", "glans_gu_60"]],
   ["Effect", ["effect", "transparant", "ondergrond_candy"]],
   ["Bron", ["bron_url", "opmerking"]],
 ];
-const LEEG = () => ({ merk: "", product: "", kleurnaam: "", kleurcode: "", hex: "", glansgraad: "", glans_gu_60: "",
+/** Waarden van het formulier: alles tekst, behalve het vinkje; een leeg veld is "". */
+export type Formulier = Record<string, string | boolean>;
+const LEEG = (): Formulier => ({ merk: "", product: "", kleurnaam: "", kleurcode: "", hex: "", glansgraad: "", glans_gu_60: "",
   effect: "geen", transparant: false, ondergrond_candy: "", bron_url: "", opmerking: "" });
 
 /** Formulierwaarden -> aanvraag voor de API: lege velden vervallen. */
-export function naarAanvraag(w) {
-  const o = {};
+export function naarAanvraag(w: Formulier): Partial<VerfEigenschappen> {
+  const o: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(w)) {
     if (k === "transparant") { o[k] = !!v; continue; }
     if (v === "" || v == null) continue;
     o[k] = k === "glans_gu_60" ? Number(v) : v;
   }
-  return o;
+  return o as Partial<VerfEigenschappen>;
 }
 
 /** Fout van de API -> {melding, veld}; kent het eigen formaat van uit-tekst en de lijst van pydantic. */
-export function foutInfo(e) {
+export function foutInfo(e: Pick<ApiFout, "message" | "detail">): { melding: string; veld: string | null } {
   const d = e.detail;
-  if (d && typeof d === "object" && !Array.isArray(d)) return { melding: d.melding ?? String(e.message), veld: d.veld ?? null };
+  if (d && typeof d === "object" && !Array.isArray(d)) {
+    const o = d as { melding?: string; veld?: string };
+    return { melding: o.melding ?? String(e.message), veld: o.veld ?? null };
+  }
   if (Array.isArray(d) && d.length) {
-    const loc = d[0].loc ?? [];
+    const loc: (string | number)[] = d[0].loc ?? [];
     const veld = loc.length > 1 ? String(loc[loc.length - 1]) : null;
     return { melding: `${veld ? veld + ": " : ""}${d[0].msg}`, veld };
   }
   return { melding: typeof d === "string" ? d : e.message, veld: null };
 }
 
+type Veld = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+
 export class VerfPaneel {
-  constructor(root, { bijLijst, meld }) {
-    Object.assign(this, { root, bijLijst, meld, lijst: [], schema: null, w: LEEG(), debounce: null, volgnr: 0, open: false, gekozen: null, velden: {} });
+  root: HTMLElement;
+  bijLijst: (lijst: VerfLijstItem[]) => void;
+  meld: (tekst: string, fout?: boolean) => void;
+  lijst: VerfLijstItem[] = [];
+  schema: SchemaKnoop | null = null;
+  w: Formulier = LEEG();
+  debounce: ReturnType<typeof setTimeout> | undefined;
+  volgnr = 0;
+  gekozen: string | null = null;
+  bewerkSlug: string | null = null;
+  velden: Record<string, Veld> = {};
+  laatste: VerfVertaling | null = null;
+  // het formulier wordt in bouw() en bouwFormulier() gemaakt
+  lijstEl!: HTMLElement;
+  detailEl!: HTMLElement;
+  formEl!: HTMLElement;
+  vertalingEl!: HTMLElement;
+  foutEl!: HTMLElement;
+  antwoordEl!: HTMLTextAreaElement;
+  vraagEl!: HTMLTextAreaElement;
+  bewaarEl!: HTMLButtonElement;
+  bewaarMeldEl!: HTMLElement;
+
+  constructor(root: HTMLElement, { bijLijst, meld }: { bijLijst: VerfPaneel["bijLijst"]; meld: VerfPaneel["meld"] }) {
+    this.root = root;
+    this.bijLijst = bijLijst;
+    this.meld = meld;
     this.bouw();
   }
 
@@ -71,13 +107,13 @@ export class VerfPaneel {
       : [h("p", { class: "hint" }, "De bibliotheek is nog leeg.")]));
   }
 
-  async toonDetail(slug) {
+  async toonDetail(slug: string) {
     this.gekozen = slug;
     this.bouwLijst();
     try {
       const it = await api.verfLees(slug);
       const e = it.eigenschappen, p = it.vertaling.paint;
-      const rij = (k, v) => (v == null || v === "" ? null : [h("dt", {}, k), h("dd", {}, String(v))]);
+      const rij = (k: string, v: unknown) => (v == null || v === "" ? null : [h("dt", {}, k), h("dd", {}, String(v))]);
       this.detailEl.replaceChildren(h("div", { class: "verf-kaart" },
         h("h3", {}, h("span", { class: "staal groot", style: `background:${lineairNaarHex(p.color)}` }), " ", e.merk ?? "", " ", e.product ?? "", " ", e.kleurnaam ?? ""),
         h("dl", { class: "kern" },
@@ -89,36 +125,36 @@ export class VerfPaneel {
         h("div", { class: "rij" },
           h("button", { class: "klein", "data-rol": "verf-bewerk", onclick: () => this.nieuw(e, slug) }, "Bewerk"),
           h("button", { class: "klein", "data-rol": "verf-verwijder", onclick: () => this.verwijder(slug) }, "Verwijder"))));
-    } catch (er) { this.meld(`Verf laden mislukt: ${er.message}`, true); }
+    } catch (er) { this.meld(`Verf laden mislukt: ${(er as Error).message}`, true); }
   }
 
-  async verwijder(slug) {
+  async verwijder(slug: string) {
     if (!confirm(`Verf "${slug}" uit de bibliotheek verwijderen?`)) return;
     try {
       await api.verfVerwijder(slug);
       this.gekozen = null; this.detailEl.replaceChildren();
       await this.ververs();
-    } catch (er) { this.meld(`Verwijderen mislukt: ${er.message}`, true); }
+    } catch (er) { this.meld(`Verwijderen mislukt: ${(er as Error).message}`, true); }
   }
 
   // --- formulier ---
-  async nieuw(eigenschappen = null, slug = null) {
+  async nieuw(eigenschappen: Partial<VerfEigenschappen> | null = null, slug: string | null = null) {
     this.schema ??= await api.verfSchema().catch(() => null);
     this.bewerkSlug = slug;
-    this.w = { ...LEEG(), ...Object.fromEntries(Object.entries(eigenschappen ?? {}).map(([k, v]) => [k, v ?? LEEG()[k]])) };
+    this.w = { ...LEEG(), ...Object.fromEntries(Object.entries(eigenschappen ?? {}).map(([k, v]) => [k, v ?? LEEG()[k]])) } as Formulier;
     this.bouwFormulier();
     this.formEl.hidden = false;
     this.vertaal(0);
   }
 
-  eigenschap(k) { return this.schema?.properties?.[k] ?? {}; }
+  eigenschap(k: string): SchemaKnoop { return this.schema?.properties?.[k] ?? {}; }
 
-  invoer(k) {
+  invoer(k: string) {
     const sch = this.eigenschap(k);
-    const bij = () => { this.w[k] = el.type === "checkbox" ? el.checked : el.value; this.wisFout(); this.vertaal(); };
-    let el;
+    const bij = () => { this.w[k] = el instanceof HTMLInputElement && el.type === "checkbox" ? el.checked : el.value; this.wisFout(); this.vertaal(); };
+    let el: Veld;
     if (k === "effect") {
-      const opties = (this.schema?.["$defs"]?.Effect?.enum) ?? ["geen", "metallic", "chroom", "candy", "parelmoer", "glitter", "fluo"];
+      const opties = (this.schema?.["$defs"]?.Effect?.enum as string[] | undefined) ?? ["geen", "metallic", "chroom", "candy", "parelmoer", "glitter", "fluo"];
       el = h("select", {}, opties.map((o) => h("option", { value: o, selected: o === this.w[k] }, o)));
     } else if (k === "glansgraad") {
       el = h("input", { type: "text", list: "glansgraden", value: this.w[k], placeholder: "term, bv. zijdeglans" });
@@ -129,16 +165,16 @@ export class VerfPaneel {
     } else if (k === "glans_gu_60") {
       el = h("input", { type: "number", min: 0, max: 120, step: 1, value: this.w[k], placeholder: "GU bij 60 graden" });
     } else if (k === "opmerking") {
-      el = h("textarea", { rows: 2, spellcheck: "false" }); el.value = this.w[k];
+      el = h("textarea", { rows: 2, spellcheck: "false" }); el.value = String(this.w[k]);
     } else {
       el = h("input", { type: "text", value: this.w[k], spellcheck: "false", placeholder: k === "hex" ? "#rrggbb" : k === "kleurcode" ? "RAL 3020" : "" });
     }
     el.dataset.veld = k;
-    el.addEventListener(el.tagName === "SELECT" || el.type === "checkbox" ? "change" : "input", bij);
+    el.addEventListener(el.tagName === "SELECT" || (el instanceof HTMLInputElement && el.type === "checkbox") ? "change" : "input", bij);
     this.velden[k] = el;
     const wrap = h("label", { class: "veld", title: sch.description ?? "" }, h("span", { class: "lbl" }, k.replaceAll("_", " ")), el);
     if (k === "hex") {
-      const picker = h("input", { type: "color", value: /^#[0-9a-f]{6}$/i.test(this.w.hex) ? this.w.hex : "#808080" });
+      const picker = h("input", { type: "color", value: /^#[0-9a-f]{6}$/i.test(String(this.w.hex)) ? String(this.w.hex) : "#808080" });
       picker.addEventListener("input", () => { el.value = picker.value; bij(); });
       return h("label", { class: "veld", title: sch.description ?? "" }, h("span", { class: "lbl" }, "hex"), h("span", { class: "kleurveld" }, picker, el));
     }
@@ -172,13 +208,13 @@ export class VerfPaneel {
       h("div", { class: "verf-rechts" }, h("h3", {}, "Vertaling naar de app"), this.vertalingEl));
   }
 
-  vulFormulier(e) {
-    this.w = { ...LEEG(), ...Object.fromEntries(Object.entries(e).map(([k, v]) => [k, v ?? LEEG()[k]])) };
+  vulFormulier(e: Partial<VerfEigenschappen>) {
+    this.w = { ...LEEG(), ...Object.fromEntries(Object.entries(e).map(([k, v]) => [k, v ?? LEEG()[k]])) } as Formulier;
     for (const [k, el] of Object.entries(this.velden)) {
-      if (el.type === "checkbox") el.checked = !!this.w[k]; else el.value = this.w[k] ?? "";
+      if (el instanceof HTMLInputElement && el.type === "checkbox") el.checked = !!this.w[k]; else el.value = String(this.w[k] ?? "");
     }
-    const p = this.formEl.querySelector('input[type=color]');
-    if (p && /^#[0-9a-f]{6}$/i.test(this.w.hex)) p.value = this.w.hex;
+    const p = this.formEl.querySelector<HTMLInputElement>('input[type=color]');
+    if (p && /^#[0-9a-f]{6}$/i.test(String(this.w.hex))) p.value = String(this.w.hex);
   }
 
   wisFout() {
@@ -186,10 +222,10 @@ export class VerfPaneel {
     for (const el of Object.values(this.velden)) el.classList.remove("ongeldig");
   }
 
-  toonFout(melding, veld) {
+  toonFout(melding: string, veld: string | null) {
     this.foutEl.textContent = melding;
     this.foutEl.hidden = false;
-    const el = veld && this.velden[veld];
+    const el = veld ? this.velden[veld] : undefined;
     if (el) { el.classList.add("ongeldig"); el.scrollIntoView?.({ block: "nearest" }); }
   }
 
@@ -204,7 +240,7 @@ export class VerfPaneel {
         this.toonVertaling(v);
       } catch (e) {
         if (nr !== this.volgnr) return;
-        const { melding, veld } = foutInfo(e);
+        const { melding, veld } = foutInfo(e as ApiFout);
         this.vertalingEl.replaceChildren(h("p", { class: "hint" }, `Nog niet te vertalen: ${melding}`));
         this.laatste = null;
         if (veld && this.velden[veld] && this.w[veld]) this.velden[veld].classList.add("ongeldig");
@@ -212,7 +248,7 @@ export class VerfPaneel {
     }, wacht);
   }
 
-  toonVertaling(v) {
+  toonVertaling(v: VerfVertaling) {
     this.laatste = v;
     const p = v.paint;
     this.vertalingEl.replaceChildren(
@@ -228,10 +264,10 @@ export class VerfPaneel {
 
   // --- ChatGPT-brug ---
   async kopieerVraag() {
-    const melding = this.formEl.querySelector('[data-rol=kopieer-melding]');
-    const kleur = [this.w.kleurnaam, this.w.kleurcode].filter(Boolean).join(" ") || this.w.hex || "";
+    const melding = this.formEl.querySelector<HTMLElement>('[data-rol=kopieer-melding]')!;
+    const kleur = [this.w.kleurnaam, this.w.kleurcode].filter(Boolean).join(" ") || String(this.w.hex || "");
     try {
-      const { vraag } = await api.verfVraag(this.w.merk ?? "", this.w.product ?? "", kleur);
+      const { vraag } = await api.verfVraag(String(this.w.merk ?? ""), String(this.w.product ?? ""), kleur);
       this.vraagEl.value = vraag;
       try {
         await navigator.clipboard.writeText(vraag);
@@ -240,7 +276,7 @@ export class VerfPaneel {
         this.vraagEl.hidden = false; this.vraagEl.select();
         melding.textContent = "Kopiëren naar het klembord lukte niet; selecteer de tekst hieronder en kopieer zelf (Ctrl+C).";
       }
-    } catch (e) { melding.textContent = `Vraag ophalen mislukt: ${e.message}`; }
+    } catch (e) { melding.textContent = `Vraag ophalen mislukt: ${(e as Error).message}`; }
   }
 
   async leesAntwoord() {
@@ -254,13 +290,13 @@ export class VerfPaneel {
       this.toonVertaling(r.vertaling);
       this.meld("Antwoord ingelezen: controleer de velden en de vertaling.");
     } catch (e) {
-      const { melding, veld } = foutInfo(e);
+      const { melding, veld } = foutInfo(e as ApiFout);
       this.toonFout(melding, veld);
     }
   }
 
   // --- bewaren ---
-  async bewaar(overschrijf) {
+  async bewaar(overschrijf: boolean) {
     this.bewaarMeldEl.replaceChildren();
     this.wisFout();
     try {
@@ -270,11 +306,11 @@ export class VerfPaneel {
       await this.ververs();
       await this.toonDetail(it.slug);
     } catch (e) {
-      if (e.status === 409) {
+      if ((e as ApiFout).status === 409) {
         this.bewaarMeldEl.replaceChildren("Deze verf staat al in de bibliotheek. ",
           h("button", { class: "klein", "data-rol": "verf-overschrijf", onclick: () => this.bewaar(true) }, "Overschrijven"));
       } else {
-        const { melding, veld } = foutInfo(e);
+        const { melding, veld } = foutInfo(e as ApiFout);
         this.toonFout(melding, veld);
       }
     }

@@ -1,52 +1,59 @@
-import * as api from "./api.js";
-import { HQ } from "./hq.js";
-import { lineairNaarHex } from "./kleur.js";
-import { Paneel } from "./paneel.js";
-import { Preview } from "./preview.js";
-import { HerkomstPaneel } from "./herkomst.js";
-import { Reeks } from "./reeks.js";
-import { koppelSelectie, zetMarkering } from "./selectie.js";
-import { begrens, hqAanvraag, leidLimietenAf, normaliseerGeladen, standaardConfig, standaardOpties } from "./staat.js";
-import { valideer } from "./schema.js";
-import { detailNaarTekst } from "./fout.js";
-import { Vergelijk } from "./vergelijk.js";
-import { VerfPaneel } from "./verf.js";
+import "../css/app.css";
+import * as api from "./api.ts";
+import { HQ } from "./hq.ts";
+import { lineairNaarHex } from "./kleur.ts";
+import { Paneel } from "./paneel.ts";
+import type { Wijziging } from "./paneel.ts";
+import { Preview } from "./preview.ts";
+import { HerkomstPaneel } from "./herkomst.ts";
+import { Reeks } from "./reeks.ts";
+import { koppelSelectie, zetMarkering } from "./selectie.ts";
+import type { Cfg, Opties } from "./staat.ts";
+import type { SchemaKnoop } from "./schema.ts";
+import type { Plek } from "./selectie.ts";
+import type { KlareRender } from "./hq.ts";
+import { begrens, hqAanvraag, leidLimietenAf, normaliseerGeladen, standaardConfig, standaardOpties } from "./staat.ts";
+import { valideer } from "./schema.ts";
+import { detailNaarTekst } from "./fout.ts";
+import { Vergelijk } from "./vergelijk.ts";
+import { VerfPaneel } from "./verf.ts";
 
-const $ = (id) => document.getElementById(id);
+/** Element met dit id; het type zegt wat index.html daar neerzet. */
+const $ = <T extends HTMLElement = HTMLElement>(id: string): T => document.getElementById(id) as T;
 const OPSLAG = "carbonne.laatste";
 
-function bewaarLokaal(cfg, opties) {
+function bewaarLokaal(cfg: Cfg, opties: Opties) {
   try { localStorage.setItem(OPSLAG, JSON.stringify({ cfg, opties })); } catch { /* geen opslag */ }
 }
-function leesLokaal() {
-  try { return JSON.parse(localStorage.getItem(OPSLAG)); } catch { return null; }
+function leesLokaal(): { cfg: Cfg; opties: Opties } | null {
+  try { return JSON.parse(localStorage.getItem(OPSLAG) ?? "null"); } catch { return null; }
 }
 
 async function start() {
   const presets = await api.presets();
-  const schema = await api.schema().catch(() => null); // zonder schema valt de UI terug op de eigen bereiken en de backend-controle
+  const schema: SchemaKnoop | null = await api.schema().catch(() => null); // zonder schema valt de UI terug op de eigen bereiken en de backend-controle
   if (schema) leidLimietenAf(schema);
   /** Controle van de config tegen het schema vóór verzenden; geeft een leesbare tekst of null. */
-  const schemaFouten = (config) => {
+  const schemaFouten = (config: Cfg): string | null => {
     const f = schema ? valideer(schema, config) : [];
     return f.length ? detailNaarTekst(f) : null;
   };
-  const ral = Object.fromEntries(presets.ral.map((r) => [r.code, r.hex]));
+  const ral: Record<string, string> = Object.fromEntries(presets.ral.map((r) => [r.code, r.hex]));
   const bewaard = leesLokaal();
-  let cfg = bewaard?.cfg ?? standaardConfig();
-  let opties = bewaard?.opties ?? standaardOpties();
-  const meld = (t, fout = false) => { $("meldingen").textContent = t; $("meldingen").classList.toggle("fout", fout); };
+  let cfg: Cfg = bewaard?.cfg ?? standaardConfig();
+  let opties: Opties = bewaard?.opties ?? standaardOpties();
+  const meld = (t: string, fout = false) => { $("meldingen").textContent = t; $("meldingen").classList.toggle("fout", fout); };
 
   const preview = new Preview($("preview-kader"), { ral, presets });
   const hq = new HQ({ kader: $("hq-kader"), img: $("hq-beeld"), leeg: $("hq-leeg"), knop: $("hq-start"), annuleer: $("hq-annuleer"),
     balk: $("hq-balk"), status: $("hq-status"), links: $("hq-links"), png: $("hq-png"), exr: $("hq-exr") },
-  { bijKlaar: (r) => vergelijk.voegToe(r) });
+  { bijKlaar: (r: KlareRender) => vergelijk.voegToe(r) });
   const vergelijk = new Vergelijk({ lijst: $("geschiedenis"), beeld: $("vergelijk-beeld"), modus: $("vergelijk-modus"),
     schuif: $("vergelijk-schuif"), schuifrij: $("schuifrij"), verschil: $("verschil") },
   { bijTerugzetten: (c, o) => laad(c, { ...opties, ev: o.ev ?? 0 }) });
 
   const frame = () => { for (const k of [$("preview-kader"), $("hq-kader")]) k.style.setProperty("--ar", `${cfg.render.breedte} / ${cfg.render.hoogte}`); };
-  let timer = null;
+  let timer: ReturnType<typeof setTimeout> | undefined;
   const ververs = () => {
     clearTimeout(timer);
     timer = setTimeout(async () => {
@@ -56,15 +63,15 @@ async function start() {
         if (fouten) throw new Error(fouten);
         await preview.update(cfg);
         meld("");
-      } catch (e) { meld(`Preview: ${e.message}`, true); }
+      } catch (e) { meld(`Preview: ${(e as Error).message}`, true); }
       document.body.dataset.preview = "klaar";
     }, 120);
   };
-  const zetCameraPreset = async (naam) => {
-    try { preview.zetCamera(await api.cameraPreset(naam, cfg.diameter, cfg.hoogte, cfg.poten?.hoogte_m)); } catch (e) { meld(e.message, true); }
+  const zetCameraPreset = async (naam: string) => {
+    try { preview.zetCamera(await api.cameraPreset(naam, cfg.diameter, cfg.hoogte, cfg.poten?.hoogte_m)); } catch (e) { meld((e as Error).message, true); }
   };
 
-  const bijWijziging = (soort) => {
+  const bijWijziging = (soort: Wijziging) => {
     bewaarLokaal(cfg, opties);
     if (soort === "frame") { frame(); preview.pasMaatAan(); hq.zetFrame(cfg.render.breedte, cfg.render.hoogte); }
     if (soort === "ev") preview.zetEv(opties.ev);
@@ -76,7 +83,7 @@ async function start() {
     if (cfg.scene.camera_preset) { cfg.scene.camera_preset = null; paneel.bouw(); }
   };
 
-  async function laad(nieuw, nieuweOpties = opties) {
+  async function laad(nieuw: Cfg, nieuweOpties: Opties = opties) {
     cfg = normaliseerGeladen(structuredClone(nieuw), (c) => lineairNaarHex(c));
     begrens(cfg); // een oude bewaarde of geladen config kan waarden buiten het huidige bereik hebben (zou een 422 geven)
     opties = { ...nieuweOpties };
@@ -90,7 +97,7 @@ async function start() {
 
   // --- HQ ---
   hq.bijKnop = () => {
-    const aanvraag = hqAanvraag(cfg, opties, preview.getCamera(), $("hq-herkomst").checked);
+    const aanvraag = hqAanvraag(cfg, opties, preview.getCamera(), $<HTMLInputElement>("hq-herkomst").checked);
     const fouten = schemaFouten(aanvraag.config);
     if (fouten) hq.melding(`Render niet gestart: ${fouten}`, true); else hq.start(aanvraag);
   };
@@ -102,9 +109,9 @@ async function start() {
     haalConfig: () => hqAanvraag(cfg, opties, preview.getCamera()).config, haalEv: () => opties.ev,
     ral, bijLaad: (c) => laad(c),
   });
-  let plek = null;
-  const kies = (p) => { plek = p; zetMarkering($("hq-kader"), p); vergelijk.markeer(p); reeks.zetPlek(p); };
-  const bron = (label, id, r) => ({ label, id, breedte: r.breedte, hoogte: r.hoogte });
+  let plek: Plek | null = null;
+  const kies = (p: Plek) => { plek = p; zetMarkering($("hq-kader"), p); vergelijk.markeer(p); reeks.zetPlek(p); };
+  const bron = (label: string, id: string, r: { breedte: number; hoogte: number }) => ({ label, id, breedte: r.breedte, hoogte: r.hoogte });
   koppelSelectie($("hq-kader"), (p) => {
     kies(p);
     const l = hq.laatste;
@@ -113,8 +120,8 @@ async function start() {
   koppelSelectie($("vergelijk-beeld"), (p) => {
     kies(p);
     const { a, b } = vergelijk;
-    herkomstPaneel.toon([["A", a], ["B", b]].filter(([, it]) => it?.herkomst).map(([t, it]) => bron(`${t} ${it.label}`, it.id, it.cfg.render)), p);
-  }, (e) => (e.target.tagName === "IMG" ? e.target.getBoundingClientRect() : null));
+    herkomstPaneel.toon(([["A", a], ["B", b]] as const).flatMap(([t, it]) => (it?.herkomst ? [bron(`${t} ${it.label}`, it.id, it.cfg.render)] : [])), p);
+  }, (e) => ((e.target as HTMLElement).tagName === "IMG" ? (e.target as HTMLElement).getBoundingClientRect() : null));
 
   // --- verven: bibliotheek en formulier (T20) ---
   const verfPaneel = new VerfPaneel($("verven"), { bijLijst: (lijst) => paneel.zetVerven(lijst), meld });
@@ -123,27 +130,27 @@ async function start() {
   // --- configs ---
   const vulLijst = async () => {
     const namen = await api.configsLijst();
-    $("config-lijst").replaceChildren(...namen.map((n) => Object.assign(document.createElement("option"), { value: n, textContent: n })));
+    $<HTMLSelectElement>("config-lijst").replaceChildren(...namen.map((n) => Object.assign(document.createElement("option"), { value: n, textContent: n })));
   };
   await vulLijst().catch(() => {});
   $("config-opslaan").addEventListener("click", async () => {
-    const naam = $("config-naam").value.trim();
+    const naam = $<HTMLInputElement>("config-naam").value.trim();
     try {
       const c = structuredClone(cfg); c.scene.camera = preview.getCamera(); c.scene.camera_preset = null;
       await api.configOpslaan(naam, c);
       await vulLijst();
       meld(`Config "${naam}" opgeslagen.`);
-    } catch (e) { meld(`Opslaan mislukt: ${e.message}`, true); }
+    } catch (e) { meld(`Opslaan mislukt: ${(e as Error).message}`, true); }
   });
   $("config-laden").addEventListener("click", async () => {
-    const naam = $("config-lijst").value;
+    const naam = $<HTMLSelectElement>("config-lijst").value;
     if (!naam) return;
-    try { await laad(await api.configLees(naam)); $("config-naam").value = naam; meld(`Config "${naam}" geladen.`); }
-    catch (e) { meld(`Laden mislukt: ${e.message}`, true); }
+    try { await laad(await api.configLees(naam)); $<HTMLInputElement>("config-naam").value = naam; meld(`Config "${naam}" geladen.`); }
+    catch (e) { meld(`Laden mislukt: ${(e as Error).message}`, true); }
   });
 
-  window.carbonne = { schemaFouten, cfg: () => cfg, preview, hq, vergelijk, laad, ververs, reeks, herkomstPaneel, verfPaneel, plek: () => plek };
+  (window as unknown as { carbonne: unknown }).carbonne = { schemaFouten, cfg: () => cfg, preview, hq, vergelijk, laad, ververs, reeks, herkomstPaneel, verfPaneel, plek: () => plek };
   document.body.dataset.app = "klaar";
 }
 
-start().catch((e) => { document.getElementById("meldingen").textContent = `Opstarten mislukt: ${e.message}`; console.error(e); });
+start().catch((e: Error) => { $("meldingen").textContent = `Opstarten mislukt: ${e.message}`; console.error(e); });

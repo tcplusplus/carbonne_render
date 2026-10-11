@@ -1,27 +1,44 @@
 // HQ-paneel: start een Mitsuba-render via de backend en toont het beeld progressief (WebSocket).
-import { annuleerRender, renderStatus, resultaatUrl, startRender, volgRender } from "./api.js";
+import { annuleerRender, renderStatus, resultaatUrl, startRender, volgRender } from "./api.ts";
+import type { Cfg, HqAanvraag } from "./staat.ts";
+import type { RenderBericht, RenderResultaat } from "./types/api.ts";
 
-const EIND = ["klaar", "fout", "geannuleerd"];
+const EIND: readonly string[] = ["klaar", "fout", "geannuleerd"];
+
+/** De elementen die het HQ-paneel bedient. */
+export interface HqDom {
+  kader: HTMLElement; img: HTMLImageElement; leeg: HTMLElement; knop: HTMLButtonElement; annuleer: HTMLButtonElement;
+  balk: HTMLProgressElement; status: HTMLElement; links: HTMLElement; png: HTMLAnchorElement; exr: HTMLAnchorElement;
+}
+/** Een afgeronde render zoals de vergelijking hem krijgt. */
+export interface KlareRender { id: string; blob: Blob; resultaat: RenderResultaat; aanvraag: HqAanvraag; herkomst: boolean }
 
 export class HQ {
-  constructor(dom, { bijKlaar }) {
+  dom: HqDom;
+  bijKlaar: (r: KlareRender) => void;
+  /** Wordt door de app gezet: wat er bij een klik op "Render HQ" gebeurt. */
+  bijKnop?: () => void;
+  id: string | null = null;
+  aanvraag?: HqAanvraag;
+  laatste: { id: string; herkomst: boolean; render: Cfg["render"] } | null = null;
+
+  constructor(dom: HqDom, { bijKlaar }: { bijKlaar: (r: KlareRender) => void }) {
     this.dom = dom;
     this.bijKlaar = bijKlaar;
-    this.id = null;
     dom.knop.addEventListener("click", () => this.bijKnop?.());
     dom.annuleer.addEventListener("click", () => this.annuleer());
   }
 
-  zetFrame(b, h) { this.dom.kader.style.setProperty("--ar", `${b} / ${h}`); }
+  zetFrame(b: number, h: number) { this.dom.kader.style.setProperty("--ar", `${b} / ${h}`); }
 
   bezig() { return this.id !== null; }
 
-  melding(tekst, fout = false) {
+  melding(tekst: string, fout = false) {
     this.dom.status.textContent = tekst;
     this.dom.status.classList.toggle("fout", fout);
   }
 
-  async start(aanvraag) {
+  async start(aanvraag: HqAanvraag) {
     if (this.bezig()) return;
     this.aanvraag = aanvraag;
     this.laatste = null;
@@ -34,16 +51,16 @@ export class HQ {
       const { id } = await startRender(aanvraag.config, aanvraag.opties, aanvraag.herkomst);
       this.id = id;
     } catch (e) {
-      this.melding(`Render niet gestart: ${e.message}`, true);
+      this.melding(`Render niet gestart: ${(e as Error).message}`, true);
       this.reset();
       return;
     }
-    this.volg(this.id);
+    this.volg(this.id!);
   }
 
-  volg(id) {
+  volg(id: string) {
     let klaar = false;
-    const verwerk = (m) => {
+    const verwerk = (m: RenderBericht) => {
       if (m.png_base64) this.dom.img.src = "data:image/png;base64," + m.png_base64;
       this.dom.img.hidden = false;
       this.dom.leeg.hidden = true;
@@ -65,21 +82,23 @@ export class HQ {
     volgRender(id, verwerk, () => { if (!klaar) poll(); });
   }
 
-  async eind(m) {
-    const id = this.id;
-    if (m.status === "klaar") {
+  async eind(m: RenderBericht) {
+    const id = this.id!;
+    if (m.status === "klaar" && m.resultaat && this.aanvraag) {
       const r = m.resultaat;
+      const aanvraag = this.aanvraag;
+      this.laatste = { id, herkomst: !!aanvraag.herkomst, render: aanvraag.config.render };
+      // eerst de render in de geschiedenis, dan pas "Klaar": wie op die melding wacht, vindt het resultaat er dan ook
+      try {
+        const blob = await (await fetch(resultaatUrl(id, "png"))).blob();
+        this.bijKlaar({ id, blob, resultaat: r, aanvraag, herkomst: !!aanvraag.herkomst });
+      } catch { /* de afbeelding blijft in het paneel staan */ }
       this.melding(`Klaar: ${r.spp} samples, ruis ${r.ruis == null ? "?" : (r.ruis * 100).toFixed(1) + " %"}, ${r.tijd_s.toFixed(1)} s` +
         (r.uit_cache ? " (uit cache)" : "") + `, reden: ${r.reden}`);
       this.dom.balk.value = this.dom.balk.max;
       this.dom.png.href = resultaatUrl(id, "png");
       this.dom.exr.href = resultaatUrl(id, "exr");
       this.dom.links.hidden = false;
-      this.laatste = { id, herkomst: !!this.aanvraag.herkomst, render: this.aanvraag.config.render };
-      try {
-        const blob = await (await fetch(resultaatUrl(id, "png"))).blob();
-        this.bijKlaar({ id, blob, resultaat: r, aanvraag: this.aanvraag, herkomst: !!this.aanvraag.herkomst });
-      } catch { /* de afbeelding blijft in het paneel staan */ }
     } else if (m.status === "geannuleerd") this.melding("Geannuleerd (het tussenbeeld blijft staan)");
     else this.melding(`Fout: ${m.fout}`, true);
     this.reset();
@@ -94,6 +113,6 @@ export class HQ {
   async annuleer() {
     if (!this.id) return;
     this.dom.annuleer.disabled = true;
-    try { await annuleerRender(this.id); } catch (e) { this.melding(`Annuleren mislukt: ${e.message}`, true); }
+    try { await annuleerRender(this.id); } catch (e) { this.melding(`Annuleren mislukt: ${(e as Error).message}`, true); }
   }
 }

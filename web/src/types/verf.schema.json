@@ -1,0 +1,157 @@
+{
+  "additionalProperties": false,
+  "description": "Eigenschappen van het product, zoals op het blik of het technische fiche staan.",
+  "properties": {
+    "bron_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Bron Url"
+    },
+    "effect": {
+      "default": "geen",
+      "enum": [
+        "geen",
+        "metallic",
+        "chroom",
+        "candy",
+        "parelmoer",
+        "glitter",
+        "fluo"
+      ],
+      "title": "Effect",
+      "type": "string"
+    },
+    "glans_gu_60": {
+      "anyOf": [
+        {
+          "maximum": 120.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "gloss units bij 60 graden (technisch fiche)",
+      "title": "Glans Gu 60"
+    },
+    "glansgraad": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "mat, zijdemat, zijdeglans, satijn, glans, hoogglans (ook Engels)",
+      "title": "Glansgraad"
+    },
+    "hex": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "#rrggbb (sRGB-weergave van de kleur)",
+      "title": "Hex"
+    },
+    "kleurcode": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "RAL-code ('RAL 3020') of hex; een merkcode alleen samen met `hex`",
+      "title": "Kleurcode"
+    },
+    "kleurnaam": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Kleurnaam"
+    },
+    "merk": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Merk"
+    },
+    "ondergrond_candy": {
+      "anyOf": [
+        {
+          "enum": [
+            "metallic",
+            "white"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ondergrond Candy"
+    },
+    "opmerking": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Opmerking"
+    },
+    "product": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Product"
+    },
+    "transparant": {
+      "default": false,
+      "title": "Transparant",
+      "type": "boolean"
+    }
+  },
+  "title": "VerfEigenschappen",
+  "type": "object"
+}

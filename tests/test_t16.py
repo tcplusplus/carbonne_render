@@ -42,10 +42,10 @@ def test_zet_pad_js_en_selectie_js():
 
     if shutil.which("node") is None:
         pytest.skip("node ontbreekt")
-    web = Path(__file__).resolve().parents[1] / "web" / "js"
+    web = Path(__file__).resolve().parents[1] / "web" / "src"
     code = f"""
 globalThis.document = {{ createElement: () => ({{}}), createElementNS: () => ({{}}) }};
-import {{ plekNaarPixels }} from "{(web / 'selectie.js').as_uri()}";
+import {{ plekNaarPixels }} from "{(web / 'selectie.ts').as_uri()}";
 console.log(JSON.stringify([plekNaarPixels({{x0: .5, y0: .25, x1: .5, y1: .25}}, 320, 180),
   plekNaarPixels({{x0: .1, y0: .2, x1: .3, y1: .6}}, 100, 50), plekNaarPixels({{x0: 1, y0: 1, x1: 1, y1: 1}}, 100, 50)]));
 """

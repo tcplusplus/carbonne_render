@@ -2,11 +2,13 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
-import { geometrie, hdriUrl } from "./api.js";
-import { waardeNaarHex } from "./kleur.js";
+import { geometrie, hdriUrl } from "./api.ts";
+import { waardeNaarHex } from "./kleur.ts";
+import type { Afwerking, Cfg, Camera, VerfLaag } from "./staat.ts";
+import type { Geometrie, MeshData, OmgevingPreset, Presets } from "./types/api.ts";
 
-const lin = (rgb) => new THREE.Color().setRGB(rgb[0], rgb[1], rgb[2], THREE.LinearSRGBColorSpace);
-const bufGeo = (v) => {
+const lin = (rgb: readonly number[]) => new THREE.Color().setRGB(rgb[0]!, rgb[1]!, rgb[2]!, THREE.LinearSRGBColorSpace);
+const bufGeo = (v: MeshData) => {
   const g = new THREE.BufferGeometry();
   g.setAttribute("position", new THREE.Float32BufferAttribute(v.posities, 3));
   g.setAttribute("normal", new THREE.Float32BufferAttribute(v.normalen, 3));
@@ -14,8 +16,32 @@ const bufGeo = (v) => {
   return g;
 };
 
+type Verf = Pick<VerfLaag, "kind" | "candy_base">;
+
 export class Preview {
-  constructor(kader, { ral, presets }) {
+  kader: HTMLElement;
+  ral: Record<string, string>;
+  presets: Presets;
+  renderer: THREE.WebGLRenderer;
+  scene: THREE.Scene;
+  camera: THREE.PerspectiveCamera;
+  hfov = 40;
+  controls: OrbitControls;
+  pmrem: THREE.PMREMGenerator;
+  hdriCache = new Map<string, Promise<{ tex: THREE.DataTexture; env: THREE.Texture }>>();
+  blok = new THREE.Group();
+  vloer: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshStandardMaterial> | null = null;
+  spot: THREE.SpotLight | null = null;
+  geoSleutel: string | null = null;
+  matSleutel: string | null = null;
+  omgevingNaam: string | null | undefined = undefined;
+  geo!: Geometrie;
+  _raf = 0;
+  _omKey?: string;
+  /** Wordt door de app gezet: de gebruiker draait aan de camera (een camerapreset vervalt dan). */
+  bijVrijeCamera?: () => void;
+
+  constructor(kader: HTMLElement, { ral, presets }: { ral: Record<string, string>; presets: Presets }) {
     this.kader = kader;
     this.ral = ral;
     this.presets = presets;
@@ -26,19 +52,12 @@ export class Preview {
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(40, 16 / 9, 0.01, 200);
     this.camera.position.set(0, 0.55, 0.62);
-    this.hfov = 40;
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = false;
     this.controls.addEventListener("change", () => this.vraagRender());
     this.controls.addEventListener("start", () => this.bijVrijeCamera?.());
     this.pmrem = new THREE.PMREMGenerator(this.renderer);
-    this.hdriCache = new Map();
-    this.blok = new THREE.Group();
     this.scene.add(this.blok);
-    this.vloer = null;
-    this.spot = null;
-    this.geoSleutel = null;
-    this.omgevingNaam = undefined;
     new ResizeObserver(() => this.pasMaatAan()).observe(kader);
     this.pasMaatAan();
   }
@@ -58,13 +77,13 @@ export class Preview {
   }
 
   /** De config-fov is horizontaal; three.js gebruikt een verticale. */
-  zetAspect(aspect) {
+  zetAspect(aspect: number) {
     this.camera.aspect = aspect;
     this.camera.fov = (2 * Math.atan(Math.tan((this.hfov * Math.PI) / 360) / aspect) * 180) / Math.PI;
     this.camera.updateProjectionMatrix();
   }
 
-  zetCamera({ positie, doel, fov }) {
+  zetCamera({ positie, doel, fov }: Camera) {
     this.hfov = fov;
     this.camera.position.set(...positie);
     this.controls.target.set(...doel);
@@ -74,18 +93,18 @@ export class Preview {
   }
 
   /** Huidige camera in configvorm (horizontale fov). */
-  getCamera() {
-    const r = (a) => a.map((x) => Math.round(x * 1e5) / 1e5);
+  getCamera(): Camera {
+    const r = (a: number[]) => a.map((x) => Math.round(x * 1e5) / 1e5) as [number, number, number];
     return { positie: r(this.camera.position.toArray()), doel: r(this.controls.target.toArray()), fov: this.hfov };
   }
 
-  zetEv(ev) {
+  zetEv(ev: number) {
     this.renderer.toneMappingExposure = 2 ** ev;
     this.vraagRender();
   }
 
   // --- omgeving ---
-  async laadHdri(naam) {
+  async laadHdri(naam: string) {
     if (!this.hdriCache.has(naam)) {
       const p = new RGBELoader().loadAsync(hdriUrl(naam)).then((tex) => {
         tex.mapping = THREE.EquirectangularReflectionMapping;
@@ -93,12 +112,12 @@ export class Preview {
       });
       this.hdriCache.set(naam, p);
     }
-    return this.hdriCache.get(naam);
+    return this.hdriCache.get(naam)!;
   }
 
-  async zetOmgeving(cfg) {
+  async zetOmgeving(cfg: Cfg) {
     const naam = cfg.scene.omgeving;
-    const om = this.presets.omgevingen.find((o) => o.naam === naam);
+    const om: OmgevingPreset | undefined = this.presets.omgevingen.find((o) => o.naam === naam);
     this.omgevingNaam = naam;
     if (this.vloer) { this.scene.remove(this.vloer); this.vloer.geometry.dispose(); this.vloer.material.dispose(); }
     if (this.spot) { this.scene.remove(this.spot, this.spot.target); this.spot = null; }
@@ -110,7 +129,7 @@ export class Preview {
     this.vloer = vloer;
     this.scene.add(vloer);
     if (om) {
-      const { tex, env } = await this.laadHdri(naam);
+      const { tex, env } = await this.laadHdri(om.naam);
       if (this.omgevingNaam !== naam) return; // intussen een andere keuze
       const rot = Math.PI / 2 - (om.rotatie * Math.PI) / 180; // Mitsuba-envmap -> three.js equirect
       this.scene.background = tex;
@@ -134,23 +153,23 @@ export class Preview {
   }
 
   // --- tafel ---
-  afwerkingMateriaal(f, cfg) {
-    const glas = (ruw) => new THREE.MeshPhysicalMaterial({
+  afwerkingMateriaal(f: Afwerking, cfg: Cfg) {
+    const glas = (ruw: number) => new THREE.MeshPhysicalMaterial({
       color: 0xffffff, transmission: 1, ior: cfg.epoxy.cauchy_a + cfg.epoxy.cauchy_b / 0.347, thickness: cfg.hoogte,
       roughness: ruw, metalness: 0,
     });
-    if (f.type === "paintstack") f = f.lagen[f.lagen.length - 1];  // de preview toont de buitenste laag (T24)
-    if (f.type === "paint" || f.type === "plate") {
-      const c = new THREE.Color(waardeNaarHex(f.color, this.ral));
-      const ruw = f.roughness ? Math.sqrt(f.roughness) : null;
-      const m = this.verfMateriaal(f, c, ruw);
+    const buiten: Afwerking | undefined = f.type === "paintstack" ? f.lagen[f.lagen.length - 1] : f; // de preview toont de buitenste laag (T24)
+    if (buiten && (buiten.type === "paint" || buiten.type === "plate")) {
+      const c = new THREE.Color(waardeNaarHex(buiten.color, this.ral));
+      const ruw = buiten.roughness ? Math.sqrt(buiten.roughness) : null;
+      const m = this.verfMateriaal(buiten, c, ruw);
       m.side = THREE.DoubleSide; // de onderkant moet ook zichtbaar zijn door de transmissie heen
       return m;
     }
-    return glas(f.type === "clearcoat" ? Math.sqrt(f.roughness) : 0.0);
+    return glas(buiten?.type === "clearcoat" ? Math.sqrt(buiten.roughness) : 0.0);
   }
 
-  verfMateriaal(f, c, ruw) {
+  verfMateriaal(f: Verf, c: THREE.Color, ruw: number | null): THREE.MeshStandardMaterial {
     switch (f.kind) {
       case "glossy": return new THREE.MeshPhysicalMaterial({ color: c, roughness: ruw ?? 0.08, clearcoat: 0.3 });
       case "metallic": return new THREE.MeshStandardMaterial({ color: c, metalness: 1, roughness: ruw ?? 0.3 });
@@ -161,7 +180,7 @@ export class Preview {
   }
 
   /** Materiaal van een poot (benadering van het Mitsuba-materiaal: Al, Cr, zwarte poedercoating). */
-  pootMateriaal(metaal) {
+  pootMateriaal(metaal: string) {
     switch (metaal) {
       case "gepoetst": return new THREE.MeshStandardMaterial({ color: lin([0.55, 0.56, 0.55]), metalness: 1, roughness: Math.sqrt(0.02) });
       case "zwart": return new THREE.MeshStandardMaterial({ color: lin([0.02, 0.02, 0.02]), metalness: 0, roughness: Math.sqrt(0.3) });
@@ -169,8 +188,8 @@ export class Preview {
     }
   }
 
-  async zetTafel(cfg) {
-    const sleutel = JSON.stringify([cfg.diameter, cfg.hoogte, cfg.segmenten, cfg.layers, cfg.poten, cfg.poten && cfg.onderkant.gap_mm]);
+  async zetTafel(cfg: Cfg) {
+    const sleutel = JSON.stringify([cfg.diameter, cfg.hoogte, cfg.segmenten, cfg.layers, cfg.poten, cfg.poten && (cfg.onderkant as { gap_mm?: number }).gap_mm]);
     const kleurSleutel = JSON.stringify([cfg.zijkant, cfg.onderkant, cfg.epoxy, cfg.poten?.metaal]);
     if (sleutel !== this.geoSleutel) {
       const g = await geometrie(cfg); // kan een fout geven (bv. inhoud past niet)
@@ -181,7 +200,7 @@ export class Preview {
     if (cfg.poten && this.vloer && this.geo.vloer_y != null) this.vloer.position.y = this.geo.vloer_y; // met een plaat hangen de poten lager
     if (kleurSleutel === this.matSleutel) return;
     this.matSleutel = kleurSleutel;
-    for (const k of [...this.blok.children]) { this.blok.remove(k); k.geometry?.dispose(); }
+    for (const k of [...this.blok.children]) { this.blok.remove(k); (k as THREE.Mesh).geometry?.dispose(); }
     const g = this.geo;
     const glas = this.afwerkingMateriaal({ type: "bare" }, cfg);
     const mantel = this.afwerkingMateriaal(cfg.zijkant, cfg);
@@ -202,7 +221,7 @@ export class Preview {
     }
     // inhoud: per soort samengevoegd tot één mesh; de albedo (per exemplaar iets anders) gaat als vertexkleur mee
     for (const soort of ["wood", "flower"]) {
-      const pos = [], nor = [], kl = [], idx = [];
+      const pos: number[] = [], nor: number[] = [], kl: number[] = [], idx: number[] = [];
       let o = 0;
       for (const d of g.inhoud.filter((x) => x.soort === soort)) {
         pos.push(...d.posities); nor.push(...d.normalen);
@@ -220,7 +239,7 @@ export class Preview {
     this.vraagRender();
   }
 
-  async update(cfg) {
+  async update(cfg: Cfg) {
     const omKey = JSON.stringify([cfg.scene.omgeving, cfg.hoogte, cfg.scene.spot, cfg.poten?.hoogte_m ?? null]);
     const omTaak = this._omKey !== omKey ? this.zetOmgeving(cfg) : null;
     this._omKey = omKey;

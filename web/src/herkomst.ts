@@ -1,11 +1,13 @@
 // Herkomstpaneel: gestapelde balk met stalen, percentages en kerngetallen per bron (een render, of A en B).
-import { herkomst as haalHerkomst } from "./api.js";
-import { h } from "./paneel.js";
-import { plekNaarPixels } from "./selectie.js";
+import { herkomst as haalHerkomst } from "./api.ts";
+import { h } from "./paneel.ts";
+import { plekNaarPixels } from "./selectie.ts";
+import type { Plek } from "./selectie.ts";
+import type { Herkomst } from "./types/api.ts";
 
-const getal = (v, d = 1) => v.toFixed(d).replace(".", ",");
+const getal = (v: number, d = 1) => v.toFixed(d).replace(".", ",");
 
-export function herkomstKolom(titel, d) {
+export function herkomstKolom(titel: string, d: Herkomst) {
   const cats = d.categorieen.filter((c) => c.aandeel_pct >= 0.05);
   const [L, a, b] = d.lab;
   const k = d.kerngetallen;
@@ -31,18 +33,24 @@ export function herkomstKolom(titel, d) {
       h("dt", {}, "weg in epoxy"), h("dd", {}, `${getal(k.weg_epoxy_cm)} cm`)) : null);
 }
 
+/** Een bron voor de herkomst: een render (of A/B) met het formaat van het resultaatbeeld. */
+export interface HerkomstBron { label: string; id: string; breedte: number; hoogte: number }
+
 export class HerkomstPaneel {
-  constructor(root) { this.root = root; this.leeg(); }
+  root: HTMLElement;
+  volgnr = 0;
+
+  constructor(root: HTMLElement) { this.root = root; this.leeg(); }
 
   leeg(tekst = "-") { this.root.replaceChildren(h("p", { class: "hint" }, tekst)); }
 
   /** `bronnen`: [{label, id, breedte, hoogte}]; `plek`: fracties. */
-  async toon(bronnen, plek) {
+  async toon(bronnen: HerkomstBron[], plek: Plek) {
     if (!bronnen.length) { this.leeg("geen herkomst bij deze render"); return; }
-    const volgnr = (this.volgnr = (this.volgnr ?? 0) + 1);
+    const volgnr = ++this.volgnr;
     const kolommen = await Promise.all(bronnen.map(async (b) => {
       try { return herkomstKolom(b.label, await haalHerkomst(b.id, plekNaarPixels(plek, b.breedte, b.hoogte))); }
-      catch (e) { return h("div", { class: "hk" }, h("b", {}, b.label), h("p", { class: "status fout" }, e.message)); }
+      catch (e) { return h("div", { class: "hk" }, h("b", {}, b.label), h("p", { class: "status fout" }, (e as Error).message)); }
     }));
     if (volgnr === this.volgnr) this.root.replaceChildren(h("div", { class: "hk-rij" }, kolommen));
   }

@@ -55,10 +55,10 @@ def test_naar_aanvraag_en_foutinfo():
 
     if shutil.which("node") is None:
         pytest.skip("node ontbreekt")
-    web = Path(__file__).resolve().parents[1] / "web" / "js"
+    web = Path(__file__).resolve().parents[1] / "web" / "src"
     code = f"""
 globalThis.document = {{ createElement: () => ({{}}), createElementNS: () => ({{}}) }};
-const {{ naarAanvraag, foutInfo }} = await import("{(web / 'verf.js').as_uri()}");
+const {{ naarAanvraag, foutInfo }} = await import("{(web / 'verf.ts').as_uri()}");
 console.log(JSON.stringify([naarAanvraag({{merk: "", hex: "#fff", glans_gu_60: "85", transparant: false, effect: "geen"}}),
   foutInfo({{detail: {{melding: "m", veld: "hex"}}, message: "x"}}),
   foutInfo({{detail: [{{loc: ["body", "glans_gu_60"], msg: "te groot"}}], message: "x"}}), foutInfo({{detail: "kaal", message: "x"}})]));

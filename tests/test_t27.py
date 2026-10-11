@@ -1,7 +1,7 @@
-"""T27: contracttest tussen de UI (web/js) en de backend-API, en leesbare 422-meldingen.
+"""T27: contracttest tussen de UI (web/src) en de backend-API, en leesbare 422-meldingen.
 
 Alles wat de UI kan maken (standaardwaarden, alle slidergrenzen, alle itemtypes, afwerkingen en lagen) moet door
-de backend aanvaard worden. Een falende test wijst aan of de UI-waarde (`web/js/staat.js`) of het schema
+de backend aanvaard worden. Een falende test wijst aan of de UI-waarde (`web/src/staat.ts`) of het schema
 (`src/carbonne/core/config.py`) niet klopt."""
 
 from __future__ import annotations
@@ -25,7 +25,7 @@ from test_t15 import NepHerkomst
 from carbonne.server.app import maak_app
 
 ROOT = Path(__file__).resolve().parents[1]
-WEB = ROOT / "web" / "js"
+WEB = ROOT / "web" / "src"
 CHROME = "/usr/bin/google-chrome"
 IMG = ROOT / "docs" / "evidence" / "img"
 BEELDEN = bool(os.environ.get("T27_BEELDEN"))
@@ -44,8 +44,8 @@ def ui() -> dict:
     if shutil.which("node") is None:
         pytest.skip("node ontbreekt")
     return js(f"""
-const s = await import("{(WEB / 'staat.js').as_uri()}");
-const k = await import("{(WEB / 'kleur.js').as_uri()}");
+const s = await import("{(WEB / 'staat.ts').as_uri()}");
+const k = await import("{(WEB / 'kleur.ts').as_uri()}");
 const lagen = {{}};
 for (const h of [0.02, 0.03, 0.04, 0.05, 0.06]) lagen[h] = s.nieuweLaag(h);
 const afw = {{}};
@@ -240,7 +240,7 @@ def test_inhoud_die_niet_past_geeft_leesbare_422(client, ui):
 @node
 def test_foutmelding_wijst_het_veld_aan():
     uit = js(f"""
-const f = await import("{(WEB / 'fout.js').as_uri()}");
+const f = await import("{(WEB / 'fout.ts').as_uri()}");
 console.log(JSON.stringify([
   f.detailNaarTekst([{{loc: ["body","config","layers",0,"height_m"], msg: "Input should be less than or equal to 0.06", input: 0.1}}]),
   f.detailNaarTekst([{{loc: ["body","layers",1,"items",2,"wood","count"], msg: "Input should be less than or equal to 500", input: 1000}}]),
@@ -263,7 +263,7 @@ def test_begrens_haalt_oude_waarden_binnen_bereik(ui):
     cfg = met(ui, hoogte=0.04, diameter=5, layers=[{"height_m": 0.1, "seed": 0, "edge_margin_mm": 3,
                                                    "items": [{**ui["wood"], "count": 1000}, {**ui["flower"], "petals": 99}]}])
     uit = js(f"""
-const s = await import("{(WEB / 'staat.js').as_uri()}");
+const s = await import("{(WEB / 'staat.ts').as_uri()}");
 const c = {json.dumps(cfg)};
 const veranderd = s.begrens(c);
 console.log(JSON.stringify([veranderd, c, s.begrens(c)]));""")
@@ -273,7 +273,7 @@ console.log(JSON.stringify([veranderd, c, s.begrens(c)]));""")
     assert c["layers"][0]["items"][0]["count"] == 60 and c["layers"][0]["items"][1]["petals"] == 24
 
 
-# --- 3b. de UI valideert tegen het JSON-schema van de backend (web/js/schema.js, geen buildstap) ---
+# --- 3b. de UI valideert tegen het JSON-schema van de backend (web/src/schema.ts, geen buildstap) ---
 
 def valideer_in_node(schema: dict, configs: list[dict]) -> list[list[dict]]:
     import tempfile
@@ -282,7 +282,7 @@ def valideer_in_node(schema: dict, configs: list[dict]) -> list[list[dict]]:
         json.dump({"schema": schema, "configs": configs}, f)
     try:
         return js(f"""
-const {{ valideer }} = await import("{(WEB / 'schema.js').as_uri()}");
+const {{ valideer }} = await import("{(WEB / 'schema.ts').as_uri()}");
 const fs = await import("node:fs");
 const {{ schema, configs }} = JSON.parse(fs.readFileSync("{f.name}", "utf8"));
 console.log(JSON.stringify(configs.map((c) => valideer(schema, c))));""")
@@ -342,7 +342,7 @@ def test_limieten_volgen_het_schema(client):
     schema["properties"]["diameter"]["maximum"] = 0.5
     schema["properties"]["hoogte"]["minimum"] = 0.03
     uit = js(f"""
-const s = await import("{(WEB / 'staat.js').as_uri()}");
+const s = await import("{(WEB / 'staat.ts').as_uri()}");
 const schema = {json.dumps(schema)};
 s.leidLimietenAf(schema);
 console.log(JSON.stringify([s.LIMIETEN.diameter, s.LIMIETEN.hoogte, s.LIMIETEN.aantal, s.ENUMS,

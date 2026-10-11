@@ -1,0 +1,908 @@
+{
+  "$defs": {
+    "Bare": {
+      "additionalProperties": false,
+      "description": "Onbehandeld: glad diëlektrisch grensvlak epoxy/lucht (met TIR).",
+      "properties": {
+        "type": {
+          "const": "bare",
+          "default": "bare",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "title": "Bare",
+      "type": "object"
+    },
+    "CameraConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "doel": {
+          "default": [
+            0.0,
+            0.02,
+            0.0
+          ],
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Doel",
+          "type": "array"
+        },
+        "fov": {
+          "default": 40.0,
+          "description": "graden, horizontaal",
+          "exclusiveMaximum": 120.0,
+          "exclusiveMinimum": 1.0,
+          "title": "Fov",
+          "type": "number"
+        },
+        "positie": {
+          "default": [
+            0.0,
+            0.55,
+            0.62
+          ],
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Positie",
+          "type": "array"
+        }
+      },
+      "title": "CameraConfig",
+      "type": "object"
+    },
+    "EpoxyMaterial": {
+      "additionalProperties": false,
+      "description": "Kleurloze epoxy. n(lambda) = A + B / lambda^2 (Cauchy, lambda in micrometer).",
+      "properties": {
+        "absorptie_nm": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Absorptie Nm",
+          "type": "array"
+        },
+        "absorptie_per_m": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Absorptie Per M",
+          "type": "array"
+        },
+        "cauchy_a": {
+          "default": 1.517,
+          "exclusiveMaximum": 3.0,
+          "exclusiveMinimum": 1.0,
+          "title": "Cauchy A",
+          "type": "number"
+        },
+        "cauchy_b": {
+          "default": 0.0045,
+          "description": "um^2",
+          "maximum": 0.1,
+          "minimum": 0.0,
+          "title": "Cauchy B",
+          "type": "number"
+        },
+        "scattering_coeff": {
+          "default": 0.0,
+          "description": "1/m; 0 = geen verstrooiing",
+          "maximum": 10000.0,
+          "minimum": 0.0,
+          "title": "Scattering Coeff",
+          "type": "number"
+        },
+        "scattering_g": {
+          "default": 0.0,
+          "description": "asymmetrie van Henyey-Greenstein; 0 = isotroop",
+          "exclusiveMaximum": 1.0,
+          "exclusiveMinimum": -1.0,
+          "title": "Scattering G",
+          "type": "number"
+        }
+      },
+      "title": "EpoxyMaterial",
+      "type": "object"
+    },
+    "Flower": {
+      "additionalProperties": false,
+      "description": "Eenvoudige bloem: een rozet van gebogen, dunne blaadjes, licht doorschijnend (Disney thin: diffuse\nreflectie plus diffuse transmissie). `petals=1` geeft een los bloemblaadje.",
+      "properties": {
+        "color": {
+          "default": [
+            0.9,
+            0.3,
+            0.45
+          ],
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Color",
+          "type": "array"
+        },
+        "count": {
+          "default": 1,
+          "description": "aantal exemplaren van dit item in de laag",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "cup_mm": {
+          "default": 2.5,
+          "description": "hoeveel de blaadjes aan de top omhoog buigen",
+          "maximum": 20.0,
+          "minimum": 0.0,
+          "title": "Cup Mm",
+          "type": "number"
+        },
+        "petals": {
+          "default": 6,
+          "maximum": 24,
+          "minimum": 1,
+          "title": "Petals",
+          "type": "integer"
+        },
+        "radius_mm": {
+          "default": [
+            8.0,
+            12.0
+          ],
+          "description": "lengte van de blaadjes, (min, max)",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Radius Mm",
+          "type": "array"
+        },
+        "tilt_deg": {
+          "default": 15.0,
+          "description": "maximale willekeurige kanteling",
+          "maximum": 90.0,
+          "minimum": 0.0,
+          "title": "Tilt Deg",
+          "type": "number"
+        },
+        "translucency": {
+          "default": 0.4,
+          "description": "fractie van het licht dat doorgelaten wordt",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Translucency",
+          "type": "number"
+        },
+        "type": {
+          "const": "flower",
+          "default": "flower",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "title": "Flower",
+      "type": "object"
+    },
+    "Layer": {
+      "additionalProperties": false,
+      "description": "Een gietlaag: inhoud die op `height_m` boven de onderkant van het blok zweeft (hoogte van het\nmiddenvlak van de items). Plaatsing is willekeurig maar reproduceerbaar via `seed`.",
+      "properties": {
+        "edge_margin_mm": {
+          "default": 3.0,
+          "description": "minimale afstand tot de rand van het blok",
+          "maximum": 50.0,
+          "minimum": 0.0,
+          "title": "Edge Margin Mm",
+          "type": "number"
+        },
+        "height_m": {
+          "exclusiveMinimum": 0.0,
+          "maximum": 0.06,
+          "title": "Height M",
+          "type": "number"
+        },
+        "items": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "flower": "#/$defs/Flower",
+                "wood": "#/$defs/WoodSlice"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/WoodSlice"
+              },
+              {
+                "$ref": "#/$defs/Flower"
+              }
+            ]
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "seed": {
+          "default": 0,
+          "title": "Seed",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "height_m"
+      ],
+      "title": "Layer",
+      "type": "object"
+    },
+    "Legs": {
+      "additionalProperties": false,
+      "description": "T26: metalen poten onder het blok (alleen als `TableConfig.poten` gezet is; standaard geen poten).\n\nPlaatsing: `aantal` poten gelijkmatig op een cirkel, de buitenkant van elke poot op `rand_mm` van de rand van\nhet blok. De poot hangt `hoogte_m` onder het blok (de vloer ligt daar). Metaal: geborsteld = aluminium (ruw),\ngepoetst = chroom (bijna glad), zwart = gepoederlakt (zwart pigment onder een dielectrische lak).",
+      "properties": {
+        "aantal": {
+          "default": 4,
+          "maximum": 6,
+          "minimum": 3,
+          "title": "Aantal",
+          "type": "integer"
+        },
+        "afmeting_mm": {
+          "default": 25.0,
+          "description": "diameter (rond) of zijde (vierkant)",
+          "maximum": 60.0,
+          "minimum": 6.0,
+          "title": "Afmeting Mm",
+          "type": "number"
+        },
+        "hoogte_m": {
+          "default": 0.41,
+          "description": "lengte van de poot = hoogte van het blok boven de vloer minus de blokdikte",
+          "maximum": 0.8,
+          "minimum": 0.05,
+          "title": "Hoogte M",
+          "type": "number"
+        },
+        "metaal": {
+          "default": "geborsteld",
+          "enum": [
+            "geborsteld",
+            "gepoetst",
+            "zwart"
+          ],
+          "title": "Metaal",
+          "type": "string"
+        },
+        "rand_mm": {
+          "default": 30.0,
+          "description": "afstand van de buitenkant van de poot tot de rand van het blok",
+          "maximum": 100.0,
+          "minimum": 0.0,
+          "title": "Rand Mm",
+          "type": "number"
+        },
+        "vorm": {
+          "default": "rond",
+          "enum": [
+            "rond",
+            "vierkant"
+          ],
+          "title": "Vorm",
+          "type": "string"
+        }
+      },
+      "title": "Legs",
+      "type": "object"
+    },
+    "MatteClearCoat": {
+      "additionalProperties": false,
+      "description": "Kleurloze matte lak: ruw diëlektrisch grensvlak (GGX) epoxy/lucht.\n\nStandaardruwheid alpha = 0,3: een gespoten matte lak heeft microruwheid in de orde van enkele tienden van\neen micrometer met glansmeting 5-15 GU; GGX-alpha 0,3 geeft een duidelijk gespreide, maar nog herkenbare\nreflectie. Zeer ruw (alpha > 0,5) maakt het oppervlak vrijwel Lambertiaans.",
+      "properties": {
+        "roughness": {
+          "default": 0.3,
+          "description": "GGX alpha",
+          "exclusiveMinimum": 0.0,
+          "maximum": 1.0,
+          "title": "Roughness",
+          "type": "number"
+        },
+        "type": {
+          "const": "clearcoat",
+          "default": "clearcoat",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "title": "MatteClearCoat",
+      "type": "object"
+    },
+    "Paint": {
+      "additionalProperties": false,
+      "description": "Ondoorzichtige verf in optisch contact met de epoxy (geen Fresnel-grensvlak aan de binnenkant).",
+      "properties": {
+        "bibliotheek_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "slug in data/verven/ (alleen herkomst, geen invloed op de render)",
+          "title": "Bibliotheek Id"
+        },
+        "candy_base": {
+          "default": "metallic",
+          "description": "ondergrond van candy: metallic of white",
+          "enum": [
+            "metallic",
+            "white"
+          ],
+          "title": "Candy Base",
+          "type": "string"
+        },
+        "color": {
+          "default": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "description": "albedo, lineair RGB 0..1; invoer ook '#rrggbb' of 'RAL 9005'",
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Color",
+          "type": "array"
+        },
+        "dekking": {
+          "default": 1.0,
+          "description": "0..1; 1 = ondoorzichtig, < 1 = doorschijnend (alleen matte/glossy)",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Dekking",
+          "type": "number"
+        },
+        "kind": {
+          "default": "matte",
+          "enum": [
+            "matte",
+            "glossy",
+            "metallic",
+            "candy"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "roughness": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "maximum": 1.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GGX alpha van de glans; None = standaard per soort",
+          "title": "Roughness"
+        },
+        "type": {
+          "const": "paint",
+          "default": "paint",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "title": "Paint",
+      "type": "object"
+    },
+    "PaintStack": {
+      "additionalProperties": false,
+      "description": "T24: gestapelde verflagen op een vlak, van binnen (tegen de epoxy) naar buiten (naar de lucht).\n\nElke laag is een `Paint` met een eigen `dekking`. Een doorschijnende laag laat de laag eronder zichtbaar;\nhet effectieve beeld volgt uit Kubelka-Munk (`carbonne.core.lagen`). Een stapel van een ondoorzichtige laag\nis bit-identiek aan die `Paint` zelf.",
+      "properties": {
+        "lagen": {
+          "description": "van binnen (epoxy) naar buiten (lucht)",
+          "items": {
+            "$ref": "#/$defs/Paint"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Lagen",
+          "type": "array"
+        },
+        "type": {
+          "const": "paintstack",
+          "default": "paintstack",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lagen"
+      ],
+      "title": "PaintStack",
+      "type": "object"
+    },
+    "PlateBelow": {
+      "additionalProperties": false,
+      "description": "Losse plaat onder het blok met een luchtspleet; het blok zelf blijft onbehandeld (alleen onderkant).",
+      "properties": {
+        "candy_base": {
+          "default": "metallic",
+          "enum": [
+            "metallic",
+            "white"
+          ],
+          "title": "Candy Base",
+          "type": "string"
+        },
+        "color": {
+          "default": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "description": "albedo van de plaat, lineair RGB 0..1",
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Color",
+          "type": "array"
+        },
+        "gap_mm": {
+          "default": 0.1,
+          "exclusiveMinimum": 0.0,
+          "maximum": 50.0,
+          "title": "Gap Mm",
+          "type": "number"
+        },
+        "kind": {
+          "default": "matte",
+          "enum": [
+            "matte",
+            "glossy",
+            "metallic",
+            "candy"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "roughness": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "maximum": 1.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GGX alpha van de glans; None = standaard per soort",
+          "title": "Roughness"
+        },
+        "type": {
+          "const": "plate",
+          "default": "plate",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "title": "PlateBelow",
+      "type": "object"
+    },
+    "RenderSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "breedte": {
+          "default": 512,
+          "maximum": 8192,
+          "minimum": 16,
+          "title": "Breedte",
+          "type": "integer"
+        },
+        "hoogte": {
+          "default": 384,
+          "maximum": 8192,
+          "minimum": 16,
+          "title": "Hoogte",
+          "type": "integer"
+        },
+        "max_depth": {
+          "default": 24,
+          "maximum": 256,
+          "minimum": 1,
+          "title": "Max Depth",
+          "type": "integer"
+        },
+        "spp": {
+          "default": 64,
+          "minimum": 1,
+          "title": "Spp",
+          "type": "integer"
+        }
+      },
+      "title": "RenderSettings",
+      "type": "object"
+    },
+    "SceneConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "camera": {
+          "$ref": "#/$defs/CameraConfig"
+        },
+        "camera_preset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Camera Preset"
+        },
+        "omgeving": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Omgeving"
+        },
+        "omgeving_radiantie": {
+          "default": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Omgeving Radiantie",
+          "type": "array"
+        },
+        "spot": {
+          "default": false,
+          "title": "Spot",
+          "type": "boolean"
+        },
+        "vloer_albedo": {
+          "default": [
+            0.75,
+            0.75,
+            0.72
+          ],
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Vloer Albedo",
+          "type": "array"
+        },
+        "vloer_grootte": {
+          "default": 2.0,
+          "description": "zijde van de vierkante vloer, m",
+          "exclusiveMinimum": 0.0,
+          "title": "Vloer Grootte",
+          "type": "number"
+        },
+        "vloer_lijn_albedo": {
+          "default": [
+            0.03,
+            0.03,
+            0.03
+          ],
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Vloer Lijn Albedo",
+          "type": "array"
+        },
+        "vloer_rastercel": {
+          "default": 0.05,
+          "description": "cel van het rasterpatroon, m",
+          "exclusiveMinimum": 0.0,
+          "title": "Vloer Rastercel",
+          "type": "number"
+        }
+      },
+      "title": "SceneConfig",
+      "type": "object"
+    },
+    "WoodSlice": {
+      "additionalProperties": false,
+      "description": "Onregelmatig houtschijfje: plat, diffuus, met een houtkleur. Elk exemplaar krijgt een eigen straal,\nomtrek en een lichte helderheidsvariatie (via de seed van de laag).",
+      "properties": {
+        "color": {
+          "default": [
+            0.45,
+            0.28,
+            0.13
+          ],
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Color",
+          "type": "array"
+        },
+        "count": {
+          "default": 1,
+          "description": "aantal exemplaren van dit item in de laag",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "irregularity": {
+          "default": 0.12,
+          "description": "relatieve afwijking van de ronde omtrek",
+          "maximum": 0.4,
+          "minimum": 0.0,
+          "title": "Irregularity",
+          "type": "number"
+        },
+        "radius_mm": {
+          "default": [
+            8.0,
+            14.0
+          ],
+          "description": "straal van het schijfje, (min, max)",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Radius Mm",
+          "type": "array"
+        },
+        "thickness_mm": {
+          "default": 3.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 20.0,
+          "title": "Thickness Mm",
+          "type": "number"
+        },
+        "type": {
+          "const": "wood",
+          "default": "wood",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "title": "WoodSlice",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "diameter": {
+      "default": 0.35,
+      "description": "m; 0,35 of 0,50, maar vrij getal toegestaan",
+      "exclusiveMinimum": 0.0,
+      "maximum": 2.0,
+      "title": "Diameter",
+      "type": "number"
+    },
+    "epoxy": {
+      "$ref": "#/$defs/EpoxyMaterial"
+    },
+    "hoogte": {
+      "default": 0.04,
+      "description": "m",
+      "maximum": 0.06,
+      "minimum": 0.02,
+      "title": "Hoogte",
+      "type": "number"
+    },
+    "layers": {
+      "description": "gietlagen met inhoud (T06)",
+      "items": {
+        "$ref": "#/$defs/Layer"
+      },
+      "title": "Layers",
+      "type": "array"
+    },
+    "onderkant": {
+      "discriminator": {
+        "mapping": {
+          "bare": "#/$defs/Bare",
+          "clearcoat": "#/$defs/MatteClearCoat",
+          "paint": "#/$defs/Paint",
+          "paintstack": "#/$defs/PaintStack",
+          "plate": "#/$defs/PlateBelow"
+        },
+        "propertyName": "type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Bare"
+        },
+        {
+          "$ref": "#/$defs/Paint"
+        },
+        {
+          "$ref": "#/$defs/PaintStack"
+        },
+        {
+          "$ref": "#/$defs/MatteClearCoat"
+        },
+        {
+          "$ref": "#/$defs/PlateBelow"
+        }
+      ],
+      "title": "Onderkant"
+    },
+    "poten": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Legs"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "T26: metalen poten onder het blok; None = geen poten (vloer op TAFEL_HOOGTE)"
+    },
+    "render": {
+      "$ref": "#/$defs/RenderSettings"
+    },
+    "scene": {
+      "$ref": "#/$defs/SceneConfig"
+    },
+    "segmenten": {
+      "default": 128,
+      "description": "aantal segmenten van de mantel",
+      "maximum": 2048,
+      "minimum": 8,
+      "title": "Segmenten",
+      "type": "integer"
+    },
+    "top_roughness": {
+      "default": 0.0,
+      "description": "T17: GGX-alpha van het bovenvlak; 0 = glad (roughdielectric vanaf > 0)",
+      "maximum": 0.5,
+      "minimum": 0.0,
+      "title": "Top Roughness",
+      "type": "number"
+    },
+    "zijkant": {
+      "discriminator": {
+        "mapping": {
+          "bare": "#/$defs/Bare",
+          "clearcoat": "#/$defs/MatteClearCoat",
+          "paint": "#/$defs/Paint",
+          "paintstack": "#/$defs/PaintStack"
+        },
+        "propertyName": "type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Bare"
+        },
+        {
+          "$ref": "#/$defs/Paint"
+        },
+        {
+          "$ref": "#/$defs/PaintStack"
+        },
+        {
+          "$ref": "#/$defs/MatteClearCoat"
+        }
+      ],
+      "title": "Zijkant"
+    }
+  },
+  "title": "TableConfig",
+  "type": "object"
+}
