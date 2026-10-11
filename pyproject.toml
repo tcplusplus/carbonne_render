@@ -9,6 +9,7 @@ dependencies = ["mitsuba>=3.6", "numpy", "pydantic>=2"]
 carbonne-smoke = "carbonne.smoke:main"
 carbonne-t02 = "carbonne.render_t02:main"
 carbonne-t03 = "carbonne.render_t03:main"
+carbonne-render = "carbonne.render.cli:main"
 
 [dependency-groups]
 dev = ["pytest", "ruff"]
