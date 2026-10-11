@@ -54,6 +54,24 @@ Elke afgeronde render komt in de geschiedenis (de laatste 8, met samples en tijd
 paneel. Weergave: **schuifbalk** (links A, rechts B) of **naast elkaar**. Onder het beeld staat welke instellingen
 verschillen tussen A en B. De geschiedenis leeft in de pagina: herladen wist hem (configs blijven bewaard).
 
+### Herkomst (klik op de render)
+Zet **met herkomst** aan voor je op **Render HQ** drukt (de render duurt ongeveer twee keer zo lang). Klik daarna op de
+afgewerkte render voor een punt, of sleep voor een rechthoek; de gekozen plek staat als kruisje of kader op het beeld.
+Het paneel **Herkomst** toont een gestapelde balk met per bron de kleur van het licht dat via die bron kwam
+(zijkant, onderkant, zijkant + onderkant, inhoud, vloer, glans/omgeving, overig), het percentage, de kleur van de
+bijdrage en daaronder de kerngetallen: gemiddeld aantal interne reflecties, aandeel met totale terugkaatsing (TIR) en
+de weglengte in de epoxy. Klik je in de A/B-vergelijking op een van de beelden, dan staat de herkomst van A en B
+naast elkaar (alleen van renders die met herkomst gemaakt zijn). Er wordt niets opnieuw gerenderd.
+
+### Reeks (wat-als)
+Het paneel **Reeks** laat je een parameter variëren en het effect op een plek meten. Kies de parameter, de waarden
+(een bereik met een stap voor getallen, vinkjes voor afwerkingen en keuzes, kleurkiezers voor kleuren) en klik eerst
+de plek aan op de HQ-render of de vergelijking. **Start reeks** rendert elke waarde (kleiner beeld, tweemaal het
+aantal samples voor de ruisschatting); elke waarde verschijnt zodra die klaar is als beeld met staal, L\*, C\*, h en
+ΔE ten opzichte van de eerste waarde. Een waarde waarvan het verschil binnen de ruis valt, is grijs. Daaronder staan de
+grafieken van L\* en C\* en van de herkomstaandelen tegenover de waarde. Een beeld aanklikken laadt die config in de
+preview en het paneel.
+
 ## Screenshot maken
 `uv run python scripts/maak_ui_screenshot.py [--url ...]` start (zo nodig) een server, drijft Chrome headless aan met
 Playwright en schrijft de bewijsbeelden naar `docs/evidence/img/T10-*.png`. Playwright staat als dev-afhankelijkheid
