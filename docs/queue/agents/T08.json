@@ -1,0 +1,1 @@
+{"taak":"T08","status":"af","nu":"klaar","gedaan":["src/carbonne/render/{pipeline,uitvoer,cli}.py","tests/test_t08.py","scripts/t08_*.py","evidence + omgeving.md"],"next":null,"tests":"66 passed, 4 skipped; ruff src+tests schoon","kosten":"hoog (CPU-renders ~25 min)"}

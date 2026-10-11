@@ -48,3 +48,9 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - `core/kleur.py::parse_kleur` (hex/RAL naar lineair RGB), RAL-tabel `src/carbonne/data/ral_classic.csv`. `Paint(color="RAL 3020", kind="gloss")` werkt direct.
 - Meting zijkant: `uv run python scripts/zijkant_meting.py` (512 px/512 spp: ~25 min op 12 threads; 192-256 px met meer spp geeft dezelfde ROI-gemiddelden en is sneller). Verftypenbeeld: `scripts/render_t05.py --spp 1024 --res 400 --schaal 0.55` (~2 min).
 - `roughconductor` samplet enkele procenten onder de horizon (gewicht 0); `twosided` om een one-sided BSDF is nodig om van de epoxykant te testen.
+## Renderpijplijn (T08)
+- `uv run carbonne-render config.json -o out/ [--ruisdrempel 0.02 --tijdslimiet 600 --max-depth 32 --preview]`; voorbeeld-config `docs/evidence/T08-preset.json`.
+- Standaard: path, max_depth 32, 16 spp per pass, drempel 0,02 (relatieve ruis), max 4096 spp.
+- Tijd tot drempel 0,02 voor de zwaarste preset (verf onder epoxy, 12 threads): 480x270 110 s, **1280x720 753 s**; tijd is evenredig met het aantal pixels. Meet convergentie op ~320x180 en schaal.
+- Cache in `cache/<hash>/` (beeld.exr, beeld.npz, beeld.png, meta.json); de hash bevat een hash van `core/` en `render/`.
+- Mitsuba `aov`-integrator zet AOV-kanalen vooraan; de pijplijn neemt kanalen 0-2 aan als RGB.
