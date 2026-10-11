@@ -49,11 +49,14 @@ def cilinder_geometrie(diameter: float, hoogte: float, segmenten: int) -> dict[s
     }
 
 
-def _mesh(naam: str, g: dict[str, np.ndarray], bsdf: dict):
+def _mesh(naam: str, g: dict[str, np.ndarray], bsdf: dict, interior=None):
     import drjit as dr
     import mitsuba as mi
 
-    m = mi.Mesh(naam, vertex_count=len(g["v"]), face_count=len(g["f"]), has_vertex_normals=True)
+    props = mi.Properties()
+    if interior is not None:
+        props["interior"] = interior  # medium binnen het blok (T17)
+    m = mi.Mesh(naam, vertex_count=len(g["v"]), face_count=len(g["f"]), props=props, has_vertex_normals=True)
     p = mi.traverse(m)
     p["vertex_positions"] = dr.ravel(mi.TensorXf(g["v"].astype(np.float32)))
     p["vertex_normals"] = dr.ravel(mi.TensorXf(g["n"].astype(np.float32)))
@@ -77,6 +80,45 @@ def raster_bitmap(cel_px: int = 128, lijn_px: int = 3, achtergrond=(0.75, 0.75, 
 def epoxy_bsdf(config: TableConfig) -> dict:
     """Epoxy/lucht-grensvlak (scalaire IOR, zie moduledocstring)."""
     return {"type": "dielectric", "int_ior": float(config.epoxy.n_d), "ext_ior": 1.000277}
+
+
+MEDIUM_NM = (360.0, 830.0)  # bereik van de spectrale variant; daarbuiten geeft een spectrum 0
+
+
+def epoxy_medium(config: TableConfig) -> dict | None:
+    """Homogeen medium voor het volume van de epoxy (T17), of None als er geen absorptie of verstrooiing is.
+
+    sigma_t(lambda) = absorptie(lambda) + verstrooiing, albedo(lambda) = verstrooiing / sigma_t(lambda). De
+    absorptiecurve wordt lineair geinterpoleerd en buiten het opgegeven bereik constant voortgezet. Fasefunctie:
+    isotroop (g = 0) of Henyey-Greenstein. Eenheden: 1/m (de scene is in meter).
+    """
+    ep = config.epoxy
+    if not ep.heeft_medium:
+        return None
+    nm = np.array(ep.absorptie_nm, dtype=float)
+    volgorde = np.argsort(nm)
+    nm, a = nm[volgorde], np.array(ep.absorptie_per_m, dtype=float)[volgorde]
+    rooster = np.unique(np.concatenate([[MEDIUM_NM[0]], nm, [MEDIUM_NM[1]]]))
+    a_l = np.interp(rooster, nm, a)  # np.interp zet buiten het bereik de randwaarde voort
+    s = ep.scattering_coeff
+    sigma_t = a_l + s
+    albedo = np.divide(s, sigma_t, out=np.zeros_like(sigma_t), where=sigma_t > 0)  # sigma_t = 0: geen medium
+
+    def spectrum(w: np.ndarray) -> dict:
+        if np.ptp(w) == 0:  # constant (ook nul: een spectrum zonder massa wordt door Mitsuba geweigerd)
+            return {"type": "uniform", "value": float(w[0])}
+        return {"type": "spectrum", "value": [(float(x), float(y)) for x, y in zip(rooster, w, strict=True)]}
+
+    fase = {"type": "hg", "g": float(ep.scattering_g)} if ep.scattering_g != 0 else {"type": "isotropic"}
+    return {"type": "homogeneous", "sigma_t": spectrum(sigma_t), "albedo": spectrum(albedo), "phase": fase}
+
+
+def maak_medium(config: TableConfig):
+    """Geladen Mitsuba-medium van `epoxy_medium`, of None."""
+    import mitsuba as mi
+
+    d = epoxy_medium(config)
+    return None if d is None else mi.load_dict(d)
 
 
 PLAAT_DIKTE = 0.003  # m
@@ -207,7 +249,8 @@ def build_scene(config: TableConfig) -> dict:
     vloer_y = -(effectieve_gap_mm(config, plaat.gap_mm) / 1000.0 + PLAAT_DIKTE) if plaat else 0.0
     scene: dict = {
         "type": "scene",
-        "integrator": {"type": "path", "max_depth": rs.max_depth},
+        # volpath alleen als de epoxy absorbeert of verstrooit (T17); anders blijft alles zoals voor T17
+        "integrator": {"type": "volpath" if config.epoxy.heeft_medium else "path", "max_depth": rs.max_depth},
         "sensor": {
             "type": "perspective",
             "fov": sc.camera.fov,
@@ -239,9 +282,15 @@ def build_scene(config: TableConfig) -> dict:
             },
         },
     }
+    if config.top_roughness > 0:
+        boven = {**epoxy_bsdf(config), "type": "roughdielectric", "distribution": "ggx", "alpha": config.top_roughness}
+    else:
+        boven = epoxy_bsdf(config)
+    medium = maak_medium(config)
     finish = {"boven": Bare(), "mantel": config.zijkant, "onder": config.onderkant}
     for naam in VLAKKEN:
-        scene[naam] = _mesh(naam, geo[naam], afwerking_bsdf(finish[naam], config))
+        bsdf = boven if naam == "boven" else afwerking_bsdf(finish[naam], config)
+        scene[naam] = _mesh(naam, geo[naam], bsdf, interior=medium)
     if plaat:
         for naam, g in plaat_geometrie(config, plaat.gap_mm).items():
             # de plaat staat in lucht: beide zijden zijn "buiten"

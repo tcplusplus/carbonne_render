@@ -178,7 +178,13 @@ def render(
     cfg = _effectieve_config(config, opties)
     sd = build_scene(cfg)
     # integrator_params overschrijft; een waarde None laat de sleutel weg (voor integratoren zonder max_depth)
-    ints = {"type": opties.integrator, "max_depth": opties.max_depth, **opties.integrator_params}
+    soort = opties.integrator
+    if config.epoxy.heeft_medium:
+        if soort == "herkomst":
+            raise ValueError("de herkomst-integrator ondersteunt geen medium (absorptie/verstrooiing in de epoxy, T17)")
+        if soort == "path":
+            soort = "volpath"  # path negeert media
+    ints = {"type": soort, "max_depth": opties.max_depth, **opties.integrator_params}
     sd["integrator"] = {k: v for k, v in ints.items() if v is not None}
     scene = mi.load_dict(sd)
     namen = ["R", "G", "B"] + list(scene.integrator().aov_names())
