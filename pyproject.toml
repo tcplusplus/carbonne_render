@@ -3,16 +3,27 @@ name = "carbonne"
 version = "0.1.0"
 description = "Fysisch accurate render van een epoxy bijzettafeltje (Mitsuba 3, spectraal)"
 requires-python = ">=3.12,<3.14"
-dependencies = ["mitsuba>=3.6", "numpy", "pydantic>=2"]
+dependencies = [
+    "fastapi>=0.143.0",
+    "mitsuba>=3.6",
+    "numpy",
+    "pydantic>=2",
+    "uvicorn[standard]>=0.54.0",
+]
 
 [project.scripts]
 carbonne-smoke = "carbonne.smoke:main"
 carbonne-t02 = "carbonne.render_t02:main"
 carbonne-t03 = "carbonne.render_t03:main"
 carbonne-render = "carbonne.render.cli:main"
+carbonne-app = "carbonne.server.app:main"
 
 [dependency-groups]
-dev = ["pytest", "ruff"]
+dev = [
+    "httpx>=0.28.1",
+    "pytest",
+    "ruff",
+]
 
 [build-system]
 requires = ["hatchling"]
