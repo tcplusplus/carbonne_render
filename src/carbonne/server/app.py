@@ -18,7 +18,10 @@ from carbonne.analyse.parameters import PARAMETERS
 from carbonne.analyse.reeks import zet_pad
 from carbonne.core import environments as env
 from carbonne.core.config import TableConfig
-from carbonne.core.kleur import ral_tabel
+from carbonne.core import verfbibliotheek as bib
+from carbonne.core.kleur import lineair_naar_srgb, ral_tabel
+from carbonne.core.verf import VerfEigenschappen, VerfFout, Vertaling, vertaal_verf
+from carbonne.core.verf_tekst import TekstFout, uit_tekst, vraag
 from carbonne.render.pipeline import RenderOpties
 from carbonne.server.hdri import hdri_1k
 from carbonne.server.jobs import EINDSTATEN, JobManager, Renderer
@@ -47,6 +50,11 @@ class ReeksAanvraag(BaseModel):
     ev: float = 0.0
 
 
+class TekstAanvraag(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    tekst: str = Field(min_length=1, description="het geplakte ChatGPT-antwoord")
+
+
 class ConfigOpslaan(BaseModel):
     model_config = ConfigDict(extra="forbid")
     naam: str
@@ -58,11 +66,13 @@ def maak_app(
     cache_map: Path | None = None,
     configs_map: Path | None = None,
     web_map: Path | None = None,
+    verven_map: Path | None = None,
 ) -> FastAPI:
     """App-fabriek; tests geven een nep-`renderer` en tijdelijke mappen mee."""
     cache_map = cache_map or Path(os.environ.get("CARBONNE_CACHE", ROOT / "cache"))
     configs_map = configs_map or Path(os.environ.get("CARBONNE_CONFIGS", ROOT / "configs"))
     web_map = web_map or ROOT / "web"
+    verven_map = bib.verf_map(verven_map)
     kw = {"renderer": renderer} if renderer is not None else {}
     jobs = JobManager(cache_map=cache_map, uit_map=cache_map / "server", **kw)
     app = FastAPI(title="carbonne", version="0.1.0")
@@ -346,6 +356,70 @@ def maak_app(
         configs_map.mkdir(parents=True, exist_ok=True)
         pad.write_text(json.dumps(inv.config.model_dump(mode="json"), indent=1))
         return {"naam": inv.naam}
+
+    # --- verfbibliotheek (T18/T19); vaste paden vóór /{slug} ---
+    def staal(v: Vertaling) -> str:
+        return "#" + "".join(f"{round(lineair_naar_srgb(min(1.0, max(0.0, c))) * 255):02x}" for c in v.paint.color)
+
+    def vertaal_of_422(e: VerfEigenschappen) -> Vertaling:
+        try:
+            return vertaal_verf(e)
+        except VerfFout as ex:
+            raise HTTPException(422, str(ex)) from ex
+
+    def slug_of_404(slug: str):
+        try:
+            return bib.laad(slug, verven_map)
+        except KeyError as ex:
+            raise HTTPException(404, str(ex.args[0])) from ex
+        except ValueError as ex:
+            raise HTTPException(422, str(ex)) from ex
+
+    @app.get("/api/verven/schema")
+    def verven_schema() -> dict:
+        return VerfEigenschappen.model_json_schema()
+
+    @app.post("/api/verven/vertaal")
+    def verven_vertaal(e: VerfEigenschappen) -> dict:
+        return vertaal_of_422(e).model_dump(mode="json")
+
+    @app.get("/api/verven/chatgpt-vraag")
+    def verven_chatgpt_vraag(merk: str = "", product: str = "", kleur: str = "") -> dict:
+        return {"vraag": vraag(merk, product, kleur)}
+
+    @app.post("/api/verven/uit-tekst")
+    def verven_uit_tekst(inv: TekstAanvraag) -> dict:
+        try:
+            e = uit_tekst(inv.tekst)
+        except TekstFout as ex:
+            raise HTTPException(422, {"melding": str(ex), "veld": ex.veld}) from ex
+        return {"eigenschappen": e.model_dump(mode="json"), "vertaling": vertaal_of_422(e).model_dump(mode="json")}
+
+    @app.get("/api/verven")
+    def verven_lijst() -> list[dict]:
+        return [{"slug": i.slug, "naam": " ".join(x for x in (i.eigenschappen.merk, i.eigenschappen.product,
+                                                              i.eigenschappen.kleurnaam) if x) or i.slug,
+                 "staal": staal(i.vertaling)} for i in bib.lijst(verven_map)]
+
+    @app.get("/api/verven/{slug}")
+    def verven_lees(slug: str) -> dict:
+        return slug_of_404(slug).model_dump(mode="json")
+
+    @app.post("/api/verven", status_code=201)
+    def verven_bewaar(e: VerfEigenschappen, overschrijf: int = 0, slug: str | None = None) -> dict:
+        vertaal_of_422(e)
+        try:
+            return bib.bewaar(e, overschrijf=bool(overschrijf), map_=verven_map, slug=slug).model_dump(mode="json")
+        except FileExistsError as ex:
+            raise HTTPException(409, str(ex)) from ex
+        except ValueError as ex:
+            raise HTTPException(422, str(ex)) from ex
+
+    @app.delete("/api/verven/{slug}")
+    def verven_verwijder(slug: str) -> dict:
+        slug_of_404(slug)
+        bib.verwijder(slug, verven_map)
+        return {"slug": slug}
 
     if web_map.exists():  # laatst: anders vangt de statische mount de /api-routes af
         app.mount("/", StaticFiles(directory=web_map, html=True), name="web")
