@@ -144,6 +144,8 @@ Bewijs komt in `docs/evidence/TNN.md` met kleine PNG's in `docs/evidence/img/` (
 | [T18](tasks/T18.md) | Verfvertaling en verfbibliotheek: producteigenschappen → app-instellingen | T05 |
 | [T19](tasks/T19.md) | Verf-API: vertalen en bibliotheek beheren | T09, T18 |
 | [T20](tasks/T20.md) | Verfformulier en verfbibliotheek in de webinterface (met ChatGPT-kopieerbrug) | T10, T19 |
+| [T24](tasks/T24.md) | Gestapelde verflagen per vlak (grondlaag + toplaag) | T05, T18 |
+| [T25](tasks/T25.md) | UI opruimen en de gekozen omgeving echt zichtbaar | T10, T16, T20 |
 | [T21](tasks/T21.md) | Webapp bereikbaar in het thuisnetwerk | T09 |
 | [T22](tasks/T22.md) | MCP-server: verven, tafel, render en herkomst voor een chatassistent | T19, T15 |
 | [T23](tasks/T23.md) | Cloudflare-tunnel naar de MCP-server | T22 |
