@@ -141,8 +141,18 @@ Bewijs komt in `docs/evidence/TNN.md` met kleine PNG's in `docs/evidence/img/` (
 | [T15](tasks/T15.md) | API voor herkomst en wat-als-reeksen | T09, T14 |
 | [T16](tasks/T16.md) | Klik-herkomst en reekspaneel in de webinterface | T10, T15 |
 | [T17](tasks/T17.md) | Verstrooiing in de epoxy en ruw bovenvlak | T08, T05 |
+| [T18](tasks/T18.md) | Verfvertaling en verfbibliotheek: producteigenschappen → app-instellingen | T05 |
+| [T19](tasks/T19.md) | Verf-API: vertalen en bibliotheek beheren | T09, T18 |
+| [T20](tasks/T20.md) | Verfformulier en verfbibliotheek in de webinterface (met ChatGPT-kopieerbrug) | T10, T19 |
+| [T21](tasks/T21.md) | Webapp bereikbaar in het thuisnetwerk | T09 |
+| [T22](tasks/T22.md) | MCP-server: verven, tafel, render en herkomst voor een chatassistent | T19, T15 |
+| [T23](tasks/T23.md) | Cloudflare-tunnel naar de MCP-server | T22 |
 
-Later, nog niet als dossier: metalen poten, een webinterface buiten de laptop, andere vormen.
+T18–T20 werken met een gratis ChatGPT: het formulier maakt een vraag om te kopiëren en leest het antwoord
+terug in. T22–T23 staan klaar voor een abonnement met eigen connectors, of voor Claude. De vertaling van een
+verf naar instellingen zit altijd in de kern (T18), nooit in het LLM.
+
+Later, nog niet als dossier: metalen poten, andere vormen.
 
 ## 6. Werkwijze
 
