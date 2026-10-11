@@ -237,7 +237,7 @@ def test_reeks_annuleren_midden_in(tmp_path):
 
 def test_reeks_ongeldige_aanvragen(tmp_path):
     with maak(tmp_path, NepHerkomst()) as client:
-        post = lambda **kw: client.post("/api/reeks", json=reeks_aanvraag(**kw))  # noqa: E731
+        post = lambda **kw: client.post("/api/reeks", json=reeks_aanvraag(**kw))
         r = post(parameter="bestaat.niet")
         assert r.status_code == 422 and "ongeldig parameterpad" in r.json()["detail"]
         assert post(waarden=[0.5]).status_code == 422  # hoogte buiten bereik

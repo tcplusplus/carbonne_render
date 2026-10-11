@@ -1,0 +1,60 @@
+{
+ "slug": "voorbeeld-mat-zwart",
+ "datum": "2026-10-11",
+ "regels_versie": "77a9f5acc2",
+ "eigenschappen": {
+  "merk": "Voorbeeld",
+  "product": "Mat zwart",
+  "kleurnaam": null,
+  "kleurcode": null,
+  "hex": "#141414",
+  "glansgraad": "mat",
+  "glans_gu_60": null,
+  "effect": "geen",
+  "transparant": false,
+  "ondergrond_candy": null,
+  "bron_url": null,
+  "opmerking": null
+ },
+ "vertaling": {
+  "paint": {
+   "type": "paint",
+   "color": [
+    0.006995410187265387,
+    0.006995410187265387,
+    0.006995410187265387
+   ],
+   "kind": "glossy",
+   "roughness": 0.1897,
+   "candy_base": "metallic",
+   "bibliotheek_id": "voorbeeld-mat-zwart"
+  },
+  "uitleg": [
+   {
+    "veld": "color",
+    "waarde": "0.0070, 0.0070, 0.0070",
+    "bron": "hex",
+    "regel": "hex (sRGB) -> lineair RGB"
+   },
+   {
+    "veld": "kind",
+    "waarde": "glossy",
+    "bron": "standaard",
+    "regel": "geen effect: matte of glossy volgens de glans"
+   },
+   {
+    "veld": "roughness",
+    "waarde": "0.1897",
+    "bron": "glansgraad",
+    "regel": "5 GU -> GGX-alpha 0.1897 (gemeten tabel, ISO 2813 60 graden) [term 'mat' = 0-10 GU, midden gebruikt]"
+   },
+   {
+    "veld": "binnenvlak",
+    "waarde": "ongewijzigd",
+    "bron": "model",
+    "regel": "de glans geldt alleen voor de buitenkant in lucht; het vlak in contact met de epoxy blijft pigment zonder grensvlak (T03/T05)"
+   }
+  ],
+  "waarschuwingen": []
+ }
+}

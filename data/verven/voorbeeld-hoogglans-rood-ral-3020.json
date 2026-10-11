@@ -1,0 +1,60 @@
+{
+ "slug": "voorbeeld-hoogglans-rood-ral-3020",
+ "datum": "2026-10-11",
+ "regels_versie": "77a9f5acc2",
+ "eigenschappen": {
+  "merk": "Voorbeeld",
+  "product": "Hoogglans rood RAL 3020",
+  "kleurnaam": null,
+  "kleurcode": "RAL 3020",
+  "hex": null,
+  "glansgraad": "hoogglans",
+  "glans_gu_60": null,
+  "effect": "geen",
+  "transparant": false,
+  "ondergrond_candy": null,
+  "bron_url": null,
+  "opmerking": null
+ },
+ "vertaling": {
+  "paint": {
+   "type": "paint",
+   "color": [
+    0.5332764040105052,
+    0.006048833022857054,
+    0.011612245179743885
+   ],
+   "kind": "glossy",
+   "roughness": 0.002,
+   "candy_base": "metallic",
+   "bibliotheek_id": "voorbeeld-hoogglans-rood-ral-3020"
+  },
+  "uitleg": [
+   {
+    "veld": "color",
+    "waarde": "0.5333, 0.0060, 0.0116",
+    "bron": "kleurcode",
+    "regel": "RAL Classic-tabel (sRGB-benadering) -> lineair RGB"
+   },
+   {
+    "veld": "kind",
+    "waarde": "glossy",
+    "bron": "standaard",
+    "regel": "geen effect: matte of glossy volgens de glans"
+   },
+   {
+    "veld": "roughness",
+    "waarde": "0.002",
+    "bron": "glansgraad",
+    "regel": "92.5 GU -> GGX-alpha 0.002 (gemeten tabel, ISO 2813 60 graden) (92.5 GU is meer dan een lak met n = 1,5 kan geven (89 GU bij alpha 0.002); afgekapt) [term 'hoogglans' = 85-100 GU, midden gebruikt]"
+   },
+   {
+    "veld": "binnenvlak",
+    "waarde": "ongewijzigd",
+    "bron": "model",
+    "regel": "de glans geldt alleen voor de buitenkant in lucht; het vlak in contact met de epoxy blijft pigment zonder grensvlak (T03/T05)"
+   }
+  ],
+  "waarschuwingen": []
+ }
+}

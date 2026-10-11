@@ -1,0 +1,66 @@
+{
+ "slug": "voorbeeld-candy-blauw",
+ "datum": "2026-10-11",
+ "regels_versie": "77a9f5acc2",
+ "eigenschappen": {
+  "merk": "Voorbeeld",
+  "product": "Candy blauw",
+  "kleurnaam": null,
+  "kleurcode": null,
+  "hex": "#1f5fd1",
+  "glansgraad": null,
+  "glans_gu_60": 85.0,
+  "effect": "candy",
+  "transparant": false,
+  "ondergrond_candy": null,
+  "bron_url": null,
+  "opmerking": "voorbeeld, geen echt product"
+ },
+ "vertaling": {
+  "paint": {
+   "type": "paint",
+   "color": [
+    0.013702083047289686,
+    0.11443537382697373,
+    0.6375968739940326
+   ],
+   "kind": "candy",
+   "roughness": 0.006,
+   "candy_base": "metallic",
+   "bibliotheek_id": "voorbeeld-candy-blauw"
+  },
+  "uitleg": [
+   {
+    "veld": "color",
+    "waarde": "0.0137, 0.1144, 0.6376",
+    "bron": "hex",
+    "regel": "hex (sRGB) -> lineair RGB"
+   },
+   {
+    "veld": "kind",
+    "waarde": "candy",
+    "bron": "effect",
+    "regel": "candy -> gekleurde transparante laag over een ondergrond (kleur^2)"
+   },
+   {
+    "veld": "roughness",
+    "waarde": "0.006",
+    "bron": "glans_gu_60",
+    "regel": "85 GU -> GGX-alpha 0.006 (gemeten tabel, ISO 2813 60 graden); tabel gemeten voor lak, voor metaal bij benadering [gemeten GU bij 60 graden uit het technische fiche]"
+   },
+   {
+    "veld": "candy_base",
+    "waarde": "metallic",
+    "bron": "standaard",
+    "regel": "ondergrond onder de gekleurde laag"
+   },
+   {
+    "veld": "binnenvlak",
+    "waarde": "ongewijzigd",
+    "bron": "model",
+    "regel": "de glans geldt alleen voor de buitenkant in lucht; het vlak in contact met de epoxy blijft pigment zonder grensvlak (T03/T05)"
+   }
+  ],
+  "waarschuwingen": []
+ }
+}

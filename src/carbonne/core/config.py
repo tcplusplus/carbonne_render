@@ -78,6 +78,9 @@ class Paint(_Model):
     kind: VerfSoort = "matte"
     roughness: float | None = Field(None, gt=0.0, le=1.0, description="GGX alpha van de glans; None = standaard per soort")
     candy_base: CandyBasis = Field("metallic", description="ondergrond van candy: metallic of white")
+    # T18: welke verf uit de bibliotheek gekozen werd. Alleen een herinnering; de render gebruikt altijd de
+    # instellingen in deze config zelf, zodat een config reproduceerbaar blijft.
+    bibliotheek_id: str | None = Field(None, description="slug in data/verven/ (alleen herkomst, geen invloed op de render)")
 
     @field_validator("kind", mode="before")
     @classmethod
