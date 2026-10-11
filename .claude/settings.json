@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv sync:*)",
+      "Bash(uv run:*)",
+      "Bash(uv add:*)",
+      "Bash(python3 tools/wachtrij.py:*)",
+      "Bash(git worktree:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git merge:*)",
+      "Bash(git branch:*)",
+      "Bash(mkdir /home/tomc/git/carbonne_render/.locks/:*)",
+      "Bash(rmdir /home/tomc/git/carbonne_render/.locks/:*)"
+    ]
+  }
+}
