@@ -1,0 +1,1 @@
+{"taak":"T11","status":"af","nu":"klaar","gedaan":["scripts/maak_uitlegschetsen.py","web/uitleg/*.svg","tests/test_t11.py","evidence + T11-schetsen.png"],"next":null,"tests":"47 passed, 4 skipped, ruff schoon","kosten":"laag"}
