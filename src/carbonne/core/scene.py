@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from carbonne.core.config import Bare, EdgeFinish, MatteClearCoat, Paint, PlateBelow, TableConfig
+from carbonne.core.config import Bare, EdgeFinish, MatteClearCoat, Paint, PaintStack, PlateBelow, TableConfig
 
 VLAKKEN = ("boven", "mantel", "onder")
 
@@ -209,6 +209,10 @@ def afwerking_bsdf(finish: EdgeFinish, config: TableConfig) -> dict:
     luchtkant, de achterkant (bsdf1) is de epoxykant."""
     if isinstance(finish, (Bare, PlateBelow)):
         return epoxy_bsdf(config)  # bij PlateBelow blijft het blok zelf onbehandeld
+    if isinstance(finish, PaintStack) or (isinstance(finish, Paint) and finish.dekking < 1.0):
+        from carbonne.core.lagen import stapel_twosided
+
+        return stapel_twosided(finish if isinstance(finish, PaintStack) else PaintStack(lagen=[finish]))
     if isinstance(finish, Paint):
         # binnen: pigmentlaag direct op de epoxy (zelfde index, dus geen Fresnel, geen TIR);
         # buiten: de verf in lucht
