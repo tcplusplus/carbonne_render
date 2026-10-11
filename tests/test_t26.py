@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-import re
 import math
+import re
 from pathlib import Path
 
 import numpy as np
 import pytest
 from pydantic import ValidationError
+from test_t27 import live  # noqa: F401  (fixture: echte server met nep-renderer)
 
 from carbonne.core.config import Legs, PlateBelow, TableConfig
 from carbonne.core.environments import TAFEL_HOOGTE, assets_dir, camera_preset
@@ -16,7 +17,6 @@ from carbonne.core.herkomst import bron_bits
 from carbonne.core.poten import METALEN, poot_bsdf, poot_geometrieen, poot_posities, vloer_y
 from carbonne.core.scene import build_scene, effectieve_gap_mm
 from carbonne.core.variant import select_variant
-from test_t27 import live  # noqa: F401  (fixture: echte server met nep-renderer)
 
 DATA = Path(__file__).parent / "data"
 
@@ -160,7 +160,7 @@ def _gem_gewicht(bsdf_dict: dict, golflengte: float, n: int = 20000) -> float:
     si.sh_frame = mi.Frame3f(mi.Vector3f(0, 0, 1))
     si.t = 1.0
     rng = np.random.default_rng(1)
-    bs, w = b.sample(mi.BSDFContext(), si, mi.Float(rng.random(n).astype(np.float32)),
+    _bs, w = b.sample(mi.BSDFContext(), si, mi.Float(rng.random(n).astype(np.float32)),
                      mi.Point2f(rng.random(n).astype(np.float32), rng.random(n).astype(np.float32)))
     kleur = np.array(w[0])  # eerste spectrale component
     return float(kleur.mean())
@@ -235,7 +235,7 @@ CHROME = "/usr/bin/google-chrome"
 
 
 @pytest.mark.skipif(not Path(CHROME).exists(), reason="google-chrome ontbreekt")
-def test_browser_poten_in_de_preview(live):
+def test_browser_poten_in_de_preview(live):  # noqa: F811
     from playwright.sync_api import sync_playwright
 
     with sync_playwright() as p:

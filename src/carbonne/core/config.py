@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Annotated, Literal
-
 import math
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 

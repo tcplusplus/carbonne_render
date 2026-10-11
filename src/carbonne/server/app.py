@@ -17,8 +17,8 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from carbonne.analyse.parameters import PARAMETERS
 from carbonne.analyse.reeks import zet_pad
 from carbonne.core import environments as env
-from carbonne.core.config import TableConfig
 from carbonne.core import verfbibliotheek as bib
+from carbonne.core.config import TableConfig
 from carbonne.core.kleur import lineair_naar_srgb, ral_tabel
 from carbonne.core.verf import VerfEigenschappen, VerfFout, Vertaling, vertaal_verf
 from carbonne.core.verf_tekst import TekstFout, uit_tekst, vraag
