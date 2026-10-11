@@ -1,0 +1,23 @@
+Zoek het technische fiche (TDS, technical data sheet) op van deze verf en vul de eigenschappen in:
+
+Merk: {merk}
+Product: {product}
+Kleur: {kleur}
+
+Ik heb de volgende velden nodig:
+- merk, product, kleurnaam: zoals op het blik staat.
+- kleurcode: een RAL-code ("RAL 3020") als de kleur er een heeft; een merkcode alleen samen met hex.
+- hex: de kleur als sRGB-hex "#rrggbb" (zoals de fabrikant of een betrouwbare kleurkaart die toont).
+- glansgraad: een van mat, zijdemat, zijdeglans, satijn, glans, hoogglans.
+- glans_gu_60: de glans in gloss units bij 60 graden (getal 0-120) als het fiche die geeft.
+- effect: een van {effecten}; "geen" voor een gewone effen kleur.
+- transparant: true als de verf doorzichtig is (bijvoorbeeld een candy- of lasuurverf), anders false.
+- ondergrond_candy: alleen bij een candy-effect: "metallic" of "white", naargelang het fiche de ondergrond voorschrijft.
+- bron_url: de URL van het fiche of de pagina waar je het vond.
+- opmerking: eventueel een korte opmerking.
+
+Regels:
+- Geef ALLEEN een JSON-blok terug (in een codeblok is goed), zonder uitleg ervoor of erna.
+- Het blok moet precies aan dit JSON-schema voldoen; gebruik geen andere veldnamen:
+{schema}
+- Gebruik null voor alles wat je niet kunt vinden. Gok niet en schat niet: een lege waarde is beter dan een verzonnen waarde.
