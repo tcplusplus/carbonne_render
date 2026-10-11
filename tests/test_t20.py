@@ -136,14 +136,14 @@ def test_browser_verfformulier_en_bibliotheek(live):
             sectie.screenshot(path=str(IMG / "T20-bibliotheek.png"))
 
         # kiesbaar voor zijkant, onderkant en plaat
-        for sleutel, titel in (("zijkant", "Zijkant"), ("onderkant", "Onderkant")):
+        for sleutel, titel in (("zijkant", "Zijkant (rand van het blok)"), ("onderkant", "Onderkant (onder het blok)")):
             det = pg.locator("#paneel details", has=pg.locator(f"summary:text-is('{titel}')"))
             det.locator("select").first.select_option("bibliotheek")
             det.locator("select").nth(1).select_option("sikkens-rubbol-satura-roodbruin")
             pg.wait_for_function(f"window.carbonne.cfg().{sleutel}.bibliotheek_id === 'sikkens-rubbol-satura-roodbruin'")
             f = pg.evaluate(f"window.carbonne.cfg().{sleutel}")
             assert f["type"] == "paint" and f["kind"] == "metallic" and f["color"] == "#7b1e1e"
-        det = pg.locator("#paneel details", has=pg.locator("summary:text-is('Onderkant')"))
+        det = pg.locator("#paneel details", has=pg.locator("summary:text-is('Onderkant (onder het blok)')"))
         det.locator("select").first.select_option("plate")
         det.locator("select").nth(1).select_option("sikkens-rubbol-satura-roodbruin")
         pg.wait_for_function("window.carbonne.cfg().onderkant.color === '#7b1e1e'")
