@@ -42,12 +42,12 @@ export function nieuwItem(type) {
 export const nieuweLaag = (hoogte) => ({ height_m: Math.round(hoogte * 5) / 1000, items: [nieuwItem("wood")], seed: 0, edge_margin_mm: 3 });
 
 /** De aanvraag voor POST /api/render: de huidige previewcamera gaat mee; presetnaam vervalt. */
-export function hqAanvraag(cfg, opties, camera) {
+export function hqAanvraag(cfg, opties, camera, herkomst = false) {
   const config = structuredClone(cfg);
   config.scene.camera = camera;
   config.scene.camera_preset = null;
   const k = KWALITEIT[opties.kwaliteit];
-  return { config, opties: { ev: opties.ev, max_spp: k.max_spp, ruisdrempel: k.ruisdrempel, spp_per_pass: 16 } };
+  return { config, herkomst, opties: { ev: opties.ev, max_spp: k.max_spp, ruisdrempel: k.ruisdrempel, spp_per_pass: 16 } };
 }
 
 /** Een geladen config bevat lineaire kleurdrietallen voor verf; de UI bewerkt ze als hex. */

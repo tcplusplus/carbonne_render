@@ -3,6 +3,9 @@ import { HQ } from "./hq.js";
 import { lineairNaarHex } from "./kleur.js";
 import { Paneel } from "./paneel.js";
 import { Preview } from "./preview.js";
+import { HerkomstPaneel } from "./herkomst.js";
+import { Reeks } from "./reeks.js";
+import { koppelSelectie, zetMarkering } from "./selectie.js";
 import { hqAanvraag, normaliseerGeladen, standaardConfig, standaardOpties } from "./staat.js";
 import { Vergelijk } from "./vergelijk.js";
 
@@ -73,8 +76,28 @@ async function start() {
   await laad(cfg, opties);
 
   // --- HQ ---
-  hq.bijKnop = () => hq.start(hqAanvraag(cfg, opties, preview.getCamera()));
+  hq.bijKnop = () => hq.start(hqAanvraag(cfg, opties, preview.getCamera(), $("hq-herkomst").checked));
   hq.zetFrame(cfg.render.breedte, cfg.render.hoogte);
+
+  // --- herkomst en reeks: een gekozen plek (fracties van het beeld) hoort bij beide ---
+  const herkomstPaneel = new HerkomstPaneel($("herkomst"));
+  const reeks = new Reeks($("reeks"), {
+    haalConfig: () => hqAanvraag(cfg, opties, preview.getCamera()).config, haalEv: () => opties.ev,
+    ral, bijLaad: (c) => laad(c),
+  });
+  let plek = null;
+  const kies = (p) => { plek = p; zetMarkering($("hq-kader"), p); vergelijk.markeer(p); reeks.zetPlek(p); };
+  const bron = (label, id, r) => ({ label, id, breedte: r.breedte, hoogte: r.hoogte });
+  koppelSelectie($("hq-kader"), (p) => {
+    kies(p);
+    const l = hq.laatste;
+    herkomstPaneel.toon(l?.herkomst && !hq.bezig() ? [bron("HQ", l.id, l.render)] : [], p);
+  }, (e) => (e.target === $("hq-beeld") && !$("hq-beeld").hidden ? $("hq-beeld").getBoundingClientRect() : null));
+  koppelSelectie($("vergelijk-beeld"), (p) => {
+    kies(p);
+    const { a, b } = vergelijk;
+    herkomstPaneel.toon([["A", a], ["B", b]].filter(([, it]) => it?.herkomst).map(([t, it]) => bron(`${t} ${it.label}`, it.id, it.cfg.render)), p);
+  }, (e) => (e.target.tagName === "IMG" ? e.target.getBoundingClientRect() : null));
 
   // --- configs ---
   const vulLijst = async () => {
@@ -98,7 +121,7 @@ async function start() {
     catch (e) { meld(`Laden mislukt: ${e.message}`, true); }
   });
 
-  window.carbonne = { cfg: () => cfg, preview, hq, vergelijk, laad, ververs };
+  window.carbonne = { cfg: () => cfg, preview, hq, vergelijk, laad, ververs, reeks, herkomstPaneel, plek: () => plek };
   document.body.dataset.app = "klaar";
 }
 
