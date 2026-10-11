@@ -32,7 +32,7 @@ VELDEN = ["taak", "titel", "status", "deelsysteem", "hangt_af_van", "model",
 
 def lees_kop(pad: Path) -> dict:
     tekst = pad.read_text(encoding="utf-8")
-    m = re.match(r"^---\n(.*?)\n---\n", tekst, re.S)
+    m = re.match(r"^---\n(.*?)\n---\n", tekst, re.DOTALL)
     if not m:
         return {"_fout": "geen kop"}
     kop: dict = {}
@@ -86,9 +86,9 @@ def cmd_zet(args: list[str]) -> int:
         return 1
     pad = TASKS / f"{naam}.md"
     tekst = pad.read_text(encoding="utf-8")
-    tekst = re.sub(r"^status: .*$", f"status: {status}", tekst, count=1, flags=re.M)
+    tekst = re.sub(r"^status: .*$", f"status: {status}", tekst, count=1, flags=re.MULTILINE)
     if status == "klaar":
-        tekst = re.sub(r"^laatste_meting: .*$", f"laatste_meting: {dt.date.today()}", tekst, count=1, flags=re.M)
+        tekst = re.sub(r"^laatste_meting: .*$", f"laatste_meting: {dt.date.today()}", tekst, count=1, flags=re.MULTILINE)
     pad.write_text(tekst, encoding="utf-8")
     print(f"{naam}: {status}")
     return 0

@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from carbonne.core.config import TableConfig
+from carbonne.core.config import Bare, EdgeFinish, MatteClearCoat, Paint, PlateBelow, TableConfig
 
 VLAKKEN = ("boven", "mantel", "onder")
 
@@ -79,12 +79,63 @@ def epoxy_bsdf(config: TableConfig) -> dict:
     return {"type": "dielectric", "int_ior": float(config.epoxy.n_d), "ext_ior": 1.000277}
 
 
+PLAAT_DIKTE = 0.003  # m
+PLAAT_OVERMAAT = 0.01  # m, de plaat steekt zoveel buiten de straal van het blok
+
+
+def _diffuus(kleur) -> dict:
+    return {"type": "diffuse", "reflectance": {"type": "rgb", "value": list(kleur)}}
+
+
+def afwerking_bsdf(finish: EdgeFinish, config: TableConfig) -> dict:
+    """BSDF voor een vlak van het blok. Normalen wijzen naar buiten: de voorkant van `twosided` is de
+    luchtkant, de achterkant (bsdf1) is de epoxykant."""
+    if isinstance(finish, (Bare, PlateBelow)):
+        return epoxy_bsdf(config)  # bij PlateBelow blijft het blok zelf onbehandeld
+    if isinstance(finish, Paint):
+        if finish.kind != "matte":
+            raise NotImplementedError(f"verfsoort {finish.kind!r} komt in T05")
+        # binnen: pigmentlaag direct op de epoxy (zelfde index, dus geen Fresnel, geen TIR);
+        # buiten: matte verf in lucht
+        return {
+            "type": "twosided",
+            "front": _diffuus(finish.color),
+            "back": _diffuus(finish.color),
+        }
+    if isinstance(finish, MatteClearCoat):
+        return {**epoxy_bsdf(config), "type": "roughdielectric", "distribution": "ggx", "alpha": finish.roughness}
+    raise TypeError(finish)
+
+
+RAY_EPS_FACTOR = 2e-3  # veilige onder-spleet als fractie van de plaatstraal, zie effectieve_gap_mm
+
+
+def effectieve_gap_mm(config: TableConfig, gap_mm: float) -> float:
+    """Spleet zoals gerenderd. Mitsuba (float32) verschuift het startpunt van een straal na een botsing met
+    ~1e-3 x de grootste coordinaat; is de spleet kleiner (0,1 mm bij straal > ~0,11 m), dan springt de straal
+    over het grensvlak epoxy/lucht heen en is de plaat ineens in optisch contact (ontdekt in T03, zichtbaar als
+    donker vierkant-gebied). Voor geometrische optiek maakt de dikte van een luchtspleet >> golflengte niets uit,
+    dus we renderen minstens `RAY_EPS_FACTOR * straal` (0,35 m: ~0,37 mm; 0,5 m: ~0,52 mm)."""
+    r = config.diameter / 2 + PLAAT_OVERMAAT
+    return max(gap_mm, RAY_EPS_FACTOR * r * 1000.0)
+
+
+def plaat_geometrie(config: TableConfig, gap_mm: float) -> dict[str, dict[str, np.ndarray]]:
+    """Dunne ronde plaat met de bovenkant `gap_mm` (effectief) onder het blok (y = 0)."""
+    gap_mm = effectieve_gap_mm(config, gap_mm)
+    geo = cilinder_geometrie(config.diameter + 2 * PLAAT_OVERMAAT, PLAAT_DIKTE, config.segmenten)
+    y0 = -gap_mm / 1000.0 - PLAAT_DIKTE
+    return {k: {**g, "v": g["v"] + np.array([0.0, y0, 0.0])} for k, g in geo.items()}
+
+
 def build_scene(config: TableConfig) -> dict:
     """Bouw het Mitsuba-scenedict; de Mitsuba-variant moet al gezet zijn."""
     import mitsuba as mi
 
     sc, rs = config.scene, config.render
     geo = cilinder_geometrie(config.diameter, config.hoogte, config.segmenten)
+    plaat = config.onderkant if isinstance(config.onderkant, PlateBelow) else None
+    vloer_y = -(effectieve_gap_mm(config, plaat.gap_mm) / 1000.0 + PLAAT_DIKTE) if plaat else 0.0
     scene: dict = {
         "type": "scene",
         "integrator": {"type": "path", "max_depth": rs.max_depth},
@@ -105,7 +156,7 @@ def build_scene(config: TableConfig) -> dict:
         "env": {"type": "constant", "radiance": {"type": "rgb", "value": list(sc.omgeving_radiantie)}},
         "floor": {
             "type": "rectangle",
-            "to_world": mi.ScalarTransform4f().rotate([1, 0, 0], -90).scale(sc.vloer_grootte / 2),
+            "to_world": mi.ScalarTransform4f().translate([0, vloer_y, 0]).rotate([1, 0, 0], -90).scale(sc.vloer_grootte / 2),
             "bsdf": {
                 "type": "diffuse",
                 "reflectance": {
@@ -119,8 +170,14 @@ def build_scene(config: TableConfig) -> dict:
             },
         },
     }
+    finish = {"boven": Bare(), "mantel": config.zijkant, "onder": config.onderkant}
     for naam in VLAKKEN:
-        scene[naam] = _mesh(naam, geo[naam], epoxy_bsdf(config))
+        scene[naam] = _mesh(naam, geo[naam], afwerking_bsdf(finish[naam], config))
+    if plaat:
+        for naam, g in plaat_geometrie(config, plaat.gap_mm).items():
+            if plaat.kind != "matte":
+                raise NotImplementedError(f"verfsoort {plaat.kind!r} komt in T05")
+            scene[f"plaat_{naam}"] = _mesh(f"plaat_{naam}", g, _diffuus(plaat.color))
     if sc.omgeving is not None or sc.camera_preset is not None or sc.spot:
         from carbonne.core.environments import pas_omgeving_toe
 
