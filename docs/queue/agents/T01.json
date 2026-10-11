@@ -1,0 +1,1 @@
+{"taak": "T01", "status": "af", "nu": "klaar", "gedaan": ["uv geinstalleerd", "pyproject + src-layout", "select_variant", "carbonne-smoke", "tests", "omgeving.md", "evidence"], "next": null, "tests": "3 passed, ruff schoon", "kosten": "laag"}

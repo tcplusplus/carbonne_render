@@ -1,0 +1,29 @@
+# Omgeving
+
+## Gekozen variant: `llvm_ad_spectral`
+- Mitsuba 3.9.1, drjit, Python 3.12 (`.python-version`), uv 0.13 (geinstalleerd in `~/snap/code/264/.local/bin`;
+  zet dat in je `PATH` als `uv` niet gevonden wordt).
+- **CUDA werkt niet**: de Quadro P2000 (Pascal, compute capability 6.1, driver 580, OptiX-bibliotheek aanwezig)
+  valt af, want Mitsuba/Dr.Jit 3.9 vraagt compute capability >= 7.5 ("compute capability of device too low").
+  `cuda_ad_spectral` geeft daarom een ImportError. Dit is een harde hardwaregrens, geen driverprobleem.
+- LLVM (libLLVM-18 aanwezig) werkt; `select_variant()` valt dus terug op `llvm_ad_spectral`. Daarmee is de GPU-lock
+  voor renders niet nodig, maar de renders gebruiken wel alle 12 CPU-threads.
+- `CARBONNE_VARIANT=<variant>` overschrijft de keuze (zonder terugval).
+
+## Rendertijden (smoke: glazen bol, constante omgeving, path, max_depth 12)
+| variant | resolutie | spp | tijd |
+|---|---|---|---|
+| llvm_ad_spectral | 256x256 | 64 | 0.4 s |
+| llvm_ad_spectral | 512x512 | 256 | 2.9 s |
+| scalar_spectral | 128x128 | 16 | 0.04 s |
+
+Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerste run kan enkele seconden langer duren.
+
+## Commando's
+- `uv sync` - omgeving opbouwen (herhaal `uv sync --reinstall-package carbonne` als `import carbonne` faalt)
+- `uv run pytest -q`, `uv run ruff check src tests`
+- `uv run carbonne-smoke [--res 256 --spp 64 --out out/smoke.png]`
+
+## Valkuilen
+- Bij het laden meldt Dr.Jit een waarschuwing over de te lage compute capability; die is onschuldig.
+- `mi.Bitmap(img)` dwingt de evaluatie af; meet rendertijd altijd inclusief die stap.
