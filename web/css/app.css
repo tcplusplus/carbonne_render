@@ -118,3 +118,28 @@ button:disabled { opacity: .5; cursor: default; }
 .grafiek .seg { stroke: var(--paneel); stroke-width: 1; }
 .legenda { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; }
 .legenda .staal { width: 12px; height: 12px; margin-right: 4px; }
+
+/* verven (T20) */
+#verven { display: grid; grid-template-columns: minmax(200px, 260px) 1fr; gap: 16px; align-items: start; }
+#verven:has(.verf-formulier[hidden]) { grid-template-columns: 1fr; }
+.verf-kolom { display: grid; gap: 8px; }
+.verf-lijst { display: grid; gap: 4px; }
+.verf-item { display: flex; gap: 8px; align-items: center; text-align: left; width: 100%; }
+.verf-item.gekozen { border-color: var(--accent); }
+.verf-kaart { border: 1px solid var(--rand); border-radius: 6px; padding: 8px; }
+.verf-kaart h3, .verf-formulier h3 { font-size: 14px; margin: 0 0 6px; }
+.verf-kaart a { word-break: break-all; }
+.verf-formulier { display: grid; grid-template-columns: minmax(320px, 1fr) minmax(320px, 1fr); gap: 20px; }
+.verf-formulier[hidden] { display: none; }
+.verf-formulier fieldset { border: 1px solid var(--rand); border-radius: 6px; margin: 8px 0; padding: 4px 10px 8px; }
+.verf-formulier legend { color: var(--zacht); font-size: 12px; padding: 0 4px; }
+.verf-formulier textarea, .verf-formulier input[type=text] { width: 100%; font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--rand); border-radius: 5px; padding: 3px 6px; }
+.verf-formulier .ongeldig { border-color: var(--fout); outline: 1px solid var(--fout); }
+.chatgpt-brug { border: 1px dashed var(--rand); border-radius: 6px; padding: 8px; display: grid; gap: 6px; }
+p.fout { color: var(--fout); font-weight: 600; margin: 6px 0; }
+.waarschuwing { background: #fff3cd; color: #4a3600; border-left: 4px solid #e0a800; padding: 6px 10px; margin: 6px 0; border-radius: 3px; }
+@media (prefers-color-scheme: dark) { .waarschuwing { background: #3a2f0b; color: #ffe29a; } }
+.vertaling-kop { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
+.vertaling-tabel td { vertical-align: top; }
+.chip { font-size: 11px; padding: 0 6px; border-radius: 8px; border: 1px solid var(--rand); white-space: nowrap; }
+@media (max-width: 900px) { #verven, .verf-formulier { grid-template-columns: 1fr; } }

@@ -2,12 +2,12 @@
 async function j(url, opt) {
   const r = await fetch(url, opt);
   if (!r.ok) {
-    let t = r.statusText;
+    let t = r.statusText, d = null;
     try {
-      const d = (await r.json()).detail;
+      d = (await r.json()).detail;
       t = typeof d === "string" ? d : JSON.stringify(d);
     } catch { /* geen JSON */ }
-    throw new Error(`${r.status}: ${t}`);
+    throw Object.assign(new Error(`${r.status}: ${t}`), { status: r.status, detail: d });
   }
   return r.json();
 }
@@ -48,3 +48,13 @@ export function volgReeks(id, bijBericht, bijSluiten) {
   ws.onclose = () => bijSluiten();
   return { sluit: () => ws.close() };
 }
+
+// verven (T19)
+export const verfSchema = () => j("/api/verven/schema");
+export const verfVertaal = (e) => post("/api/verven/vertaal", e);
+export const verfVraag = (merk, product, kleur) => j("/api/verven/chatgpt-vraag?" + new URLSearchParams({ merk, product, kleur }));
+export const verfUitTekst = (tekst) => post("/api/verven/uit-tekst", { tekst });
+export const verfLijst = () => j("/api/verven");
+export const verfLees = (slug) => j(`/api/verven/${encodeURIComponent(slug)}`);
+export const verfBewaar = (e, overschrijf = false) => post(`/api/verven?overschrijf=${overschrijf ? 1 : 0}`, e);
+export const verfVerwijder = (slug) => j(`/api/verven/${encodeURIComponent(slug)}`, { method: "DELETE" });

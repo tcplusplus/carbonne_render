@@ -1,5 +1,6 @@
 // Instellingenpaneel: bouwt de invoervelden en meldt wijzigingen via `bijWijziging(soort)`.
 import { KWALITEIT, RESOLUTIES, nieuweAfwerking, nieuwItem, nieuweLaag } from "./staat.js";
+import * as api from "./api.js";
 import { hexNaarLineair, lineairNaarHex, tekstNaarHex, waardeNaarHex } from "./kleur.js";
 
 export function h(tag, attrs = {}, ...kinderen) {
@@ -19,10 +20,29 @@ const veld = (label, ...inhoud) => h("label", { class: "veld" }, h("span", { cla
 export class Paneel {
   constructor(root, { cfg, opties, presets, ral, bijWijziging, bijCameraPreset }) {
     Object.assign(this, { root, cfg, opties, presets, ral, bijWijziging, bijCameraPreset });
+    this.verven = [];     // bibliotheek [{slug, naam, staal}] (T20)
+    this.bibModus = {};   // sleutel -> true zodra "Uit bibliotheek..." gekozen is
     this.bouw();
   }
 
+  zetVerven(lijst) { this.verven = lijst; this.bouw(); }
+
+  /** Zet de instellingen van een bibliotheekverf in een afwerking (verf of plaat); daarna zijn ze nog aan te passen. */
+  async kiesBibliotheek(sleutel, slug) {
+    const f = this.cfg[sleutel];
+    if (!slug) { if (f.type === "paint") f.bibliotheek_id = null; this.bouw(); return; }
+    const p = (await api.verfLees(slug)).vertaling.paint;
+    f.color = lineairNaarHex(p.color);
+    f.kind = p.kind;
+    f.roughness = p.roughness ?? null;
+    f.candy_base = p.candy_base;
+    if (f.type === "paint") f.bibliotheek_id = slug;   // een plaat kent het veld niet
+    this.bouw();
+    this.wijzig("materiaal");
+  }
+
   zet(cfg, opties) {
+    this.bibModus = {};
     this.cfg = cfg;
     if (opties) this.opties = opties;
     this.bouw();
@@ -73,10 +93,17 @@ export class Paneel {
 
   afwerking(titel, sleutel, types, schets) {
     const f = this.cfg[sleutel];
-    const keuze = this.sel("Type", types, () => f.type, (t) => {
-      this.cfg[sleutel] = nieuweAfwerking(t, f);
+    const bibAan = f.type === "paint" && (this.bibModus[sleutel] || !!f.bibliotheek_id);
+    const keuze = this.sel("Type", [...types, ["bibliotheek", "uit bibliotheek..."]], () => (bibAan ? "bibliotheek" : f.type), (t) => {
+      this.bibModus[sleutel] = t === "bibliotheek";
+      this.cfg[sleutel] = nieuweAfwerking(t === "bibliotheek" ? "paint" : t, f);
     }, "materiaal", true);
     const velden = [];
+    if (bibAan || f.type === "plate") {
+      const huidig = f.type === "paint" ? (f.bibliotheek_id ?? "") : "";
+      velden.push(this.sel("Uit bibliotheek...", [["", this.verven.length ? "(eigen instellingen)" : "(bibliotheek is leeg)"],
+        ...this.verven.map((v) => [v.slug, v.naam])], () => huidig, (v) => { this.kiesBibliotheek(sleutel, v); }, "geen"));
+    }
     if (f.type === "paint" || f.type === "plate") {
       velden.push(this.kleur("Kleur", () => f.color, (v) => { f.color = v; }, { ral: true }));
       velden.push(this.sel("Verftype", [["matte", "mat"], ["glossy", "glanzend"], ["metallic", "metallic"], ["candy", "candy"]],
