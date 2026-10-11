@@ -10,6 +10,7 @@ carbonne-smoke = "carbonne.smoke:main"
 carbonne-t02 = "carbonne.render_t02:main"
 carbonne-t03 = "carbonne.render_t03:main"
 carbonne-render = "carbonne.render.cli:main"
+carbonne-herkomst = "carbonne.core.herkomst_cli:main"
 
 [dependency-groups]
 dev = ["pytest", "ruff"]

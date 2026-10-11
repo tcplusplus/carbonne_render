@@ -171,6 +171,10 @@ def render(
             return hit
 
     select_variant()
+    if opties.integrator == "herkomst":
+        from carbonne.core.herkomst import registreer
+
+        registreer()
     cfg = _effectieve_config(config, opties)
     sd = build_scene(cfg)
     # integrator_params overschrijft; een waarde None laat de sleutel weg (voor integratoren zonder max_depth)
