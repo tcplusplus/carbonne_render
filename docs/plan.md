@@ -140,6 +140,7 @@ Bewijs komt in `docs/evidence/TNN.md` met kleine PNG's in `docs/evidence/img/` (
 | [T14](tasks/T14.md) | Wat-als-reeks: één instelling variëren, effect op een plek meten | T08, T13 |
 | [T15](tasks/T15.md) | API voor herkomst en wat-als-reeksen | T09, T14 |
 | [T16](tasks/T16.md) | Klik-herkomst en reekspaneel in de webinterface | T10, T15 |
+| [T17](tasks/T17.md) | Verstrooiing in de epoxy en ruw bovenvlak | T08, T05 |
 
 Later, nog niet als dossier: metalen poten, een webinterface buiten de laptop, andere vormen.
 
