@@ -149,6 +149,9 @@ Bewijs komt in `docs/evidence/TNN.md` met kleine PNG's in `docs/evidence/img/` (
 | [T26](tasks/T26.md) | Metalen poten onder het tafeltje | T07, T10, T24 |
 | [T27](tasks/T27.md) | Contracttest UI-API en leesbare 422-meldingen | T10, T16, T20, T24 |
 | [T28](tasks/T28.md) | Frontend naar TypeScript (Vite, geen framework) met types uit het schema | T27, T26 |
+| [T29](tasks/T29.md) | Fotocamera: scherptediepte en lenskeuze (niveau 1) | T28 |
+| [T30](tasks/T30.md) | Fotolook: tonemapping, witbalans en kleurgradatie (niveau 1) | T28 |
+| [T31](tasks/T31.md) | Scherpe achtergrond en eindrender op hoge resolutie (niveau 1) | T28, T29 |
 | [T21](tasks/T21.md) | Webapp bereikbaar in het thuisnetwerk | T09 |
 | [T22](tasks/T22.md) | MCP-server: verven, tafel, render en herkomst voor een chatassistent | T19, T15 |
 | [T23](tasks/T23.md) | Cloudflare-tunnel naar de MCP-server | T22 |
@@ -157,7 +160,13 @@ T18–T20 werken met een gratis ChatGPT: het formulier maakt een vraag om te kop
 terug in. T22–T23 staan klaar voor een abonnement met eigen connectors, of voor Claude. De vertaling van een
 verf naar instellingen zit altijd in de kern (T18), nooit in het LLM.
 
-Later, nog niet als dossier: metalen poten, andere vormen.
+Later, nog niet als dossier: andere vormen.
+
+**Open optie, niveau 2 (interieurscène, nog niet uitgewerkt):** een modelleerde kamer met muren, raam met lichtval,
+vloerreliëf, meubels en props (bank, plant, boek), zodat de epoxy echte objecten weerspiegelt. Vraagt 3D-modellen
+(gratis bronnen; downloads vooraf aan de gebruiker voorleggen), een eenvoudige scènebibliotheek in de UI en veel
+langere rendertijden. Alleen oppakken als de gebruiker dat vraagt, bij voorkeur na T12 (kalibratie met een foto) en na
+niveau 1 (T29–T31). Niveau 3 (handwerk, imperfecties, retouche) valt buiten het plan.
 
 ## 6. Werkwijze
 
