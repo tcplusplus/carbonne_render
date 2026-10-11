@@ -1,0 +1,1 @@
+{"taak":"T27","status":"klaar","nu":"afgerond, wacht op merge","gedaan":["422-oorzaken gereproduceerd en verklaard","backend: plaats_of_422 voor geometrie/render/reeks","UI: LIMIETEN, begrens, nieuweLaag, fout.js, schema.js, client-validatie","tests/test_t27.py (15 tests)","evidence"],"next":"geen","tests":"tests/test_t27.py 15 passed; volledige suite zie commit","kosten":null}

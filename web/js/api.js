@@ -1,19 +1,22 @@
 // Dunne laag om de backend-API (src/carbonne/server/app.py).
+import { detailNaarTekst } from "./fout.js";
+
 async function j(url, opt) {
   const r = await fetch(url, opt);
   if (!r.ok) {
     let t = r.statusText, d = null;
     try {
       d = (await r.json()).detail;
-      t = typeof d === "string" ? d : JSON.stringify(d);
+      t = typeof d === "string" ? d : detailNaarTekst(d);
     } catch { /* geen JSON */ }
-    throw Object.assign(new Error(`${r.status}: ${t}`), { status: r.status, detail: d });
+    throw Object.assign(new Error(r.status === 422 ? t : `${r.status}: ${t}`), { status: r.status, detail: d });
   }
   return r.json();
 }
 const post = (url, body) => j(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
 
 export const presets = () => j("/api/presets");
+export const schema = () => j("/api/schema");
 export const geometrie = (config) => post("/api/geometrie", config);
 export const cameraPreset = (naam, d, h) => j(`/api/camera/${naam}?diameter=${d}&hoogte=${h}`);
 export const startRender = (config, opties, herkomst = false) => post("/api/render", { config, opties, herkomst });

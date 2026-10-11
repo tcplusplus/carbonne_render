@@ -1,5 +1,5 @@
 // Instellingenpaneel: bouwt de invoervelden en meldt wijzigingen via `bijWijziging(soort)`.
-import { KWALITEIT, RESOLUTIES, nieuweAfwerking, nieuwItem, nieuweLaag } from "./staat.js";
+import { CANDY_BASIS, ENUMS, KWALITEIT, LIMIETEN as L, RESOLUTIES, VERFSOORTEN, begrens, toegestaan, laagBereik, nieuweAfwerking, nieuwItem, nieuweLaag } from "./staat.js";
 import * as api from "./api.js";
 import { hexNaarLineair, lineairNaarHex, tekstNaarHex, waardeNaarHex } from "./kleur.js";
 
@@ -56,18 +56,23 @@ export class Paneel {
 
   wijzig(soort) { this.bijWijziging(soort); }
 
+  /** Getalveld (slider + invoer). De waarde blijft binnen [min, max]: de backend wijst alles daarbuiten af (422). */
   num(label, get, set, { min, max, step = 1, schaal = 1, eenheid = "", slider = true, soort = "geometrie" } = {}) {
     const wrap = h("span", { class: "num" });
     const nr = h("input", { type: "number", min: min * schaal, max: max * schaal, step, value: +(get() * schaal).toFixed(4) });
     const rg = slider ? h("input", { type: "range", min: min * schaal, max: max * schaal, step, value: get() * schaal }) : null;
     const toepas = (bron) => {
-      const w = parseFloat(bron.value);
-      if (Number.isNaN(w)) return;
+      const ruw = parseFloat(bron.value);
+      if (Number.isNaN(ruw)) return;
+      const w = Math.min(Math.max(ruw, min * schaal), max * schaal);
+      nr.classList.toggle("ongeldig", w !== ruw);
       set(w / schaal);
-      if (bron === nr && rg) rg.value = w; else nr.value = w;
+      if (rg) rg.value = w;
+      if (bron === rg) nr.value = w;
       this.wijzig(soort);
     };
     nr.addEventListener("input", () => toepas(nr));
+    nr.addEventListener("change", () => { nr.value = +Math.min(Math.max(parseFloat(nr.value) || 0, min * schaal), max * schaal).toFixed(4); nr.classList.remove("ongeldig"); });
     rg?.addEventListener("input", () => toepas(rg));
     wrap.append(...[rg, nr, h("span", { class: "eenheid" }, eenheid)].filter(Boolean));
     return veld(label, wrap);
@@ -112,15 +117,15 @@ export class Paneel {
     }
     if (f.type === "paint" || f.type === "plate") {
       velden.push(this.kleur("Kleur", () => f.color, (v) => { f.color = v; }, { ral: true }));
-      velden.push(this.sel("Verftype", [["matte", "mat"], ["glossy", "glanzend"], ["metallic", "metallic"], ["candy", "candy"]],
+      velden.push(this.sel("Verftype", toegestaan(VERFSOORTEN, ENUMS.verfsoort),
         () => f.kind, (v) => { f.kind = v; }, "materiaal", true));
-      if (f.kind === "candy") velden.push(this.sel("Ondergrond candy", [["metallic", "metallic"], ["white", "wit"]], () => f.candy_base, (v) => { f.candy_base = v; }));
+      if (f.kind === "candy") velden.push(this.sel("Ondergrond candy", toegestaan(CANDY_BASIS, ENUMS.candyBasis), () => f.candy_base, (v) => { f.candy_base = v; }));
       velden.push(geavanceerd(this.num("Ruwheid (alpha, 0 = standaard)", () => f.roughness ?? 0, (v) => { f.roughness = v > 0 ? v : null; },
-        { min: 0, max: 1, step: 0.01, soort: "materiaal" })));
+        { min: L.ruwheid.min, max: L.ruwheid.max, step: 0.01, soort: "materiaal" })));
     }
     if (f.type === "paintstack") velden.push(...this.verflagen(f));
-    if (f.type === "clearcoat") velden.push(this.num("Ruwheid (alpha)", () => f.roughness, (v) => { f.roughness = Math.max(v, 0.01); }, { min: 0.01, max: 1, step: 0.01, soort: "materiaal" }));
-    if (f.type === "plate") velden.push(this.num("Luchtspleet", () => f.gap_mm, (v) => { f.gap_mm = Math.max(v, 0.01); }, { min: 0.01, max: 5, step: 0.01, eenheid: "mm", soort: "materiaal" }));
+    if (f.type === "clearcoat") velden.push(this.num("Ruwheid (alpha)", () => f.roughness, (v) => { f.roughness = Math.max(v, L.lakRuwheid.min); }, { min: L.lakRuwheid.min, max: L.lakRuwheid.max, step: 0.01, soort: "materiaal" }));
+    if (f.type === "plate") velden.push(this.num("Luchtspleet", () => f.gap_mm, (v) => { f.gap_mm = Math.max(v, L.spleet.min); }, { min: L.spleet.min, max: L.spleet.max, step: 0.01, eenheid: "mm", soort: "materiaal" }));
     const s = schets(f);
     return h("details", { open: true }, h("summary", {}, titel), keuze, ...velden,
       s ? h("figure", { class: "schets" }, h("img", { src: `uitleg/${s[0]}`, alt: s[1] }), h("figcaption", {}, s[1])) : null);
@@ -137,11 +142,11 @@ export class Paneel {
           h("button", { class: "klein", disabled: i === f.lagen.length - 1, onclick: () => { [f.lagen[i + 1], f.lagen[i]] = [f.lagen[i], f.lagen[i + 1]]; ververs(); } }, "naar buiten"),
           h("button", { class: "klein", disabled: f.lagen.length < 2, onclick: () => { f.lagen.splice(i, 1); ververs(); } }, "Verwijder"))),
       this.kleur("Kleur", () => l.color, (v) => { l.color = v; }, { ral: true }),
-      this.sel("Verftype", [["matte", "mat"], ["glossy", "glanzend"], ["metallic", "metallic"], ["candy", "candy"]], () => l.kind, (v) => { l.kind = v; if (v === "metallic" || v === "candy") l.dekking = 1; }, "materiaal", true),
+      this.sel("Verftype", toegestaan(VERFSOORTEN, ENUMS.verfsoort), () => l.kind, (v) => { l.kind = v; if (v === "metallic" || v === "candy") l.dekking = 1; }, "materiaal", true),
       l.kind === "matte" || l.kind === "glossy"
-        ? this.num("Dekking (1 = ondoorzichtig)", () => l.dekking, (v) => { l.dekking = Math.min(Math.max(v, 0), 1); }, { min: 0, max: 1, step: 0.05, soort: "materiaal" })
+        ? this.num("Dekking (1 = ondoorzichtig)", () => l.dekking, (v) => { l.dekking = Math.min(Math.max(v, 0), 1); }, { min: L.dekking.min, max: L.dekking.max, step: 0.05, soort: "materiaal" })
         : null));
-    return [...rijen, h("button", { class: "klein", onclick: () => { f.lagen.push(nieuw()); ververs(); } }, "+ laag")];
+    return [...rijen, h("button", { class: "klein", disabled: f.lagen.length >= L.verflagen.max, onclick: () => { f.lagen.push(nieuw()); ververs(); } }, "+ laag")];
   }
 
   lagen() {
@@ -149,15 +154,15 @@ export class Paneel {
     const lijst = c.layers.map((laag, li) => h("div", { class: "laag" },
       h("div", { class: "laagkop" }, h("b", {}, `Laag ${li + 1}`),
         h("button", { class: "klein", onclick: () => { c.layers.splice(li, 1); this.bouw(); this.wijzig("geometrie"); } }, "Verwijder")),
-      this.num("Hoogte in het blok", () => laag.height_m, (v) => { laag.height_m = Math.min(Math.max(v, 0.001), Math.min(0.06, c.hoogte - 0.002)); },
-        { min: 0.002, max: 0.058, step: 0.5, schaal: 1000, eenheid: "mm" }),
-      geavanceerd(this.num("Seed (willekeurige plaatsing)", () => laag.seed, (v) => { laag.seed = Math.round(v); }, { min: 0, max: 999, slider: false })),
+      this.num("Hoogte in het blok", () => laag.height_m, (v) => { laag.height_m = Math.min(Math.max(v, laagBereik(c.hoogte).min), laagBereik(c.hoogte).max); },
+        { min: laagBereik(c.hoogte).min, max: laagBereik(c.hoogte).max, step: 0.5, schaal: 1000, eenheid: "mm" }),
+      geavanceerd(this.num("Seed (willekeurige plaatsing)", () => laag.seed, (v) => { laag.seed = Math.round(v); }, { min: L.seed.min, max: L.seed.max, slider: false })),
       laag.items.map((it, ii) => this.item(laag, it, ii)),
       h("div", { class: "rij" },
         h("button", { class: "klein", onclick: () => { laag.items.push(nieuwItem("wood")); this.bouw(); this.wijzig("geometrie"); } }, "+ houtschijfje"),
         h("button", { class: "klein", onclick: () => { laag.items.push(nieuwItem("flower")); this.bouw(); this.wijzig("geometrie"); } }, "+ bloem"))));
     return h("details", { open: true }, h("summary", {}, "Inhoud (lagen)"), lijst,
-      h("button", { onclick: () => { c.layers.push(nieuweLaag(c.hoogte * 1000 / 2)); this.bouw(); this.wijzig("geometrie"); } }, "+ laag"));
+      h("button", { onclick: () => { c.layers.push(nieuweLaag(c.hoogte)); this.bouw(); this.wijzig("geometrie"); } }, "+ laag"));
   }
 
   item(laag, it, ii) {
@@ -165,11 +170,11 @@ export class Paneel {
     return h("div", { class: "item" },
       h("div", { class: "laagkop" }, h("span", {}, it.type === "wood" ? "Houtschijfje" : "Bloem"),
         h("button", { class: "klein", onclick: () => { laag.items.splice(ii, 1); this.bouw(); this.wijzig("geometrie"); } }, "x")),
-      this.num("Aantal", () => it.count, (v) => { it.count = Math.max(1, Math.round(v)); }, { min: 1, max: 60, slider: true }),
+      this.num("Aantal", () => it.count, (v) => { it.count = Math.max(1, Math.round(v)); }, { min: L.aantal.min, max: L.aantal.max, slider: true }),
       kleur,
-      this.num("Straal (min)", () => it.radius_mm[0], (v) => { it.radius_mm = [Math.min(v, it.radius_mm[1]), it.radius_mm[1]]; }, { min: 2, max: 40, step: 0.5, eenheid: "mm" }),
-      this.num("Straal (max)", () => it.radius_mm[1], (v) => { it.radius_mm = [it.radius_mm[0], Math.max(v, it.radius_mm[0])]; }, { min: 2, max: 40, step: 0.5, eenheid: "mm" }),
-      it.type === "flower" ? this.num("Bloemblaadjes", () => it.petals, (v) => { it.petals = Math.round(v); }, { min: 1, max: 24 }) : null);
+      this.num("Straal (min)", () => it.radius_mm[0], (v) => { it.radius_mm = [Math.min(v, it.radius_mm[1]), it.radius_mm[1]]; }, { min: L.straal.min, max: L.straal.max, step: 0.5, eenheid: "mm" }),
+      this.num("Straal (max)", () => it.radius_mm[1], (v) => { it.radius_mm = [it.radius_mm[0], Math.max(v, it.radius_mm[0])]; }, { min: L.straal.min, max: L.straal.max, step: 0.5, eenheid: "mm" }),
+      it.type === "flower" ? this.num("Bloemblaadjes", () => it.petals, (v) => { it.petals = Math.round(v); }, { min: L.bloemblaadjes.min, max: L.bloemblaadjes.max }) : null);
   }
 
   bouw() {
@@ -188,8 +193,8 @@ export class Paneel {
     if (!res.some(([k]) => k === resHuidig)) res.push([resHuidig, `${c.render.breedte} x ${c.render.hoogte}`]);
     this.root.replaceChildren(lijst,
       h("details", { open: true }, h("summary", {}, "Tafeltje"),
-        this.num("Diameter", () => c.diameter, (v) => { c.diameter = v; }, { min: 0.2, max: 0.7, step: 5, schaal: 1000, eenheid: "mm" }),
-        this.num("Dikte (hoogte)", () => c.hoogte, (v) => { c.hoogte = v; }, { min: 0.02, max: 0.06, step: 1, schaal: 1000, eenheid: "mm" })),
+        this.num("Diameter", () => c.diameter, (v) => { c.diameter = v; }, { min: L.diameter.min, max: L.diameter.max, step: 5, schaal: 1000, eenheid: "mm" }),
+        this.num("Dikte (hoogte)", () => c.hoogte, (v) => { c.hoogte = v; if (begrens(c)) this.bouw(); }, { min: L.hoogte.min, max: L.hoogte.max, step: 1, schaal: 1000, eenheid: "mm" })),
       this.afwerking("Zijkant (rand van het blok)", "zijkant", [["bare", "onbehandeld"], ["paint", "verf"], ["paintstack", "gestapelde verf"], ["clearcoat", "matte lak"]], afwSchets.zijkant),
       this.afwerking("Onderkant (onder het blok)", "onderkant", [["bare", "onbehandeld"], ["paint", "verf"], ["paintstack", "gestapelde verf"], ["clearcoat", "matte lak"], ["plate", "plaat met luchtspleet"]], afwSchets.onderkant),
       this.lagen(),
