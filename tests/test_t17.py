@@ -117,3 +117,19 @@ def test_herkomst_weigert_medium():
     c.render.breedte, c.render.hoogte = 32, 24
     with pytest.raises(ValueError, match="medium"):
         render(c, RenderOpties(integrator="herkomst", cache=False, max_spp=2))
+
+
+def test_inhoud_in_medium_rendert():
+    """Inhoud (items zonder eigen medium) in een verstrooiende epoxy: rendert eindig en wijkt af van zonder medium."""
+    import mitsuba as mi
+
+    from carbonne.core.config import Layer, WoodSlice
+
+    def beeld(s: float) -> np.ndarray:
+        c = TableConfig(epoxy=EpoxyMaterial(scattering_coeff=s), layers=[Layer(height_m=0.02, items=[WoodSlice(count=3)])])
+        c.render.breedte, c.render.hoogte, c.render.spp, c.render.max_depth = 48, 36, 32, 64
+        return np.array(mi.render(mi.load_dict(build_scene(c)), seed=2))[..., :3]
+
+    a, b = beeld(0.0), beeld(30.0)
+    assert np.isfinite(b).all() and b.mean() > 0.05
+    assert np.abs(a - b).mean() > 1e-3

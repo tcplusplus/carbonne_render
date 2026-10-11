@@ -35,6 +35,8 @@ ONDER = {
 # (naam, verstrooiing 1/m, g, bovenvlakruwheid)
 REEKS = [
     ("s0", 0.0, 0.0, 0.0),
+    ("s1", 1.0, 0.0, 0.0),
+    ("s2", 2.0, 0.0, 0.0),
     ("s5", 5.0, 0.0, 0.0),
     ("s20", 20.0, 0.0, 0.0),
     ("s100", 100.0, 0.0, 0.0),
@@ -114,6 +116,8 @@ def figuur(dir_: Path, pad: Path, onder: str, varianten: list[str]) -> None:
     for cam in CAMERAS:
         rijen.append(np.concatenate([np.load(dir_ / f"{cam}-{onder}-{v}.npy") for v in varianten], axis=1))
     img = np.concatenate(rijen, axis=0)
+    h, w = img.shape[0] // 2 * 2, img.shape[1] // 2 * 2
+    img = img[:h, :w].reshape(h // 2, 2, w // 2, 2, 3).mean(axis=(1, 3))  # 2x2-middeling: kleiner PNG, minder ruis
     pad.parent.mkdir(parents=True, exist_ok=True)
     mi.Bitmap(img).convert(mi.Bitmap.PixelFormat.RGB, mi.Struct.Type.UInt8, srgb_gamma=True).write(str(pad))
 
@@ -125,7 +129,7 @@ def main() -> None:
     p.add_argument("--max-depth", type=int, default=64)
     p.add_argument("--out", type=Path, default=Path("out/t17"))
     p.add_argument("--onder", nargs="+", default=list(ONDER))
-    p.add_argument("--varianten", nargs="+", default=[r[0] for r in REEKS])
+    p.add_argument("--varianten", nargs="+", default=[r[0] for r in REEKS if r[0] not in ("s1", "s2")])
     p.add_argument("--figuur", type=Path, default=None)
     p.add_argument("--figuur-onder", default="plaat")
     p.add_argument("--figuur-varianten", nargs="+", default=["s0", "s5", "s20"])
