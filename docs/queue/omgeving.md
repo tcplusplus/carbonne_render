@@ -105,3 +105,8 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - `core/verf.py::vertaal_verf`, bibliotheek `core/verfbibliotheek.py` (map `data/verven/`, of `CARBONNE_VERVEN`; `map_=` in tests). Gesimuleerde glansmeter `core/glansmeter.py::meet_gu` (ISO 2813, 60 graden; 1-2 miljoen BSDF-samples ~1 s).
 - Tabel opnieuw maken (24 s): `uv run python scripts/maak_glans_tabel.py`; bewijsbeeld (13 s): `uv run python scripts/maak_t18_evidence.py`. Verandert de tabel of een regel, dan verandert `regels_versie()` en vertalen bibliotheekverven opnieuw bij het laden.
 - Een lak met n = 1,5 haalt maximaal ~89 GU; GU's daarboven worden afgekapt.
+
+## Kalibratie (T12)
+- `uv run carbonne-kalibreer raster|meet|vergelijk` (zie `docs/kalibratie.md`); synthetische demonstratie `uv run python scripts/render_t12.py` (4 renders van 320x240, ~15 s).
+- Foto's lezen gaat via `mi.Bitmap` (PNG/JPEG); `convert(..., srgb_gamma=False)` geeft al lineaire waarden (Mitsuba decodeert de sRGB-curve zelf). Er is geen Pillow in het project.
+- `ruff check --fix` over `src/` past ook bestanden van andere taken aan; beperk het tot je eigen bestanden.

@@ -65,18 +65,11 @@ def hoofd(spp: int) -> dict:
         }
         if naam == "lineair":
             (img / "T12-foto-synthetisch.png").write_bytes(kern.foto_naar_png(img8))
-            for kop, res in (("voor", voor), ("na", na)):
-                b = kern.vergelijkingsbeeld(res["foto_norm"], res["render_norm"], PLAN["gebieden"], res["verschillen"])
-                (img / f"T12-vergelijking-{kop}.png").write_bytes(kern.foto_naar_png(b))
-            (img / "T12-vergelijking.png").write_bytes(
-                kern.foto_naar_png(np.concatenate([_lees(img / "T12-vergelijking-voor.png"),
-                                                   _lees(img / "T12-vergelijking-na.png")], axis=0)))
+            delen = [kern.vergelijkingsbeeld(res["foto_norm"], res["render_norm"], PLAN["gebieden"],
+                                             res["verschillen"], hoogte=170) for res in (voor, na)]
+            (img / "T12-vergelijking.png").write_bytes(kern.foto_naar_png(np.concatenate(delen, axis=0)))
     Path("docs/evidence/T12-metingen.json").write_text(json.dumps(uit, indent=1, default=str))
     return uit
-
-
-def _lees(p: Path) -> np.ndarray:
-    return (kern.lineair_naar_srgb_arr(kern.laad_foto(p)) * 255).round().astype(np.uint8)
 
 
 if __name__ == "__main__":
