@@ -1,7 +1,8 @@
 """Omgevingen: HDRI-interieurs, vloeren, camerapresets en een optionele spot.
 
 Het tafeltje heeft zijn onderkant op y = 0 (zie scene.py). Een preset legt de vloer op
-y = hoogte - TAFEL_HOOGTE, zodat de bovenkant van het blad op ~45 cm boven de vloer zweeft (poten ontbreken nog).
+y = hoogte - TAFEL_HOOGTE, zodat de bovenkant van het blad op ~45 cm boven de vloer zweeft. Met poten (T26, `TableConfig.poten`)
+ligt de vloer op de poothoogte onder het blok (`poten.vloer_y`).
 `pas_omgeving_toe` werkt op het scenedict van `build_scene` en vervangt daarin env, vloer en (optioneel) camera.
 """
 
@@ -111,7 +112,7 @@ OMGEVINGEN: dict[str, Omgeving] = {
 }
 
 
-def camera_preset(naam: str, diameter: float, hoogte: float) -> CameraConfig:
+def camera_preset(naam: str, diameter: float, hoogte: float, tafel_hoogte: float = TAFEL_HOOGTE) -> CameraConfig:
     """Camera voor een preset: kamer (bijna horizontaal), boven, schuin30, schuin60, zittend, staand (kijkt naar het midden van het blad)."""
     doel = (0.0, hoogte, 0.0)
     afstand = max(0.9, 2.4 * diameter)
@@ -124,12 +125,12 @@ def camera_preset(naam: str, diameter: float, hoogte: float) -> CameraConfig:
             positie=(0.0, hoogte + afstand * math.sin(el), afstand * math.cos(el)), doel=doel, fov=40.0
         )
     if naam == "zittend":  # oog op 1,10 m boven de vloer, 1,6 m van het tafeltje
-        return CameraConfig(positie=(0.0, 1.10 - TAFEL_HOOGTE + hoogte, 1.6), doel=doel, fov=40.0)
+        return CameraConfig(positie=(0.0, 1.10 - tafel_hoogte + hoogte, 1.6), doel=doel, fov=40.0)
     if naam == "staand":  # oog op 1,65 m boven de vloer, 1,2 m van het tafeltje
-        return CameraConfig(positie=(0.0, 1.65 - TAFEL_HOOGTE + hoogte, 1.2), doel=doel, fov=40.0)
+        return CameraConfig(positie=(0.0, 1.65 - tafel_hoogte + hoogte, 1.2), doel=doel, fov=40.0)
     if naam == "kamer":  # kijkt bijna horizontaal: de ruimte (HDRI) achter het tafeltje is zichtbaar, niet alleen de vloer
         afstand = max(1.0, 2.8 * diameter)
-        oog = KAMER_OOGHOOGTE - TAFEL_HOOGTE + hoogte  # oog boven y = 0 (onderkant van het blok)
+        oog = KAMER_OOGHOOGTE - tafel_hoogte + hoogte  # oog boven y = 0 (onderkant van het blok)
         return CameraConfig(
             positie=(0.0, oog, afstand), doel=(0.0, oog - afstand * math.tan(math.radians(KAMER_NEIGING)), 0.0), fov=KAMER_FOV
         )
@@ -189,10 +190,14 @@ def pas_omgeving_toe(scene: dict, config: TableConfig, assets: Path | None = Non
     """Vervang env/vloer (en camera) in het scenedict volgens `config.scene.omgeving` / `camera_preset` / `spot`."""
     import mitsuba as mi
 
+    from carbonne.core.poten import vloer_y as poten_vloer_y
+
     sc = config.scene
     assets = assets or assets_dir()
+    vloer_poten = poten_vloer_y(config)  # T26: met poten ligt de vloer op de poothoogte, anders op TAFEL_HOOGTE
+    tafel = TAFEL_HOOGTE if vloer_poten is None else config.hoogte - vloer_poten
     if sc.camera_preset is not None:
-        cam = camera_preset(sc.camera_preset, config.diameter, config.hoogte)
+        cam = camera_preset(sc.camera_preset, config.diameter, config.hoogte, tafel)
         up = [0, 0, -1] if sc.camera_preset == "boven" else [0, 1, 0]
         scene["sensor"]["fov"] = cam.fov
         scene["sensor"]["to_world"] = mi.ScalarTransform4f().look_at(
@@ -201,7 +206,7 @@ def pas_omgeving_toe(scene: dict, config: TableConfig, assets: Path | None = Non
     if sc.omgeving is not None:
         om = OMGEVINGEN[sc.omgeving]
         scene["env"] = _env_dict(om, assets)
-        scene["floor"] = _vloer_dict(om.vloer, config.hoogte - TAFEL_HOOGTE, assets)
+        scene["floor"] = _vloer_dict(om.vloer, config.hoogte - TAFEL_HOOGTE if vloer_poten is None else vloer_poten, assets)
         spot = om.spot
     else:
         spot = None

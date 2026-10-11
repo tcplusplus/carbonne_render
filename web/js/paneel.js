@@ -1,5 +1,5 @@
 // Instellingenpaneel: bouwt de invoervelden en meldt wijzigingen via `bijWijziging(soort)`.
-import { CANDY_BASIS, ENUMS, KWALITEIT, LIMIETEN as L, RESOLUTIES, VERFSOORTEN, begrens, toegestaan, laagBereik, nieuweAfwerking, nieuwItem, nieuweLaag } from "./staat.js";
+import { CANDY_BASIS, ENUMS, KWALITEIT, POTEN_METALEN, POTEN_VORMEN, nieuwePoten, LIMIETEN as L, RESOLUTIES, VERFSOORTEN, begrens, toegestaan, laagBereik, nieuweAfwerking, nieuwItem, nieuweLaag } from "./staat.js";
 import * as api from "./api.js";
 import { hexNaarLineair, lineairNaarHex, tekstNaarHex, waardeNaarHex } from "./kleur.js";
 
@@ -177,6 +177,20 @@ export class Paneel {
       it.type === "flower" ? this.num("Bloemblaadjes", () => it.petals, (v) => { it.petals = Math.round(v); }, { min: L.bloemblaadjes.min, max: L.bloemblaadjes.max }) : null);
   }
 
+  /** T26: metalen poten onder het blok; "geen" = geen poten (de vloer ligt dan op 45 cm onder het blad). */
+  poten() {
+    const c = this.cfg, p = c.poten;
+    const aantal = this.sel("Aantal poten", [["0", "geen poten"], ...[3, 4, 5, 6].map((n) => [String(n), `${n} poten`])],
+      () => String(p?.aantal ?? 0), (v) => { c.poten = +v === 0 ? null : { ...(c.poten ?? nieuwePoten()), aantal: +v }; }, "geometrie", true);
+    const g = "geometrie";
+    return h("details", { open: true }, h("summary", {}, "Poten"), aantal, ...(p ? [
+      this.sel("Vorm", POTEN_VORMEN, () => p.vorm, (v) => { p.vorm = v; }, g),
+      this.sel("Metaal", POTEN_METALEN, () => p.metaal, (v) => { p.metaal = v; }, "materiaal"),
+      this.num(p.vorm === "rond" ? "Diameter poot" : "Zijde poot", () => p.afmeting_mm, (v) => { p.afmeting_mm = v; }, { min: L.potenAfmeting.min, max: L.potenAfmeting.max, step: 1, eenheid: "mm", soort: g }),
+      this.num("Afstand tot de rand", () => p.rand_mm, (v) => { p.rand_mm = v; }, { min: L.potenRand.min, max: L.potenRand.max, step: 1, eenheid: "mm", soort: g }),
+      this.num("Lengte poot", () => p.hoogte_m, (v) => { p.hoogte_m = v; }, { min: L.potenHoogte.min, max: L.potenHoogte.max, step: 10, schaal: 1000, eenheid: "mm", soort: g })] : []));
+  }
+
   bouw() {
     const c = this.cfg, o = this.opties, p = this.presets;
     const afwSchets = {
@@ -198,6 +212,7 @@ export class Paneel {
       this.afwerking("Zijkant (rand van het blok)", "zijkant", [["bare", "onbehandeld"], ["paint", "verf"], ["paintstack", "gestapelde verf"], ["clearcoat", "matte lak"]], afwSchets.zijkant),
       this.afwerking("Onderkant (onder het blok)", "onderkant", [["bare", "onbehandeld"], ["paint", "verf"], ["paintstack", "gestapelde verf"], ["clearcoat", "matte lak"], ["plate", "plaat met luchtspleet"]], afwSchets.onderkant),
       this.lagen(),
+      this.poten(),
       h("details", { open: true }, h("summary", {}, "Omgeving en camera"),
         this.sel("Omgeving", [["", "geen (witte constante omgeving)"], ...p.omgevingen.map((x) => [x.naam, `${x.naam} - ${x.omschrijving}`])],
           () => c.scene.omgeving ?? "", (v) => { c.scene.omgeving = v || null; }, "omgeving"),

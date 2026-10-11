@@ -251,6 +251,10 @@ def build_scene(config: TableConfig) -> dict:
     geo = cilinder_geometrie(config.diameter, config.hoogte, config.segmenten)
     plaat = config.onderkant if isinstance(config.onderkant, PlateBelow) else None
     vloer_y = -(effectieve_gap_mm(config, plaat.gap_mm) / 1000.0 + PLAAT_DIKTE) if plaat else 0.0
+    if config.poten is not None:  # T26: de vloer ligt op de poothoogte
+        from carbonne.core.poten import vloer_y as poten_vloer_y
+
+        vloer_y = poten_vloer_y(config)
     scene: dict = {
         "type": "scene",
         # volpath alleen als de epoxy absorbeert of verstrooit (T17); anders blijft alles zoals voor T17
@@ -299,6 +303,12 @@ def build_scene(config: TableConfig) -> dict:
         for naam, g in plaat_geometrie(config, plaat.gap_mm).items():
             # de plaat staat in lucht: beide zijden zijn "buiten"
             scene[f"plaat_{naam}"] = _mesh(f"plaat_{naam}", g, {"type": "twosided", "bsdf": verf_bsdf(plaat, binnen=False)})
+    if config.poten is not None:
+        from carbonne.core.poten import poot_bsdf, poot_geometrieen
+
+        bsdf = poot_bsdf(config.poten.metaal)
+        for i, g in enumerate(poot_geometrieen(config)):
+            scene[f"poot_{i}"] = _mesh(f"poot_{i}", g, bsdf)
     if config.layers:
         from carbonne.core.inhoud import inhoud_meshes
 

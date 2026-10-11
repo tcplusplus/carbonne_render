@@ -18,7 +18,8 @@ const post = (url, body) => j(url, { method: "POST", headers: { "content-type": 
 export const presets = () => j("/api/presets");
 export const schema = () => j("/api/schema");
 export const geometrie = (config) => post("/api/geometrie", config);
-export const cameraPreset = (naam, d, h) => j(`/api/camera/${naam}?diameter=${d}&hoogte=${h}`);
+export const cameraPreset = (naam, d, h, pootHoogte = null) =>
+  j(`/api/camera/${naam}?diameter=${d}&hoogte=${h}${pootHoogte == null ? "" : `&poot_hoogte=${pootHoogte}`}`);
 export const startRender = (config, opties, herkomst = false) => post("/api/render", { config, opties, herkomst });
 export const renderStatus = (id) => j(`/api/render/${id}`);
 export const annuleerRender = (id) => j(`/api/render/${id}`, { method: "DELETE" });

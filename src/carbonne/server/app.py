@@ -113,9 +113,11 @@ def maak_app(
         }
 
     @app.get("/api/camera/{naam}")
-    def camera(naam: str, diameter: float = 0.35, hoogte: float = 0.04) -> dict:
+    def camera(naam: str, diameter: float = 0.35, hoogte: float = 0.04, poot_hoogte: float | None = None) -> dict:
+        """`poot_hoogte` (m, T26): met poten staat het oog t.o.v. de vloer onder de poten."""
         try:
-            return env.camera_preset(naam, diameter, hoogte).model_dump()
+            tafel = env.TAFEL_HOOGTE if poot_hoogte is None else hoogte + poot_hoogte
+            return env.camera_preset(naam, diameter, hoogte, tafel).model_dump()
         except KeyError as e:
             raise HTTPException(404, str(e)) from e
 
@@ -140,7 +142,11 @@ def maak_app(
 
         inhoud = [{"laag": li, "soort": it.soort, "kleur": kleur(it.bsdf), **plat(it.posities(), it.n, it.f)}
                   for li, its in enumerate(plaats_of_422(config, ("body",))) for it in its]
-        return {"diameter": config.diameter, "hoogte": config.hoogte, "vlakken": vlakken, "inhoud": inhoud}
+        from carbonne.core.poten import poot_geometrieen, vloer_y
+
+        poten = [plat(g["v"], g["n"], g["f"]) for g in poot_geometrieen(config)]
+        return {"diameter": config.diameter, "hoogte": config.hoogte, "vlakken": vlakken, "inhoud": inhoud,
+                "poten": poten, "vloer_y": vloer_y(config)}
 
     @app.get("/api/hdri/{naam}")
     def hdri(naam: str) -> FileResponse:
