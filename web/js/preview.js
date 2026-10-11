@@ -142,15 +142,21 @@ export class Preview {
     if (f.type === "paint" || f.type === "plate") {
       const c = new THREE.Color(waardeNaarHex(f.color, this.ral));
       const ruw = f.roughness ? Math.sqrt(f.roughness) : null;
-      switch (f.kind) {
-        case "glossy": return new THREE.MeshPhysicalMaterial({ color: c, roughness: ruw ?? 0.08, clearcoat: 0.3 });
-        case "metallic": return new THREE.MeshStandardMaterial({ color: c, metalness: 1, roughness: ruw ?? 0.3 });
-        case "candy": return new THREE.MeshPhysicalMaterial({
-          color: c, metalness: f.candy_base === "white" ? 0 : 1, roughness: ruw ?? 0.3, clearcoat: 1, clearcoatRoughness: 0.03 });
-        default: return new THREE.MeshStandardMaterial({ color: c, roughness: ruw ?? 0.85 });
-      }
+      const m = this.verfMateriaal(f, c, ruw);
+      m.side = THREE.DoubleSide; // de onderkant moet ook zichtbaar zijn door de transmissie heen
+      return m;
     }
     return glas(f.type === "clearcoat" ? Math.sqrt(f.roughness) : 0.0);
+  }
+
+  verfMateriaal(f, c, ruw) {
+    switch (f.kind) {
+      case "glossy": return new THREE.MeshPhysicalMaterial({ color: c, roughness: ruw ?? 0.08, clearcoat: 0.3 });
+      case "metallic": return new THREE.MeshStandardMaterial({ color: c, metalness: 1, roughness: ruw ?? 0.3 });
+      case "candy": return new THREE.MeshPhysicalMaterial({
+        color: c, metalness: f.candy_base === "white" ? 0 : 1, roughness: ruw ?? 0.3, clearcoat: 1, clearcoatRoughness: 0.03 });
+      default: return new THREE.MeshStandardMaterial({ color: c, roughness: ruw ?? 0.85 });
+    }
   }
 
   async zetTafel(cfg) {
@@ -179,25 +185,22 @@ export class Preview {
       plaat.position.y = -gap - dik / 2;
       this.blok.add(plaat);
     }
-    // inhoud: per (laag, soort, kleur) samengevoegd tot één mesh
-    const groepen = new Map();
-    for (const it of g.inhoud) {
-      const s = `${it.soort}|${it.kleur}`;
-      if (!groepen.has(s)) groepen.set(s, { it, delen: [] });
-      groepen.get(s).delen.push(it);
-    }
-    for (const { it, delen } of groepen.values()) {
-      const pos = [], nor = [], idx = [];
+    // inhoud: per soort samengevoegd tot één mesh; de albedo (per exemplaar iets anders) gaat als vertexkleur mee
+    for (const soort of ["wood", "flower"]) {
+      const pos = [], nor = [], kl = [], idx = [];
       let o = 0;
-      for (const d of delen) {
+      for (const d of g.inhoud.filter((x) => x.soort === soort)) {
         pos.push(...d.posities); nor.push(...d.normalen);
+        const n = d.posities.length / 3;
+        for (let i = 0; i < n; i++) kl.push(...(d.kleur ?? [0.5, 0.5, 0.5]));
         for (const i of d.indices) idx.push(i + o);
-        o += d.posities.length / 3;
+        o += n;
       }
-      const mat = new THREE.MeshStandardMaterial({
-        color: lin(it.kleur ?? [0.5, 0.5, 0.5]), roughness: 0.9, side: THREE.DoubleSide,
-        transparent: it.soort === "flower", opacity: it.soort === "flower" ? 0.92 : 1 });
-      this.blok.add(new THREE.Mesh(bufGeo({ posities: pos, normalen: nor, indices: idx }), mat));
+      if (!pos.length) continue;
+      const geo = bufGeo({ posities: pos, normalen: nor, indices: idx });
+      geo.setAttribute("color", new THREE.Float32BufferAttribute(kl, 3));
+      // ondoorzichtig: transparante objecten komen niet in de transmissie-pass
+      this.blok.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9, side: THREE.DoubleSide })));
     }
     this.vraagRender();
   }

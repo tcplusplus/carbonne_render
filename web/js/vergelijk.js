@@ -63,8 +63,8 @@ export class Vergelijk {
     d.beeld.style.setProperty("--ar", `${a.cfg.render.breedte} / ${a.cfg.render.hoogte}`);
     d.beeld.className = "vergelijk-beeld " + this.modus;
     if (this.modus === "schuif") {
-      const onder = h("img", { src: a.url, alt: "A" });
-      const boven = h("img", { src: b.url, alt: "B", class: "boven" });
+      const onder = h("img", { src: b.url, alt: "B" }); // rechts zichtbaar
+      const boven = h("img", { src: a.url, alt: "A", class: "boven" }); // links zichtbaar, tot de schuifbalk
       this.dom.bovenste = boven;
       d.beeld.append(onder, boven, h("span", { class: "tag tag-b" }, "B"), h("span", { class: "tag tag-a" }, "A"));
       this.pasSchuifToe();

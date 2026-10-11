@@ -61,3 +61,11 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - `maak_app(renderer=..., cache_map=..., configs_map=..., web_map=...)` voor tests; een nep-renderer heeft de signatuur van `carbonne.render.render`. `uv run pytest tests/test_t09.py -q` (2 s, incl. een echte render van 64x48).
 - Valkuil: poort 8000 is op deze machine bezet door een ander programma, daarom is de standaard 8011; `ss -ltnp | grep 8011`.
 - 1k-HDRI's: RGBE `.hdr` (1024x512, blokgemiddelde van de 2k-bron), in `cache/hdri/`.
+
+## Webfrontend (T10)
+- Interface op `http://127.0.0.1:8011/` (standaardpoort sinds T10; 8000 is door een ander programma bezet). Zie `docs/gebruik.md`.
+- three.js r170 is gevendored in `web/vendor/three/` (module, OrbitControls, RGBELoader), via een importmap; geen buildstap, geen CDN.
+- Playwright (dev-afhankelijkheid) gebruikt het systeem-Chrome: `p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist", "--no-sandbox"])`; er is geen GPU nodig voor WebGL (software). `uv run python scripts/maak_ui_screenshot.py` maakt de bewijsbeelden (ca. 70 s, twee HQ-renders van 640x360 op Normaal: 19 s en 41 s).
+- `uv run pytest tests/test_t10.py -q` (ca. 15 s) start een echte server met een nep-renderer en loopt de hele UI door in Chrome; hij slaat zichzelf over als `/usr/bin/google-chrome` ontbreekt.
+- Valkuil: in three.js komen transparante objecten (`transparent: true`) niet in de transmissie-pass; inhoud binnen het transmissieve blok moet dus ondoorzichtig zijn om zichtbaar te blijven. Verf op de onderkant moet `DoubleSide` zijn (normalen wijzen omlaag).
+- `POST /api/geometrie` geeft sinds T10 per inhoudsitem ook `kleur` (lineair RGB, met de variatie per exemplaar), zodat de preview dezelfde albedo gebruikt.

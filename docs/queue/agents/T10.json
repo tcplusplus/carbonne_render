@@ -1,0 +1,1 @@
+{"taak":"T10","status":"klaar","nu":"afgerond","gedaan":["web/ (index, css, js-modules, vendor three r170)","poort 8011 + docs","geometrie met kleur","tests/test_t10.py (5, incl. Chrome e2e)","scripts/maak_ui_screenshot.py + beelden","docs/gebruik.md, evidence/T10.md, omgeving.md"],"next":null,"tests":"116 passed, 4 skipped","kosten":null}
