@@ -77,3 +77,8 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - Filmkanaalvolgorde bij een Python-integrator: eerst RGB, dan de AOV's (`aov_names()`).
 - Shape-id's: `dr.gather` op een tabel met de 1-gebaseerde instantie-id; BSDF-klassenamen zijn `smoothdielectric`, `roughdielectric`, `twosided`, `smoothdiffuse` (niet `dielectric`).
 - Bij Bare/verf valt de vloer (y=0) in float32 samen met de onderkant (vloer-lek).
+
+## Wat-als-reeks (T14)
+- `uv run carbonne-reeks config.json --param hoogte --waarden 0.02,0.03 --punt 128,72 [--breedte 256 --spp 1024 -o out/reeks]` (ook `--rechthoek x0,y0,x1,y1`); waarden voor objecten/kleuren als JSON-lijst. In code: `carbonne.analyse.reeks.reeks`, `zet_pad`; uitvoer in `carbonne.analyse.uitvoer`.
+- Per waarde 2 renders (zaad en zaad+1, halve spp) via de pijplijn en cache; 256x144 met 1024 spp totaal: ~14 s per waarde (herkomst, 12 threads), 2e run uit cache ~1 s. `uv run python scripts/maak_t14_evidence.py` (~2 min).
+- Geen matplotlib/PIL: grafieken en tekst met het 5x7-lettertype uit `herkomst_cli` (tekens `°` en `±` toegevoegd in `analyse/uitvoer.py`).

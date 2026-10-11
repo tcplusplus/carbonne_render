@@ -1,0 +1,19 @@
+{
+ "taak": "T14",
+ "status": "klaar (wacht op merge)",
+ "nu": "afgerond",
+ "gedaan": [
+  "analyse/reeks.py: zet_pad, reeks, deltaE2000, ruis uit twee zaden",
+  "analyse/uitvoer.py: contactblad, grafiek, samengesteld beeld, JSON",
+  "analyse/cli.py: carbonne-reeks",
+  "tests/test_t14.py (8)",
+  "scripts/maak_t14_evidence.py, docs/evidence/T14.md + img + json",
+  "omgeving.md"
+ ],
+ "next": [
+  "Orkestrator: merge task/T14 en status in dossierkop",
+  "T15/T16: reeks() en ReeksResultaat.naar_dict() hergebruiken voor API/UI"
+ ],
+ "tests": "tests/test_t14.py 8 groen; volledige suite 132 passed, 4 skipped, test_t10 browser-test eenmalig rood in volle run en los groen (flaky)",
+ "kosten": "n.v.t."
+}

@@ -62,7 +62,7 @@ def zet_pad(config: TableConfig, pad: str, waarde: Any) -> TableConfig:
             except (ValueError, IndexError):
                 raise ValueError(f"ongeldig parameterpad '{pad}': '{d}' is geen geldige index (0..{len(huidig) - 1})") from None
         else:
-            raise ValueError(f"ongeldig parameterpad '{pad}': '{waar}' heeft geen onderdelen")
+            raise ValueError(f"ongeldig parameterpad '{pad}': '{waar}' heeft geen onderdelen")  # noqa: TRY004
         if laatste:
             huidig[sleutel] = _naar_gewoon(waarde)
         else:
@@ -74,6 +74,10 @@ def zet_pad(config: TableConfig, pad: str, waarde: Any) -> TableConfig:
         raise ValueError(f"ongeldige waarde {waarde!r} voor '{pad}': {regels}") from None
 
 
+def _srgb(x: float) -> float:
+    return 12.92 * x if x <= 0.0031308 else 1.055 * x ** (1 / 2.4) - 0.055
+
+
 def waarde_label(waarde: Any) -> str:
     """Korte leesbare naam van een waarde voor onder het beeld."""
     v = _naar_gewoon(waarde)
@@ -82,8 +86,8 @@ def waarde_label(waarde: Any) -> str:
     if isinstance(v, (int, float)):
         return f"{v:g}"
     if isinstance(v, (tuple, list)):
-        if len(v) == 3 and all(isinstance(x, (int, float)) for x in v):
-            return "#" + "".join(f"{round(min(max(x, 0), 1) * 255):02x}" for x in v) if all(0 <= x <= 1 for x in v) else str(v)
+        if len(v) == 3 and all(isinstance(x, (int, float)) and 0 <= x <= 1 for x in v):
+            return "#" + "".join(f"{round(_srgb(x) * 255):02x}" for x in v)  # lineair RGB -> sRGB-hex
         return str(list(v))
     if isinstance(v, dict):
         naam = {"bare": "kaal", "paint": "verf", "clearcoat": "matte lak", "plate": "plaat"}.get(v.get("type"), v.get("type", "?"))
