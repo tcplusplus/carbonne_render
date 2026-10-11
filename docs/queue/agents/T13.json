@@ -1,0 +1,5 @@
+{"taak": "T13", "status": "klaar (wacht op merge)", "nu": "afgerond",
+ "gedaan": ["core/herkomst.py: integrator, herkomst_van, 16 categorieen, padstatistieken", "core/herkomst_cli.py: carbonne-herkomst", "pipeline: integrator herkomst", "tests/test_t13.py (9)", "scripts/maak_t13_evidence.py, docs/evidence/T13.md + img + json", "omgeving.md bijgewerkt"],
+ "next": ["Orkestrator: merge task/T13 en zet status in dossierkop", "Optioneel: scan van het hele blad als beeld; padstatistieken per categorie"],
+ "tests": "tests/test_t13.py 9 groen; volledige suite 108 passed, 4 skipped",
+ "kosten": "n.v.t."}

@@ -69,3 +69,11 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - `uv run pytest tests/test_t10.py -q` (ca. 15 s) start een echte server met een nep-renderer en loopt de hele UI door in Chrome; hij slaat zichzelf over als `/usr/bin/google-chrome` ontbreekt.
 - Valkuil: in three.js komen transparante objecten (`transparent: true`) niet in de transmissie-pass; inhoud binnen het transmissieve blok moet dus ondoorzichtig zijn om zichtbaar te blijven. Verf op de onderkant moet `DoubleSide` zijn (normalen wijzen omlaag).
 - `POST /api/geometrie` geeft sinds T10 per inhoudsitem ook `kleur` (lineair RGB, met de variatie per exemplaar), zodat de preview dezelfde albedo gebruikt.
+## Herkomst-integrator (T13)
+- `carbonne-herkomst config.json --punt x,y [--straal --max-spp --ev --json -o]`; in code `herkomst_opties(config)` en `herkomst_van(resultaat, gebied)`. De pijplijn registreert hem bij `integrator="herkomst"`.
+- **~2x trager dan `path`** (320x180, 64 spp, 6 items: 0,6 s tegen 1,2 s). Geheugen 0,4 GB (320x180), 0,9 GB (640x360); 52 filmkanalen.
+- Valkuil: in een Python-integrator met `dr.while_loop` moet de **sampler in de lusstatus**, anders herhalen de toevalsgetallen elke iteratie en is het beeld 1-23 % te donker.
+- Spectrale AOV's: deel door `mi.pdf_rgb_spectrum(wl)` voor `mi.spectrum_to_srgb(spec, wl, active)`, anders ~375x te klein.
+- Filmkanaalvolgorde bij een Python-integrator: eerst RGB, dan de AOV's (`aov_names()`).
+- Shape-id's: `dr.gather` op een tabel met de 1-gebaseerde instantie-id; BSDF-klassenamen zijn `smoothdielectric`, `roughdielectric`, `twosided`, `smoothdiffuse` (niet `dielectric`).
+- Bij Bare/verf valt de vloer (y=0) in float32 samen met de onderkant (vloer-lek).
