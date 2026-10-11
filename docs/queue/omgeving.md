@@ -28,3 +28,7 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - Bij het laden meldt Dr.Jit een waarschuwing over de te lage compute capability; die is onschuldig.
 - `mi.Bitmap(img)` dwingt de evaluatie af; meet rendertijd altijd inclusief die stap.
 - Mitsuba `dielectric` kent alleen een scalaire IOR (geen dispersie); `mi.Mesh` + `set_bsdf` werkt in een scenedict. Eigen meshes: let op windingrichting (test in tests/test_t02.py).
+
+## Omgevingen (T07)
+- `uv run python scripts/fetch_assets.py` haalt HDRI's en vloeren (37,8 MB) naar `assets/` (Poly Haven API vereist een User-Agent-header, anders 403).
+- `uv run python scripts/render_presets.py --res 192 --spp 512` rendert het overzicht in ~27 s (CPU). Zonder assets werken de presets met een nep-HDRI (`CARBONNE_ASSETS` wijst een andere assetmap aan).
