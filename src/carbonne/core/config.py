@@ -81,6 +81,9 @@ class Paint(_Model):
     # T18: welke verf uit de bibliotheek gekozen werd. Alleen een herinnering; de render gebruikt altijd de
     # instellingen in deze config zelf, zodat een config reproduceerbaar blijft.
     bibliotheek_id: str | None = Field(None, description="slug in data/verven/ (alleen herkomst, geen invloed op de render)")
+    # T24: 1 = ondoorzichtig (zoals voor T24, bit-identiek); < 1 = doorschijnend, alleen in combinatie met matte/glossy.
+    # Betekenis (Kubelka-Munk, zie core/lagen.py): 1 - dekking is de doorgelaten fractie van diffuus licht.
+    dekking: float = Field(1.0, ge=0.0, le=1.0, description="0..1; 1 = ondoorzichtig, < 1 = doorschijnend (alleen matte/glossy)")
 
     @field_validator("kind", mode="before")
     @classmethod
@@ -98,6 +101,17 @@ class Paint(_Model):
         if any(not 0.0 <= x <= 1.0 for x in v):
             raise ValueError("kleur moet binnen 0..1 liggen")
         return v
+
+
+class PaintStack(_Model):
+    """T24: gestapelde verflagen op een vlak, van binnen (tegen de epoxy) naar buiten (naar de lucht).
+
+    Elke laag is een `Paint` met een eigen `dekking`. Een doorschijnende laag laat de laag eronder zichtbaar;
+    het effectieve beeld volgt uit Kubelka-Munk (`carbonne.core.lagen`). Een stapel van een ondoorzichtige laag
+    is bit-identiek aan die `Paint` zelf."""
+
+    type: Literal["paintstack"] = "paintstack"
+    lagen: list[Paint] = Field(min_length=1, max_length=8, description="van binnen (epoxy) naar buiten (lucht)")
 
 
 class MatteClearCoat(_Model):
@@ -140,9 +154,9 @@ class PlateBelow(_Model):
         return v
 
 
-ZijkantFinish = Annotated[Bare | Paint | MatteClearCoat, Field(discriminator="type")]
-OnderkantFinish = Annotated[Bare | Paint | MatteClearCoat | PlateBelow, Field(discriminator="type")]
-EdgeFinish = Bare | Paint | MatteClearCoat | PlateBelow
+ZijkantFinish = Annotated[Bare | Paint | PaintStack | MatteClearCoat, Field(discriminator="type")]
+OnderkantFinish = Annotated[Bare | Paint | PaintStack | MatteClearCoat | PlateBelow, Field(discriminator="type")]
+EdgeFinish = Bare | Paint | PaintStack | MatteClearCoat | PlateBelow
 
 
 class _Item(_Model):
