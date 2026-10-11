@@ -8,11 +8,15 @@ import os
 import re
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from dataclasses import asdict
+
+from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
+from carbonne.analyse.parameters import PARAMETERS
+from carbonne.analyse.reeks import zet_pad
 from carbonne.core import environments as env
 from carbonne.core.config import TableConfig
 from carbonne.core.kleur import ral_tabel
@@ -28,6 +32,20 @@ class RenderAanvraag(BaseModel):
     model_config = ConfigDict(extra="forbid")
     config: TableConfig
     opties: RenderOpties = Field(default_factory=RenderOpties, description="cache_map wordt door de server bepaald")
+    herkomst: bool = Field(False, description="render met de herkomst-integrator (T13); ~2x trager")
+
+
+class ReeksAanvraag(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    config: TableConfig
+    parameter: str = Field(description="pad uit GET /api/reeks/parameters")
+    waarden: list = Field(min_length=1, max_length=24)
+    gebied: list[float] = Field(description="[x, y] (met straal) of [x0, y0, x1, y1], pixels van het reeksbeeld")
+    straal: float = Field(2.0, gt=0, le=200)
+    breedte: int = Field(256, ge=32, le=1024, description="breedte van het reeksbeeld; de hoogte volgt de config")
+    spp: int = Field(512, ge=2, le=16384, description="totaal per waarde (twee helften)")
+    seed: int = 0
+    ev: float = 0.0
 
 
 class ConfigOpslaan(BaseModel):
@@ -115,7 +133,7 @@ def maak_app(
 
     @app.post("/api/render", status_code=202)
     def render_start(aanvraag: RenderAanvraag) -> dict:
-        job = jobs.indienen(aanvraag.config, aanvraag.opties)
+        job = jobs.indienen(aanvraag.config, aanvraag.opties, aanvraag.herkomst)
         return {"id": job.id, "status": job.status}
 
     @app.get("/api/render/{job_id}")
@@ -162,6 +180,139 @@ def maak_app(
         if job.resultaat is None:
             raise HTTPException(409, f"render is {job.status}")
         return FileResponse(jobs.exr_pad(job), media_type="image/x-exr", filename=f"{job.id}.exr")
+
+    @app.get("/api/render/{job_id}/herkomst")
+    def render_herkomst(job_id: str, x: float | None = None, y: float | None = None, r: float = Query(2.0, gt=0),
+                        x0: float | None = None, y0: float | None = None, x1: float | None = None,
+                        y1: float | None = None) -> dict:
+        """Herkomst van de kleur in een punt (`x`, `y`, `r`) of rechthoek (`x0`, `y0`, `x1`, `y1`), in pixels van
+        het resultaatbeeld. Rekent op het bewaarde resultaat; er wordt niets opnieuw gerenderd."""
+        from carbonne.core.herkomst import herkomst_van
+        from carbonne.core.herkomst_cli import staal_rgb8
+
+        job = job_of_404(job_id)
+        if job.resultaat is None:
+            raise HTTPException(409, f"render is {job.status}")
+        if not job.herkomst:
+            raise HTTPException(409, "render is niet gestart met herkomst: true")
+        if None not in (x0, y0, x1, y1) and x is None and y is None:
+            gebied: tuple = (x0, y0, x1, y1)
+        elif x is not None and y is not None and x0 is y0 is x1 is y1 is None:
+            gebied = (x, y)
+        else:
+            raise HTTPException(422, "geef x en y (met r), of x0, y0, x1 en y1")
+        try:
+            h = herkomst_van(job.resultaat.beeld, gebied, r)
+        except ValueError as e:
+            raise HTTPException(422, str(e)) from e
+        hx = lambda rgb: "#%02x%02x%02x" % staal_rgb8(rgb)  # noqa: E731
+        d = asdict(h)
+        d["straal"] = r if len(gebied) == 2 else None
+        d["hex"] = hx(h.rgb)
+        for c, cat in zip(d["categorieen"], h.categorieen, strict=True):
+            c["hex"], c["hex_per_pad"] = hx(cat.rgb), hx(cat.rgb_per_pad)
+        return d
+
+    @app.get("/api/render/{job_id}/herkomst.npz")
+    def herkomst_npz(job_id: str) -> FileResponse:
+        """Het ruwe resultaat met alle kanalen (bronkanalen en padstatistieken): `beeld` (h, w, c) en `kanaalnamen`."""
+        job = job_of_404(job_id)
+        if job.resultaat is None:
+            raise HTTPException(409, f"render is {job.status}")
+        if not job.herkomst:
+            raise HTTPException(409, "render is niet gestart met herkomst: true")
+        return FileResponse(jobs.npz_pad(job), media_type="application/octet-stream", filename=f"{job.id}.npz")
+
+    # --- wat-als-reeksen ---
+    def reeks_of_404(reeks_id: str):
+        job = jobs.reeksen.get(reeks_id)
+        if job is None:
+            raise HTTPException(404, "onbekende reeks")
+        return job
+
+    @app.get("/api/reeks/parameters")
+    def reeks_parameters() -> list[dict]:
+        return PARAMETERS
+
+    @app.post("/api/reeks", status_code=202)
+    def reeks_start(a: ReeksAanvraag) -> dict:
+        if len(a.gebied) not in (2, 4):
+            raise HTTPException(422, "gebied is [x, y] of [x0, y0, x1, y1]")
+        try:  # valideer pad en alle waarden vooraf: geen job voor een reeks die toch faalt
+            for w in a.waarden:
+                zet_pad(a.config, a.parameter, w)
+        except ValueError as e:
+            raise HTTPException(422, str(e)) from e
+        job = jobs.indienen_reeks(a.config, a.parameter, a.waarden, tuple(a.gebied), straal=a.straal,
+                                  breedte=a.breedte, spp=a.spp, seed=a.seed, ev=a.ev)
+        return {"id": job.id, "status": job.status}
+
+    @app.get("/api/reeks/{reeks_id}")
+    def reeks_status(reeks_id: str) -> dict:
+        """Status plus, zodra er metingen zijn, de JSON uit T14 en de URL's van de deelbeelden."""
+        job = reeks_of_404(reeks_id)
+        d = job.momentopname()
+        r = job.resultaat
+        if r is not None and r.metingen:
+            d["resultaat"] = r.naar_dict()
+            basis = f"/api/reeks/{job.id}"
+            d["urls"] = {"beelden": [f"{basis}/beeld/{i}.png" for i in range(len(r.metingen))],
+                         "contact": f"{basis}/contact.png", "grafiek": f"{basis}/grafiek.png"}
+        return d
+
+    @app.delete("/api/reeks/{reeks_id}")
+    def reeks_annuleer(reeks_id: str) -> dict:
+        reeks_of_404(reeks_id)
+        job = jobs.annuleer(reeks_id)
+        return {"id": job.id, "status": job.status}
+
+    @app.websocket("/api/reeks/{reeks_id}")
+    async def reeks_ws(ws: WebSocket, reeks_id: str) -> None:
+        job = jobs.reeksen.get(reeks_id)
+        if job is None:
+            await ws.close(code=4404)
+            return
+        await ws.accept()
+        gezien = -1
+        try:
+            while True:
+                if job.versie != gezien:
+                    gezien = job.versie
+                    await ws.send_json(job.momentopname())
+                    if job.status in EINDSTATEN:
+                        break
+                await asyncio.sleep(0.1)
+            await ws.close()
+        except WebSocketDisconnect:
+            pass  # de reeks loopt door; annuleren gaat via DELETE
+
+    def reeks_klaar(reeks_id: str):
+        job = reeks_of_404(reeks_id)
+        if job.resultaat is None or not job.resultaat.metingen:
+            raise HTTPException(409, f"reeks is {job.status} en heeft nog geen metingen")
+        return job
+
+    @app.get("/api/reeks/{reeks_id}/beeld/{nr}.png")
+    def reeks_beeld(reeks_id: str, nr: int) -> Response:
+        from carbonne.render.uitvoer import png_bytes, tonemap_srgb
+
+        job = reeks_klaar(reeks_id)
+        if not 0 <= nr < len(job.resultaat.beelden):
+            raise HTTPException(404, "onbekend deelbeeld")
+        return Response(png_bytes(tonemap_srgb(job.resultaat.beelden[nr], job.params["ev"])), media_type="image/png")
+
+    @app.get("/api/reeks/{reeks_id}/contact.png")
+    def reeks_contact(reeks_id: str) -> Response:
+        from carbonne.analyse.uitvoer import contactblad_png
+
+        job = reeks_klaar(reeks_id)
+        return Response(contactblad_png(job.resultaat, job.params["ev"]), media_type="image/png")
+
+    @app.get("/api/reeks/{reeks_id}/grafiek.png")
+    def reeks_grafiek(reeks_id: str) -> Response:
+        from carbonne.analyse.uitvoer import grafiek_png
+
+        return Response(grafiek_png(reeks_klaar(reeks_id).resultaat), media_type="image/png")
 
     # --- configs ---
     def config_pad(naam: str) -> Path:
