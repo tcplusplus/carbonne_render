@@ -66,7 +66,7 @@ def test_config_accepteert_tekstkleur_en_json_rondreis():
 def test_scenedict_per_soort():
     select_variant()
     c = _cfg()
-    typ = lambda kind, **kw: afwerking_bsdf(Paint(color=GRIJS, kind=kind, **kw), c)  # noqa: E731
+    typ = lambda kind, **kw: afwerking_bsdf(Paint(color=GRIJS, kind=kind, **kw), c)
     m = typ("matte")
     assert m["front"]["type"] == m["back"]["type"] == "diffuse"
     g = typ("glossy")
@@ -135,8 +135,8 @@ def _eval_spiegel(bsdf: dict, hoek: float, afwijking: float) -> float:
 def test_gloss_heeft_spiegelpiek_matte_niet():
     select_variant()
     k = (0.5, 0.5, 0.5)
-    pk = lambda kind: _eval_spiegel(verf_bsdf(Paint(color=k, kind=kind), binnen=False), 30.0, 0.0)  # noqa: E731
-    af = lambda kind: _eval_spiegel(verf_bsdf(Paint(color=k, kind=kind), binnen=False), 30.0, 25.0)  # noqa: E731
+    pk = lambda kind: _eval_spiegel(verf_bsdf(Paint(color=k, kind=kind), binnen=False), 30.0, 0.0)
+    af = lambda kind: _eval_spiegel(verf_bsdf(Paint(color=k, kind=kind), binnen=False), 30.0, 25.0)
     assert pk("glossy") > 3 * pk("matte")  # piek in de spiegelrichting
     assert af("glossy") < 1.1 * af("matte")  # ver van de piek: alleen het pigment
     assert pk("metallic") > 3 * pk("matte") and af("metallic") < 0.5 * pk("metallic")
@@ -153,9 +153,9 @@ def test_elke_soort_rendert_op_elke_plek(kind, plek):
 
     kleur = (0.7, 0.1, 0.1)
     f = {
-        "zijkant": dict(zijkant=Paint(color=kleur, kind=kind)),
-        "onderkant": dict(onderkant=Paint(color=kleur, kind=kind)),
-        "plaat": dict(onderkant=PlateBelow(color=kleur, kind=kind)),
+        "zijkant": {"zijkant": Paint(color=kleur, kind=kind)},
+        "onderkant": {"onderkant": Paint(color=kleur, kind=kind)},
+        "plaat": {"onderkant": PlateBelow(color=kleur, kind=kind)},
     }[plek]
     c = _cfg(**f)
     img = np.array(mi.render(mi.load_dict(build_scene(c)), spp=c.render.spp))

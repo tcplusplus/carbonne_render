@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """T05: dezelfde kleur in vier verftypes. Rij 1: op de zijkant (camera schuin boven); rij 2: op een plaat onder het
 blok (camera ooghoogte). Gebruik: `uv run python scripts/render_t05.py --out docs/evidence/img/T05-verftypes.png`.
 Omgeving studio met spot (de glans van gloss/metallic vraagt om gerichte lichtbronnen)."""
@@ -19,7 +18,7 @@ SOORTEN = ("matte", "glossy", "metallic", "candy")
 
 
 def render(kind: str, plek: str, kleur: str, res: int, spp: int, candy_base: str = "metallic") -> np.ndarray:
-    verf = dict(color=kleur, kind=kind, candy_base=candy_base)
+    verf = {"color": kleur, "kind": kind, "candy_base": candy_base}
     c = TableConfig(diameter=0.35, hoogte=0.04)
     if plek == "zijkant":
         c.zijkant = Paint(**verf)

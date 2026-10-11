@@ -1,0 +1,1 @@
+{"taak":"T05","status":"klaar","nu":"afgerond","gedaan":["kleur.py + RAL-csv","verf_bsdf voor matte/glossy/metallic/candy op zijkant, onderkant, plaat","tests/test_t05.py","scripts/render_t05.py + T05-verftypes.png","scripts/zijkant_meting.py + meting","docs/evidence/T05.md","vraag T05-1"],"next":[],"tests":"82 geslaagd, 4 overgeslagen","kosten":"CPU-renders, ca. 25 min meting"}
