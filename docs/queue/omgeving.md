@@ -100,3 +100,8 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - Mitsuba-spectrum met alleen nullen wordt geweigerd ("no probability mass"); `epoxy_medium` gebruikt dan `uniform`.
 - Een `mi.Mesh` krijgt een medium via `mi.Properties()["interior"] = medium_object` in de constructor; er is geen `set_medium`.
 - Rendertijd volpath met medium: 2-3x die van `path` (128x96, 1024 spp: 2,5 s zonder, 5-8 s met verstrooiing). `uv run python scripts/t17_meting.py` (48 configuraties x 2 zaden, ca. 12 min op 12 threads, gedeeld met andere agents).
+
+## Verfvertaling (T18)
+- `core/verf.py::vertaal_verf`, bibliotheek `core/verfbibliotheek.py` (map `data/verven/`, of `CARBONNE_VERVEN`; `map_=` in tests). Gesimuleerde glansmeter `core/glansmeter.py::meet_gu` (ISO 2813, 60 graden; 1-2 miljoen BSDF-samples ~1 s).
+- Tabel opnieuw maken (24 s): `uv run python scripts/maak_glans_tabel.py`; bewijsbeeld (13 s): `uv run python scripts/maak_t18_evidence.py`. Verandert de tabel of een regel, dan verandert `regels_versie()` en vertalen bibliotheekverven opnieuw bij het laden.
+- Een lak met n = 1,5 haalt maximaal ~89 GU; GU's daarboven worden afgekapt.

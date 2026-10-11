@@ -1,0 +1,60 @@
+{
+ "slug": "voorbeeld-metallic-goud",
+ "datum": "2026-10-11",
+ "regels_versie": "77a9f5acc2",
+ "eigenschappen": {
+  "merk": "Voorbeeld",
+  "product": "Metallic goud",
+  "kleurnaam": null,
+  "kleurcode": null,
+  "hex": "#d4af37",
+  "glansgraad": null,
+  "glans_gu_60": 45.0,
+  "effect": "metallic",
+  "transparant": false,
+  "ondergrond_candy": null,
+  "bron_url": null,
+  "opmerking": null
+ },
+ "vertaling": {
+  "paint": {
+   "type": "paint",
+   "color": [
+    0.6583748172794485,
+    0.4286904966139066,
+    0.0382043715953465
+   ],
+   "kind": "metallic",
+   "roughness": 0.0322,
+   "candy_base": "metallic",
+   "bibliotheek_id": "voorbeeld-metallic-goud"
+  },
+  "uitleg": [
+   {
+    "veld": "color",
+    "waarde": "0.6584, 0.4287, 0.0382",
+    "bron": "hex",
+    "regel": "hex (sRGB) -> lineair RGB"
+   },
+   {
+    "veld": "kind",
+    "waarde": "metallic",
+    "bron": "effect",
+    "regel": "metallic -> roughconductor met de kleur als spiegelreflectie"
+   },
+   {
+    "veld": "roughness",
+    "waarde": "0.0322",
+    "bron": "glans_gu_60",
+    "regel": "45 GU -> GGX-alpha 0.0322 (gemeten tabel, ISO 2813 60 graden); tabel gemeten voor lak, voor metaal bij benadering [gemeten GU bij 60 graden uit het technische fiche]"
+   },
+   {
+    "veld": "binnenvlak",
+    "waarde": "ongewijzigd",
+    "bron": "model",
+    "regel": "de glans geldt alleen voor de buitenkant in lucht; het vlak in contact met de epoxy blijft pigment zonder grensvlak (T03/T05)"
+   }
+  ],
+  "waarschuwingen": []
+ }
+}

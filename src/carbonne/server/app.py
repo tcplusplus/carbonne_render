@@ -6,9 +6,8 @@ import asyncio
 import json
 import os
 import re
-from pathlib import Path
-
 from dataclasses import asdict
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, Response
@@ -205,7 +204,7 @@ def maak_app(
             h = herkomst_van(job.resultaat.beeld, gebied, r)
         except ValueError as e:
             raise HTTPException(422, str(e)) from e
-        hx = lambda rgb: "#%02x%02x%02x" % staal_rgb8(rgb)  # noqa: E731
+        hx = lambda rgb: "#{:02x}{:02x}{:02x}".format(*staal_rgb8(rgb))
         d = asdict(h)
         d["straal"] = r if len(gebied) == 2 else None
         d["hex"] = hx(h.rgb)
@@ -257,7 +256,7 @@ def maak_app(
             d["resultaat"] = r.naar_dict()
             from carbonne.core.herkomst_cli import staal_rgb8
 
-            hx = lambda rgb: "#%02x%02x%02x" % staal_rgb8(rgb)  # noqa: E731
+            hx = lambda rgb: "#{:02x}{:02x}{:02x}".format(*staal_rgb8(rgb))
             for m, dm in zip(r.metingen, d["resultaat"]["metingen"], strict=True):  # stalen zoals in de PNG's
                 dm["hex"] = hx(m.rgb)
                 for c, dc in zip(m.herkomst.categorieen, dm["herkomst"]["categorieen"], strict=True):

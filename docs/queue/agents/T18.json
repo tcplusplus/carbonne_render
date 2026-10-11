@@ -1,0 +1,1 @@
+{"taak": "T18", "status": "klaar", "nu": "afgerond", "gedaan": ["core/glansmeter.py", "core/verf.py", "core/verfbibliotheek.py", "Paint.bibliotheek_id", "data/glans_tabel.json", "data/verven/ (5 voorbeelden)", "tests/test_t18.py", "docs/evidence/T18.md + img/T18-glans.png"], "next": null, "tests": "uv run pytest -q: 174 passed, 4 skipped", "kosten": "n.v.t."}

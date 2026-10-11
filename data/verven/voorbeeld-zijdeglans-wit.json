@@ -1,0 +1,60 @@
+{
+ "slug": "voorbeeld-zijdeglans-wit",
+ "datum": "2026-10-11",
+ "regels_versie": "77a9f5acc2",
+ "eigenschappen": {
+  "merk": "Voorbeeld",
+  "product": "Zijdeglans wit",
+  "kleurnaam": null,
+  "kleurcode": null,
+  "hex": "#f0f0ea",
+  "glansgraad": "zijdeglans",
+  "glans_gu_60": null,
+  "effect": "geen",
+  "transparant": false,
+  "ondergrond_candy": null,
+  "bron_url": null,
+  "opmerking": null
+ },
+ "vertaling": {
+  "paint": {
+   "type": "paint",
+   "color": [
+    0.8713671191987972,
+    0.8713671191987972,
+    0.8227857543962835
+   ],
+   "kind": "glossy",
+   "roughness": 0.026,
+   "candy_base": "metallic",
+   "bibliotheek_id": "voorbeeld-zijdeglans-wit"
+  },
+  "uitleg": [
+   {
+    "veld": "color",
+    "waarde": "0.8714, 0.8714, 0.8228",
+    "bron": "hex",
+    "regel": "hex (sRGB) -> lineair RGB"
+   },
+   {
+    "veld": "kind",
+    "waarde": "glossy",
+    "bron": "standaard",
+    "regel": "geen effect: matte of glossy volgens de glans"
+   },
+   {
+    "veld": "roughness",
+    "waarde": "0.026",
+    "bron": "glansgraad",
+    "regel": "52.5 GU -> GGX-alpha 0.026 (gemeten tabel, ISO 2813 60 graden) [term 'zijdeglans' = 35-70 GU, midden gebruikt]"
+   },
+   {
+    "veld": "binnenvlak",
+    "waarde": "ongewijzigd",
+    "bron": "model",
+    "regel": "de glans geldt alleen voor de buitenkant in lucht; het vlak in contact met de epoxy blijft pigment zonder grensvlak (T03/T05)"
+   }
+  ],
+  "waarschuwingen": []
+ }
+}
