@@ -1,5 +1,8 @@
 """Toegestane parameterpaden voor een wat-als-reeks (T15), met type en voorbeeldwaarden voor een keuzelijst.
 
+Materiaalconstanten (Cauchy A/B van de epoxy) staan er bewust niet in (T25): ze blijven in de config met hun
+standaard, maar zijn geen keuze voor de gebruiker.
+
 Elke voorbeeldwaarde moet door `zet_pad` geaccepteerd worden; `tests/test_t15.py` controleert dat tegen de
 standaardconfig, zodat deze lijst niet ongemerkt achterloopt op `core/config.py`."""
 
@@ -35,8 +38,6 @@ PARAMETERS: list[dict] = [
        ["#000000", "#ffffff", "#c1121f", "RAL 9005"]),
     _p("onderkant.gap_mm", "getal", "luchtspleet tussen blok en plaat (alleen bij een plaat)",
        [0.1, 1.0, 5.0, 20.0], "mm", 0.0, 50.0),
-    _p("epoxy.cauchy_a", "getal", "brekingsindex van de epoxy (Cauchy A)", [1.48, 1.517, 1.56], None, 1.0, 3.0),
-    _p("epoxy.cauchy_b", "getal", "dispersie van de epoxy (Cauchy B)", [0.0, 0.0045, 0.01], "um^2", 0.0, 0.1),
     _p("epoxy.scattering_coeff", "getal", "verstrooiing in de epoxy (T17; vanaf 20/m max_depth >= 128)",
        [0.0, 1.0, 5.0, 20.0], "1/m", 0.0, 200.0),
     _p("epoxy.scattering_g", "getal", "voorwaartse verstrooiing (Henyey-Greenstein g; 0 = isotroop)",

@@ -148,3 +148,5 @@ p.fout { color: var(--fout); font-weight: 600; margin: 6px 0; }
 .verf-kaart .kern dd { overflow-wrap: anywhere; }
 .verf-formulier .rij { flex-wrap: wrap; align-items: center; }
 .verf-formulier .waarschuwing { margin-top: 0; }
+details.geavanceerd { border-bottom: 0; padding: 2px 0 2px 8px; }
+details.geavanceerd > summary { font-weight: 400; color: var(--zacht); font-size: 0.9em; }
