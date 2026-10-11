@@ -212,6 +212,7 @@ def reeks(
     cache_map: Path | None = None,
     on_progress: Callable[[int, int, str], None] | None = None,
     annuleer: threading.Event | None = None,
+    renderer: Callable[..., Any] | None = None,
 ) -> ReeksResultaat:
     """Render `config` voor elke waarde van `parameter` en meet op `gebied` (punt `(x, y)` met `straal`, of
     rechthoek `(x0, y0, x1, y1)`; pixels van het beeld met `breedte` kolommen, de hoogte volgt de beeldverhouding).
@@ -219,9 +220,10 @@ def reeks(
     `spp` is het totaal per waarde (twee helften met zaad `seed` en `seed + 1`). `on_progress(i, n, label)` wordt
     na elke afgeronde waarde aangeroepen. Bij `annuleer.set()` stopt de reeks en bevat het resultaat de tot dan
     toe afgeronde waarden (`geannuleerd=True`). Een ongeldig pad of ongeldige waarde faalt vooraf (ValueError),
-    voordat er iets gerenderd is."""
+    voordat er iets gerenderd is. `renderer` vervangt `render` (voor tests en de server; zelfde signatuur)."""
     from carbonne.render.pipeline import STANDAARD_CACHE, render
 
+    render = renderer or render
     if not waarden:
         raise ValueError("geen waarden")
     cfgs = [zet_pad(config, parameter, w) for w in waarden]  # valideer alles vooraf
