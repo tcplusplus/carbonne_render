@@ -1,0 +1,62 @@
+{
+ "lineair": {
+  "versterking": [
+   1.25,
+   1.0,
+   0.72
+  ],
+  "ev": -1.0,
+  "s_curve": 0.0,
+  "waarheid": "#8a2a1c",
+  "gemeten": "#8a2a1c",
+  "model": "RAL 3020",
+  "de_voor": {
+   "zijkant": 10.0,
+   "vloer": 0.02
+  },
+  "de_na_meting": {
+   "zijkant": 0.05,
+   "vloer": 0.03
+  },
+  "de_na_bijstellen": {
+   "zijkant": 0.04,
+   "vloer": 0.03
+  },
+  "bijgesteld_hex": "#8a2a1c",
+  "dL_dC_dh_voor": [
+   -6.2,
+   -24.2,
+   2.7
+  ]
+ },
+ "tonemapping": {
+  "versterking": [
+   1.25,
+   1.0,
+   0.72
+  ],
+  "ev": -1.0,
+  "s_curve": 0.35,
+  "waarheid": "#8a2a1c",
+  "gemeten": "#7c2116",
+  "model": "RAL 3020",
+  "de_voor": {
+   "zijkant": 12.79,
+   "vloer": 0.02
+  },
+  "de_na_meting": {
+   "zijkant": 1.15,
+   "vloer": 0.02
+  },
+  "de_na_bijstellen": {
+   "zijkant": 0.97,
+   "vloer": 0.02
+  },
+  "bijgesteld_hex": "#7a1f14",
+  "dL_dC_dh_voor": [
+   -9.9,
+   -26.9,
+   1.2
+  ]
+ }
+}
