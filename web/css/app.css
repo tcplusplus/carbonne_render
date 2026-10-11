@@ -120,7 +120,7 @@ button:disabled { opacity: .5; cursor: default; }
 .legenda .staal { width: 12px; height: 12px; margin-right: 4px; }
 
 /* verven (T20) */
-#verven { display: grid; grid-template-columns: minmax(200px, 260px) 1fr; gap: 16px; align-items: start; }
+#verven { display: grid; grid-template-columns: minmax(220px, 280px) 1fr; gap: 16px; align-items: start; }
 #verven:has(.verf-formulier[hidden]) { grid-template-columns: 1fr; }
 .verf-kolom { display: grid; gap: 8px; }
 .verf-lijst { display: grid; gap: 4px; }
@@ -143,3 +143,8 @@ p.fout { color: var(--fout); font-weight: 600; margin: 6px 0; }
 .vertaling-tabel td { vertical-align: top; }
 .chip { font-size: 11px; padding: 0 6px; border-radius: 8px; border: 1px solid var(--rand); white-space: nowrap; }
 @media (max-width: 900px) { #verven, .verf-formulier { grid-template-columns: 1fr; } }
+.verf-kolom, .verf-links, .verf-rechts { min-width: 0; }
+.verf-kaart .kern { grid-template-columns: max-content minmax(0, 1fr); }
+.verf-kaart .kern dd { overflow-wrap: anywhere; }
+.verf-formulier .rij { flex-wrap: wrap; align-items: center; }
+.verf-formulier .waarschuwing { margin-top: 0; }

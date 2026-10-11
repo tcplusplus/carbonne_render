@@ -219,7 +219,7 @@ export class VerfPaneel {
       h("div", { class: "vertaling-kop" },
         h("span", { class: "staal groot", "data-rol": "vertaling-staal", style: `background:${lineairNaarHex(p.color)}` }),
         h("span", {}, h("b", {}, p.kind), p.roughness != null ? ` · ruwheid (alpha) ${p.roughness}` : "", ` · kleur ${lineairNaarHex(p.color)}`)),
-      v.waarschuwingen.map((t) => h("p", { class: "waarschuwing", "data-rol": "waarschuwing" }, h("b", {}, "Let op: "), t)),
+      ...v.waarschuwingen.map((t) => h("p", { class: "waarschuwing", "data-rol": "waarschuwing" }, h("b", {}, "Let op: "), t)),
       h("table", { class: "hk-tabel vertaling-tabel" },
         h("thead", {}, h("tr", {}, ["instelling", "waarde", "komt van", "regel"].map((t) => h("th", {}, t)))),
         h("tbody", {}, v.uitleg.map((u) => h("tr", {},

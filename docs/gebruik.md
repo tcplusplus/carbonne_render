@@ -41,6 +41,22 @@ inkleuring van het tafeltje (bijvoorbeeld wat verf in contact met epoxy doet) mo
 - **Configuraties**: "Opslaan" bewaart de huidige config onder een naam (letters, cijfers, `_` en `-`), inclusief
   de huidige camera; "Laden" haalt hem terug. De laatste staat onthoudt de browser zelf ook.
 
+### Verven (bibliotheek en nieuwe verf)
+Het paneel **Verven** (onder de preview) bevat de bibliotheek en het formulier voor een nieuwe verf. Een verf uit de
+echte wereld krijg je er ook met een gratis ChatGPT in:
+1. Klik op **Nieuwe verf** en vul merk, product en kleur in (kleurnaam of RAL-code).
+2. Klik op **Vraag voor ChatGPT kopiëren** en plak de vraag in ChatGPT. Lukt het klembord niet, dan verschijnt de vraag
+   in een tekstvak om zelf te kopiëren.
+3. Plak het antwoord van ChatGPT in het veld **Antwoord van ChatGPT** (het wordt meteen ingelezen; of klik op
+   "Antwoord inlezen"). Het formulier vult zich. Klopt er iets niet, dan staat de fout bovenaan en is het veld rood.
+4. Controleer de velden en de **vertaling** rechts: soort verf, ruwheid en kleur, met per instelling waar ze vandaan
+   komt, en gele waarschuwingen voor wat de app niet nabootst (bijvoorbeeld parelmoer, glitter, fluo). Je kan alle
+   velden ook met de hand invullen; de vertaling volgt live. Klik op **Bewaar in bibliotheek**.
+
+Een bewaarde verf kies je bij zijkant, onderkant of plaat: kies als type **uit bibliotheek...** (bij de plaat staat de
+keuze "Uit bibliotheek..." er al) en kies de verf. De instellingen worden overgenomen en blijven daarna aanpasbaar.
+Klik in de bibliotheek op een verf voor de details en de bron-URL, of op Bewerk of Verwijder.
+
 ### HQ-render
 - **Render HQ** stuurt de config met de **huidige camera van de preview** naar de server. Het beeld bouwt
   progressief op (pass voor pass), met een voortgangsbalk, het aantal samples, de ruis en de verstreken tijd.
