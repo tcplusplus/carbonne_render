@@ -37,8 +37,7 @@ def test_scenedict_per_afwerking():
     assert p["back"]["reflectance"]["value"] == list(ROOD)
     lak = afwerking_bsdf(MatteClearCoat(roughness=0.4), c)
     assert lak["type"] == "roughdielectric" and lak["alpha"] == 0.4 and lak["int_ior"] == pytest.approx(c.epoxy.n_d)
-    with pytest.raises(NotImplementedError):
-        afwerking_bsdf(Paint(kind="metallic"), c)
+    assert afwerking_bsdf(Paint(kind="metallic"), c)["front"]["type"] == "roughconductor"
 
     sc = build_scene(_cfg(zijkant=Paint(color=ROOD), onderkant=PlateBelow(color=(1, 1, 1), gap_mm=0.1)))
     assert all(n in sc for n in VLAKKEN) and "plaat_boven" in sc

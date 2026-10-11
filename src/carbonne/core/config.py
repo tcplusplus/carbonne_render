@@ -6,6 +6,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from carbonne.core.kleur import als_kleur
+
 NA_D_NM = 589.3  # natrium-D-lijn, referentiegolflengte voor n_d
 
 
@@ -43,7 +45,12 @@ class EpoxyMaterial(_Model):
 
 
 RGB = tuple[float, float, float]
-VerfSoort = Literal["matte", "glossy", "metallic", "candy"]  # alleen "matte" is gebouwd (T05 volgt)
+VerfSoort = Literal["matte", "glossy", "metallic", "candy"]  # "gloss" wordt als alias van "glossy" geaccepteerd
+CandyBasis = Literal["metallic", "white"]
+
+
+def _soort(v):
+    return "glossy" if v == "gloss" else v
 
 
 class Bare(_Model):
@@ -56,8 +63,20 @@ class Paint(_Model):
     """Ondoorzichtige verf in optisch contact met de epoxy (geen Fresnel-grensvlak aan de binnenkant)."""
 
     type: Literal["paint"] = "paint"
-    color: RGB = Field((0.5, 0.5, 0.5), description="albedo, lineair RGB 0..1")
+    color: RGB = Field((0.5, 0.5, 0.5), description="albedo, lineair RGB 0..1; invoer ook '#rrggbb' of 'RAL 9005'")
     kind: VerfSoort = "matte"
+    roughness: float | None = Field(None, gt=0.0, le=1.0, description="GGX alpha van de glans; None = standaard per soort")
+    candy_base: CandyBasis = Field("metallic", description="ondergrond van candy: metallic of white")
+
+    @field_validator("kind", mode="before")
+    @classmethod
+    def _alias(cls, v):
+        return _soort(v)
+
+    @field_validator("color", mode="before")
+    @classmethod
+    def _tekst(cls, v):
+        return als_kleur(v)
 
     @field_validator("color")
     @classmethod
@@ -86,6 +105,18 @@ class PlateBelow(_Model):
     color: RGB = Field((0.5, 0.5, 0.5), description="albedo van de plaat, lineair RGB 0..1")
     gap_mm: float = Field(0.1, gt=0.0, le=50.0)
     kind: VerfSoort = "matte"
+    roughness: float | None = Field(None, gt=0.0, le=1.0, description="GGX alpha van de glans; None = standaard per soort")
+    candy_base: CandyBasis = "metallic"
+
+    @field_validator("kind", mode="before")
+    @classmethod
+    def _alias(cls, v):
+        return _soort(v)
+
+    @field_validator("color", mode="before")
+    @classmethod
+    def _tekst(cls, v):
+        return als_kleur(v)
 
     @field_validator("color")
     @classmethod
