@@ -43,3 +43,8 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - `tests/test_physics.py`: minischenes met `volpath` en een homogeen medium (`sigma_t` uniform x `scale`; een rgb-waarde > 1 wordt geweigerd). Een enkel grensvlak met zwart erachter geeft direct de Fresnelreflectie; een `cube` met `interior`-medium geeft Beer-Lambert.
 - Vloer op dezelfde hoogte als de onderkant van het blok (Bare of lak): door ray-epsilon lopen stralen door de vloer en zie je de omgeving erdoorheen. Zet de vloer lager (`vloer_omlaag` in `scripts/ab_experiment.py`), of gebruik een plaat.
 - `uv run python scripts/ab_experiment.py --res 256 --spp 1024 --schaal 0.7` (11 varianten x 2 zaden, ~3 min op 12 threads).
+
+## Verf en kleur (T05)
+- `core/kleur.py::parse_kleur` (hex/RAL naar lineair RGB), RAL-tabel `src/carbonne/data/ral_classic.csv`. `Paint(color="RAL 3020", kind="gloss")` werkt direct.
+- Meting zijkant: `uv run python scripts/zijkant_meting.py` (512 px/512 spp: ~25 min op 12 threads; 192-256 px met meer spp geeft dezelfde ROI-gemiddelden en is sneller). Verftypenbeeld: `scripts/render_t05.py --spp 1024 --res 400 --schaal 0.55` (~2 min).
+- `roughconductor` samplet enkele procenten onder de horizon (gewicht 0); `twosided` om een one-sided BSDF is nodig om van de epoxykant te testen.

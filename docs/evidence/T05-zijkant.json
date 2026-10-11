@@ -1,0 +1,834 @@
+[
+ {
+  "camera": "schuin35",
+  "onderkant": "contact",
+  "ondergrond": "zwart",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.10054,
+   "rood": 0.9049,
+   "ruis": 0.00039
+  },
+  "rand_voor": {
+   "lum": 0.06914,
+   "rood": 0.3363,
+   "ruis": 0.00169
+  },
+  "midden": {
+   "lum": 0.09158,
+   "rood": 0.334,
+   "ruis": 0.00104
+  },
+  "rand_achter": {
+   "lum": 0.12225,
+   "rood": 0.4232,
+   "ruis": 0.00035
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "contact",
+  "ondergrond": "zwart",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.01496,
+   "rood": 0.3331,
+   "ruis": 0.00014
+  },
+  "rand_voor": {
+   "lum": 0.07157,
+   "rood": 0.3344,
+   "ruis": 0.00171
+  },
+  "midden": {
+   "lum": 0.09304,
+   "rood": 0.3336,
+   "ruis": 0.00098
+  },
+  "rand_achter": {
+   "lum": 0.12117,
+   "rood": 0.3325,
+   "ruis": 0.00041
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "contact",
+  "ondergrond": "wit",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.10054,
+   "rood": 0.9049,
+   "ruis": 0.00039
+  },
+  "rand_voor": {
+   "lum": 0.5196,
+   "rood": 0.4076,
+   "ruis": 0.00151
+  },
+  "midden": {
+   "lum": 0.60012,
+   "rood": 0.3799,
+   "ruis": 0.00216
+  },
+  "rand_achter": {
+   "lum": 0.20235,
+   "rood": 0.6926,
+   "ruis": 0.00043
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "contact",
+  "ondergrond": "wit",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.72779,
+   "rood": 0.3334,
+   "ruis": 0.00039
+  },
+  "rand_voor": {
+   "lum": 0.7795,
+   "rood": 0.3332,
+   "ruis": 0.00156
+  },
+  "midden": {
+   "lum": 0.70785,
+   "rood": 0.3332,
+   "ruis": 0.00209
+  },
+  "rand_achter": {
+   "lum": 0.79443,
+   "rood": 0.3339,
+   "ruis": 0.002
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "plaat",
+  "ondergrond": "zwart",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.10053,
+   "rood": 0.9049,
+   "ruis": 0.0004
+  },
+  "rand_voor": {
+   "lum": 0.13018,
+   "rood": 0.3336,
+   "ruis": 0.00189
+  },
+  "midden": {
+   "lum": 0.16784,
+   "rood": 0.3335,
+   "ruis": 0.00094
+  },
+  "rand_achter": {
+   "lum": 0.13493,
+   "rood": 0.5234,
+   "ruis": 0.00044
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "plaat",
+  "ondergrond": "zwart",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.6006,
+   "rood": 0.3332,
+   "ruis": 0.00145
+  },
+  "rand_voor": {
+   "lum": 0.13052,
+   "rood": 0.3333,
+   "ruis": 0.00197
+  },
+  "midden": {
+   "lum": 0.16785,
+   "rood": 0.3335,
+   "ruis": 0.00093
+  },
+  "rand_achter": {
+   "lum": 0.21382,
+   "rood": 0.3333,
+   "ruis": 0.00231
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "plaat",
+  "ondergrond": "wit",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.10636,
+   "rood": 0.9068,
+   "ruis": 0.00071
+  },
+  "rand_voor": {
+   "lum": 0.85816,
+   "rood": 0.3356,
+   "ruis": 0.00328
+  },
+  "midden": {
+   "lum": 0.89658,
+   "rood": 0.3334,
+   "ruis": 0.00122
+  },
+  "rand_achter": {
+   "lum": 0.15052,
+   "rood": 0.5939,
+   "ruis": 0.00135
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "plaat",
+  "ondergrond": "wit",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.86727,
+   "rood": 0.3336,
+   "ruis": 0.0012
+  },
+  "rand_voor": {
+   "lum": 0.89324,
+   "rood": 0.3334,
+   "ruis": 0.00336
+  },
+  "midden": {
+   "lum": 0.8977,
+   "rood": 0.3334,
+   "ruis": 0.00124
+  },
+  "rand_achter": {
+   "lum": 0.90274,
+   "rood": 0.334,
+   "ruis": 0.0019
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "lak",
+  "ondergrond": "zwart",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.10055,
+   "rood": 0.9049,
+   "ruis": 0.0004
+  },
+  "rand_voor": {
+   "lum": 0.11074,
+   "rood": 0.3629,
+   "ruis": 0.0017
+  },
+  "midden": {
+   "lum": 0.12786,
+   "rood": 0.3815,
+   "ruis": 0.0014
+  },
+  "rand_achter": {
+   "lum": 0.14596,
+   "rood": 0.5462,
+   "ruis": 0.00055
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "lak",
+  "ondergrond": "zwart",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.27114,
+   "rood": 0.3337,
+   "ruis": 0.00153
+  },
+  "rand_voor": {
+   "lum": 0.14016,
+   "rood": 0.3336,
+   "ruis": 0.00256
+  },
+  "midden": {
+   "lum": 0.18934,
+   "rood": 0.3334,
+   "ruis": 0.00049
+  },
+  "rand_achter": {
+   "lum": 0.21291,
+   "rood": 0.3329,
+   "ruis": 0.00098
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "lak",
+  "ondergrond": "wit",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.17501,
+   "rood": 0.9103,
+   "ruis": 0.00046
+  },
+  "rand_voor": {
+   "lum": 0.52517,
+   "rood": 0.3599,
+   "ruis": 0.00208
+  },
+  "midden": {
+   "lum": 0.50993,
+   "rood": 0.365,
+   "ruis": 0.00277
+  },
+  "rand_achter": {
+   "lum": 0.17688,
+   "rood": 0.625,
+   "ruis": 0.00089
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "lak",
+  "ondergrond": "wit",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.56388,
+   "rood": 0.3331,
+   "ruis": 0.00178
+  },
+  "rand_voor": {
+   "lum": 0.65457,
+   "rood": 0.3332,
+   "ruis": 0.00169
+  },
+  "midden": {
+   "lum": 0.68662,
+   "rood": 0.3336,
+   "ruis": 0.0013
+  },
+  "rand_achter": {
+   "lum": 0.65376,
+   "rood": 0.3336,
+   "ruis": 0.00115
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "bare",
+  "ondergrond": "zwart",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.10056,
+   "rood": 0.9049,
+   "ruis": 0.0004
+  },
+  "rand_voor": {
+   "lum": 0.12985,
+   "rood": 0.3336,
+   "ruis": 0.00195
+  },
+  "midden": {
+   "lum": 0.16785,
+   "rood": 0.3336,
+   "ruis": 0.00093
+  },
+  "rand_achter": {
+   "lum": 0.13499,
+   "rood": 0.5237,
+   "ruis": 0.00048
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "bare",
+  "ondergrond": "zwart",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.60066,
+   "rood": 0.3332,
+   "ruis": 0.00143
+  },
+  "rand_voor": {
+   "lum": 0.13065,
+   "rood": 0.3333,
+   "ruis": 0.002
+  },
+  "midden": {
+   "lum": 0.16785,
+   "rood": 0.3336,
+   "ruis": 0.00093
+  },
+  "rand_achter": {
+   "lum": 0.21382,
+   "rood": 0.3333,
+   "ruis": 0.00224
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "bare",
+  "ondergrond": "wit",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.1753,
+   "rood": 0.9103,
+   "ruis": 0.00043
+  },
+  "rand_voor": {
+   "lum": 0.84453,
+   "rood": 0.3366,
+   "ruis": 0.00311
+  },
+  "midden": {
+   "lum": 0.89559,
+   "rood": 0.3335,
+   "ruis": 0.00113
+  },
+  "rand_achter": {
+   "lum": 0.15561,
+   "rood": 0.5924,
+   "ruis": 0.0012
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "bare",
+  "ondergrond": "wit",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.9454,
+   "rood": 0.3334,
+   "ruis": 0.0011
+  },
+  "rand_voor": {
+   "lum": 0.89344,
+   "rood": 0.3334,
+   "ruis": 0.00294
+  },
+  "midden": {
+   "lum": 0.8977,
+   "rood": 0.3334,
+   "ruis": 0.00117
+  },
+  "rand_achter": {
+   "lum": 0.90757,
+   "rood": 0.3339,
+   "ruis": 0.00204
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "contact",
+  "ondergrond": "zwart",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.10105,
+   "rood": 0.9043,
+   "ruis": 0.00021
+  },
+  "rand_voor": {
+   "lum": 0.26529,
+   "rood": 0.3893,
+   "ruis": 0.00287
+  },
+  "midden": {
+   "lum": 0.38731,
+   "rood": 0.3333,
+   "ruis": 0.00226
+  },
+  "rand_achter": {
+   "lum": 0.34972,
+   "rood": 0.3451,
+   "ruis": 0.00078
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "contact",
+  "ondergrond": "zwart",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.01436,
+   "rood": 0.3332,
+   "ruis": 4e-05
+  },
+  "rand_voor": {
+   "lum": 0.25151,
+   "rood": 0.3347,
+   "ruis": 0.00304
+  },
+  "midden": {
+   "lum": 0.38835,
+   "rood": 0.3332,
+   "ruis": 0.00212
+  },
+  "rand_achter": {
+   "lum": 0.35003,
+   "rood": 0.3327,
+   "ruis": 0.00079
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "contact",
+  "ondergrond": "wit",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.10106,
+   "rood": 0.9043,
+   "ruis": 0.0002
+  },
+  "rand_voor": {
+   "lum": 0.5532,
+   "rood": 0.4009,
+   "ruis": 0.00191
+  },
+  "midden": {
+   "lum": 0.73162,
+   "rood": 0.3593,
+   "ruis": 0.00094
+  },
+  "rand_achter": {
+   "lum": 0.41248,
+   "rood": 0.4248,
+   "ruis": 0.00104
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "contact",
+  "ondergrond": "wit",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.65146,
+   "rood": 0.3333,
+   "ruis": 0.00214
+  },
+  "rand_voor": {
+   "lum": 0.8036,
+   "rood": 0.3337,
+   "ruis": 0.00223
+  },
+  "midden": {
+   "lum": 0.8035,
+   "rood": 0.3332,
+   "ruis": 0.00129
+  },
+  "rand_achter": {
+   "lum": 0.67557,
+   "rood": 0.3331,
+   "ruis": 0.00097
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "plaat",
+  "ondergrond": "zwart",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.10105,
+   "rood": 0.9043,
+   "ruis": 0.0002
+  },
+  "rand_voor": {
+   "lum": 0.4024,
+   "rood": 0.3701,
+   "ruis": 0.00215
+  },
+  "midden": {
+   "lum": 0.55563,
+   "rood": 0.3339,
+   "ruis": 0.00105
+  },
+  "rand_achter": {
+   "lum": 0.35558,
+   "rood": 0.3658,
+   "ruis": 0.00088
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "plaat",
+  "ondergrond": "zwart",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.13069,
+   "rood": 0.3335,
+   "ruis": 0.00094
+  },
+  "rand_voor": {
+   "lum": 0.54791,
+   "rood": 0.3336,
+   "ruis": 0.00253
+  },
+  "midden": {
+   "lum": 0.55878,
+   "rood": 0.3335,
+   "ruis": 0.001
+  },
+  "rand_achter": {
+   "lum": 0.48216,
+   "rood": 0.3331,
+   "ruis": 0.00103
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "plaat",
+  "ondergrond": "wit",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.10701,
+   "rood": 0.9061,
+   "ruis": 0.00022
+  },
+  "rand_voor": {
+   "lum": 0.77923,
+   "rood": 0.3532,
+   "ruis": 0.00235
+  },
+  "midden": {
+   "lum": 0.9383,
+   "rood": 0.3338,
+   "ruis": 0.00102
+  },
+  "rand_achter": {
+   "lum": 0.39007,
+   "rood": 0.3846,
+   "ruis": 0.00088
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "plaat",
+  "ondergrond": "wit",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.13069,
+   "rood": 0.3335,
+   "ruis": 0.00094
+  },
+  "rand_voor": {
+   "lum": 0.93234,
+   "rood": 0.3334,
+   "ruis": 0.0019
+  },
+  "midden": {
+   "lum": 0.94681,
+   "rood": 0.3333,
+   "ruis": 0.00099
+  },
+  "rand_achter": {
+   "lum": 0.73673,
+   "rood": 0.333,
+   "ruis": 0.00117
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "lak",
+  "ondergrond": "zwart",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.10108,
+   "rood": 0.9043,
+   "ruis": 0.0002
+  },
+  "rand_voor": {
+   "lum": 0.30801,
+   "rood": 0.392,
+   "ruis": 0.00274
+  },
+  "midden": {
+   "lum": 0.41937,
+   "rood": 0.3473,
+   "ruis": 0.0021
+  },
+  "rand_achter": {
+   "lum": 0.36091,
+   "rood": 0.3728,
+   "ruis": 0.00105
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "lak",
+  "ondergrond": "zwart",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.31454,
+   "rood": 0.3329,
+   "ruis": 0.00078
+  },
+  "rand_voor": {
+   "lum": 0.39004,
+   "rood": 0.3339,
+   "ruis": 0.00427
+  },
+  "midden": {
+   "lum": 0.4812,
+   "rood": 0.3332,
+   "ruis": 0.00169
+  },
+  "rand_achter": {
+   "lum": 0.41484,
+   "rood": 0.3326,
+   "ruis": 0.00059
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "lak",
+  "ondergrond": "wit",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.17552,
+   "rood": 0.9099,
+   "ruis": 0.00055
+  },
+  "rand_voor": {
+   "lum": 0.52148,
+   "rood": 0.4004,
+   "ruis": 0.00195
+  },
+  "midden": {
+   "lum": 0.62446,
+   "rood": 0.3553,
+   "ruis": 0.00072
+  },
+  "rand_achter": {
+   "lum": 0.59969,
+   "rood": 0.3774,
+   "ruis": 0.00183
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "lak",
+  "ondergrond": "wit",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.58109,
+   "rood": 0.3336,
+   "ruis": 0.00078
+  },
+  "rand_voor": {
+   "lum": 0.70116,
+   "rood": 0.3336,
+   "ruis": 0.00387
+  },
+  "midden": {
+   "lum": 0.77527,
+   "rood": 0.3335,
+   "ruis": 0.00125
+  },
+  "rand_achter": {
+   "lum": 0.80437,
+   "rood": 0.333,
+   "ruis": 0.0016
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "bare",
+  "ondergrond": "zwart",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.10107,
+   "rood": 0.9043,
+   "ruis": 0.0002
+  },
+  "rand_voor": {
+   "lum": 0.40236,
+   "rood": 0.3701,
+   "ruis": 0.00215
+  },
+  "midden": {
+   "lum": 0.55561,
+   "rood": 0.3339,
+   "ruis": 0.00108
+  },
+  "rand_achter": {
+   "lum": 0.35592,
+   "rood": 0.3658,
+   "ruis": 0.0009
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "bare",
+  "ondergrond": "zwart",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.13069,
+   "rood": 0.3335,
+   "ruis": 0.00094
+  },
+  "rand_voor": {
+   "lum": 0.54796,
+   "rood": 0.3336,
+   "ruis": 0.00255
+  },
+  "midden": {
+   "lum": 0.55876,
+   "rood": 0.3335,
+   "ruis": 0.00099
+  },
+  "rand_achter": {
+   "lum": 0.48219,
+   "rood": 0.3331,
+   "ruis": 0.00123
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "bare",
+  "ondergrond": "wit",
+  "zijkant": "rood",
+  "mantel": {
+   "lum": 0.17581,
+   "rood": 0.9099,
+   "ruis": 0.00055
+  },
+  "rand_voor": {
+   "lum": 0.7927,
+   "rood": 0.3669,
+   "ruis": 0.0021
+  },
+  "midden": {
+   "lum": 0.93732,
+   "rood": 0.334,
+   "ruis": 0.00109
+  },
+  "rand_achter": {
+   "lum": 0.60161,
+   "rood": 0.3693,
+   "ruis": 0.00167
+  }
+ },
+ {
+  "camera": "ooghoogte12",
+  "onderkant": "bare",
+  "ondergrond": "wit",
+  "zijkant": "bare",
+  "mantel": {
+   "lum": 0.90986,
+   "rood": 0.3338,
+   "ruis": 0.0017
+  },
+  "rand_voor": {
+   "lum": 0.9453,
+   "rood": 0.3334,
+   "ruis": 0.00209
+  },
+  "midden": {
+   "lum": 0.94645,
+   "rood": 0.3333,
+   "ruis": 0.00108
+  },
+  "rand_achter": {
+   "lum": 0.94148,
+   "rood": 0.3331,
+   "ruis": 0.00243
+  }
+ }
+]

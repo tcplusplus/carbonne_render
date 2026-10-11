@@ -1,0 +1,219 @@
+# RAL Classic, sRGB-benadering (hex). Bron: Wikipedia 'List of RAL colours' (CC BY-SA 4.0), opgehaald 2026-10-11.
+# De kleuren zijn indicatief: geen RAL-licentiedata en zeker geen spectra. Kolommen: code,hex,naam (Engels)
+1000,CDBA88,Green beige
+1001,D0B084,Beige
+1002,D2AA6D,Sand yellow
+1003,F9A800,Signal yellow
+1004,E49E00,Golden yellow
+1005,CB8E00,Honey yellow
+1006,E29000,[[Maize (color)
+1007,E88C00,Daffodil yellow
+1011,AF804F,Brown beige
+1012,DDAF27,[[Lemon (color)
+1013,E3D9C6,Oyster white
+1014,DDC49A,[[Ivory (color)
+1015,E6D2B5,Light ivory
+1016,F1DD38,Sulfur yellow
+1017,F6A950,[[Saffron (color)
+1018,FACA30,Zinc yellow
+1019,A48F7A,Grey beige
+1020,A08F65,[[Olive (color)
+1021,F6B600,Colza yellow
+1023,F7B500,Traffic yellow
+1024,BA8F4C,Ochre yellow
+1026,FFFF00,Luminous yellow
+1027,A77F0E,Curry
+1028,FF9B00,Melon yellow
+1032,E2A300,Broom yellow
+1033,F99A1C,Dahlia yellow
+1034,EB9C52,Pastel yellow
+1035,908370,Pearl beige
+1036,80643F,Pearl gold
+1037,F09200,Sun yellow
+2000,DD7907,Yellow [[Orange (colour)
+2001,BE4E20,Red orange
+2002,C63927,Blood orange
+2003,FA842B,Pastel orange
+2004,E75B12,Pure orange
+2005,FF2300,Luminous orange
+2007,FFA421,Luminous bright orange
+2008,F3752C,Bright red orange
+2009,E15501,Traffic orange
+2010,D4652F,Signal orange
+2011,EC7C25,Deep orange
+2012,DB6A50,Salmon orange
+2013,954527,Pearl orange
+2017,FA4402,RAL orange<ref>{{Cite web
+3000,AB2524,Flame red
+3001,A02128,Signal red
+3002,A1232B,[[Carmine (color)
+3003,8D1D2C,Ruby red
+3004,701F29,Purple red
+3005,5E2028,[[Wine (color)
+3007,402225,Black red
+3009,703731,Oxide red
+3011,7E292C,Brown red
+3012,CB8D73,Beige red
+3013,9C322E,Tomato red
+3014,D47479,Antique pink
+3015,E1A6AD,Light pink
+3016,AC4034,[[Coral (color)
+3017,D3545F,[[Rose (color)
+3018,D14152,Strawberry red
+3020,C1121C,Traffic red
+3022,D56D56,[[Salmon (color)
+3024,F70000,Luminous red
+3026,FF0000,Luminous bright red
+3027,B42041,Raspberry red
+3028,E72512,Pure red
+3031,AC323B,Orient red
+3032,711521,Pearl [[Ruby (color)
+3033,B24C43,Pearl pink
+4001,8A5A83,Red [[Lilac (color)
+4002,933D50,Red [[Violet (color)
+4003,D15B8F,Heather violet
+4004,691639,Claret violet
+4005,83639D,Blue lilac
+4006,992572,Traffic purple
+4007,4A203B,Purple violet
+4008,904684,Signal violet
+4009,A38995,Pastel violet
+4010,C63678,Telemagenta
+4011,8773A1,Pearl violet
+4012,6B6880,Pearl blackberry
+5000,384C70,Violet blue
+5001,1F4764,Green blue
+5002,2B2C7C,Ultramarine blue
+5003,2A3756,[[Sapphire (color)
+5004,1D1F2A,Black blue
+5005,154889,Signal blue
+5007,41678D,Brilliant blue
+5008,313C48,Grey blue
+5009,2E5978,[[Azure (color)
+5010,13447C,Gentian blue
+5011,232C3F,Steel blue
+5012,3481B8,Light blue
+5013,232D53,Cobalt blue
+5014,6C7C98,Pigeon blue
+5015,2874B2,Sky blue
+5017,0E518D,Traffic blue
+5018,21888F,[[Turquoise (color)
+5019,1A5784,[[Capri (color)
+5020,0B4151,Ocean blue
+5021,07737A,Water blue
+5022,2F2A5A,Night blue
+5023,4D668E,Distant blue
+5024,6A93B0,Pastel blue
+5025,296478,Pearl gentian
+5026,102C54,Pearl night blue
+6000,327662,Patina green
+6001,28713E,Emerald green
+6002,276235,Leaf green
+6003,4B573E,Olive green
+6004,0E4243,[[Blue-green
+6005,0F4336,Moss green
+6006,40433B,Grey olive
+6007,283424,Bottle green
+6008,35382E,Brown green
+6009,26392F,Fir green
+6010,3E753B,Grass green
+6011,68825B,Reseda green
+6012,31403D,Black green
+6013,797C5A,Reed green
+6014,444337,Yellow olive
+6015,3D403A,Black olive
+6016,026A52,Turquoise green
+6017,468641,May green
+6018,48A43F,Yellow green
+6019,B7D9B1,Pastel green
+6020,354733,Chromium green
+6021,86A47C,Pale green
+6022,3E3C32,Brown olive
+6024,008754,Traffic green
+6025,53753C,Fern green
+6026,005D52,Opal green
+6027,81C0BB,Light green
+6028,2D5546,Pine green
+6029,007243,[[Mint (color)
+6031,495746,Bronze green
+6032,0F8558,Signal green
+6033,478A84,Mint turquoise
+6034,7FB0B2,Pastel turquoise
+6035,1B542C,Pearl green
+6036,005D4C,Pearl opal green
+6037,25E712,Pure green
+6038,00F700,Luminous green
+6039,B3C43E,Fibrous green
+7000,7E8B92,Squirrel grey
+7001,8F999F,[[Silver (color)
+7002,817F68,Olive grey
+7003,7A7B6D,Moss grey
+7004,9EA0A1,Signal grey
+7005,6B716F,Mouse grey
+7006,756F61,Beige grey
+7008,746643,Khaki grey
+7009,5B6259,Green grey
+7010,575D57,Tarpaulin grey
+7011,555D61,Iron grey
+7012,596163,Basalt grey
+7013,555548,Brown grey or NATO olive
+7015,51565C,Slate grey
+7016,373F43,Anthracite grey
+7021,2E3234,Black grey
+7022,4B4D46,Umbra grey
+7023,818479,Concrete grey
+7024,474A50,Graphite grey
+7026,374447,Granite grey
+7030,939388,Stone grey
+7031,5D6970,Blue grey
+7032,B9B9A8,Pebble grey
+7033,818979,Cement grey
+7034,939176,Yellow grey
+7035,CBD0CC,Light grey
+7036,9A9697,[[Platinum (color)
+7037,7C7F7E,Dusty grey
+7038,B4B8B0,Agate grey
+7039,6B695F,Quartz grey
+7040,9DA3A6,Window grey
+7042,8F9695,Traffic grey A
+7043,4E5451,Traffic grey B
+7044,BDBDB2,Silk grey
+7045,91969A,Telegrey 1
+7046,82898E,Telegrey 2
+7047,CFD0CF,Telegrey 4
+7048,888175,Pearl mouse grey
+8000,887142,Green brown
+8001,9C6B30,Ochre brown
+8002,7B5141,Signal brown
+8003,80542F,Clay brown
+8004,8F4E35,[[Copper (color)
+8007,6F4A2F,[[Fawn (colour)
+8008,6F4F28,Olive brown
+8011,5A3A29,Nut brown
+8012,673831,Red brown
+8014,49392D,[[Sepia (color)
+8015,633A34,[[Chestnut (color)
+8016,4C2F26,[[Mahogany (color)
+8017,44322D,[[Chocolate (color)
+8019,3F3A3A,Grey brown
+8022,211F20,Black brown
+8023,A65E2F,Orange brown
+8024,79553C,Beige brown
+8025,755C49,Pale brown
+8028,4E3B2B,Terra brown
+8029,773C27,Pearl copper
+9001,EFEBDC,[[Cream (colour)
+9002,DDDED4,Grey white
+9003,FFFFFF,Signal white
+9004,2E3032,Signal black
+9005,131516,Jet black
+9006,A5A8A6,White aluminium
+9007,8F8F8C,Grey aluminium
+9010,F7F9EF,Pure white
+9011,1C1C1C,Graphite black
+9012,FFFDE6,Clean room white<ref>{{Cite web
+9016,F7FBF5,Traffic white
+9017,2A2D2F,Traffic black
+9018,CFD3CD,Papyrus white
+9022,858583,Pearl light grey
+9023,7E8182,Pearl dark grey

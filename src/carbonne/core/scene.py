@@ -87,21 +87,90 @@ def _diffuus(kleur) -> dict:
     return {"type": "diffuse", "reflectance": {"type": "rgb", "value": list(kleur)}}
 
 
+# standaard GGX-alpha per verfsoort (gloss: bijna glad gespoten laklaag; metallic: licht geborsteld/gespoten)
+RUWHEID = {"glossy": 0.05, "metallic": 0.25, "candy": 0.05}
+GLOSS_IOR = 1.5  # bindmiddel/lak aan de luchtkant
+CANDY_LAAGPASSAGES = 2.0  # licht gaat de gekleurde laag in en weer uit: transmissie^2 (loodrecht)
+
+
+def _ruwheid(verf) -> float:
+    return verf.roughness if verf.roughness is not None else RUWHEID.get(verf.kind, 0.05)
+
+
+def candy_kleur(kleur) -> list[float]:
+    """Effectieve reflectie van een transparant gekleurde laag over een witte of metalen ondergrond: de laag
+    heeft transmissie `kleur` per kanaal en wordt twee keer doorlopen (heen en terug), dus kleur^2."""
+    return [float(c) ** CANDY_LAAGPASSAGES for c in kleur]
+
+
+def verf_bsdf(verf, binnen: bool) -> dict:
+    """Enkelzijdige BSDF van een verf, voor de epoxykant (`binnen`, geen lak/lucht-grensvlak want zelfde
+    index) of de luchtkant (buiten).
+
+    - matte: diffuus pigment.
+    - glossy: buiten `roughplastic` (dielectrische lak, lage ruwheid, pigment eronder); binnen alleen het pigment.
+    - metallic: `roughconductor` met gekleurde spiegelreflectie (`material: none` = ideale metaalkleur uit
+      `specular_reflectance`); binnen en buiten gelijk (de vlokjes zitten in het bindmiddel).
+    - candy: transparant gekleurde laag over een ondergrond (metallic of white). Mitsuba heeft geen gelaagd
+      materiaal; de laag wordt benaderd door de ondergrond te kleuren met transmissie^2 (`candy_kleur`).
+      Witte ondergrond: buiten `roughplastic` (lak met gekleurd pigment eronder), binnen diffuus. Metalen
+      ondergrond: `roughconductor` met gekleurde reflectie; de ~4 % Fresnel van de dekkende lak bovenop is
+      weggelaten (klein naast de metaalreflectie). Zie docs/evidence/T05.md.
+    """
+    kind = verf.kind
+    if kind == "matte":
+        return _diffuus(verf.color)
+    alpha = _ruwheid(verf)
+    if kind == "glossy":
+        if binnen:
+            return _diffuus(verf.color)
+        return _plastic(verf.color, alpha)
+    if kind == "metallic":
+        return _metaal(verf.color, alpha)
+    if kind == "candy":
+        k = candy_kleur(verf.color)
+        if verf.candy_base == "metallic":
+            return _metaal(k, alpha)
+        return _diffuus(k) if binnen else _plastic(k, alpha)
+    raise ValueError(kind)
+
+
+def _plastic(kleur, alpha: float) -> dict:
+    return {
+        "type": "roughplastic",
+        "distribution": "ggx",
+        "alpha": alpha,
+        "int_ior": GLOSS_IOR,
+        "ext_ior": 1.000277,
+        "nonlinear": True,
+        "diffuse_reflectance": {"type": "rgb", "value": list(kleur)},
+    }
+
+
+def _metaal(kleur, alpha: float) -> dict:
+    return {
+        "type": "roughconductor",
+        "distribution": "ggx",
+        "alpha": alpha,
+        "material": "none",
+        "specular_reflectance": {"type": "rgb", "value": list(kleur)},
+    }
+
+
+def verf_twosided(verf) -> dict:
+    """Voorkant (luchtkant) = buiten, achterkant (epoxykant) = binnen."""
+    return {"type": "twosided", "front": verf_bsdf(verf, binnen=False), "back": verf_bsdf(verf, binnen=True)}
+
+
 def afwerking_bsdf(finish: EdgeFinish, config: TableConfig) -> dict:
     """BSDF voor een vlak van het blok. Normalen wijzen naar buiten: de voorkant van `twosided` is de
     luchtkant, de achterkant (bsdf1) is de epoxykant."""
     if isinstance(finish, (Bare, PlateBelow)):
         return epoxy_bsdf(config)  # bij PlateBelow blijft het blok zelf onbehandeld
     if isinstance(finish, Paint):
-        if finish.kind != "matte":
-            raise NotImplementedError(f"verfsoort {finish.kind!r} komt in T05")
         # binnen: pigmentlaag direct op de epoxy (zelfde index, dus geen Fresnel, geen TIR);
-        # buiten: matte verf in lucht
-        return {
-            "type": "twosided",
-            "front": _diffuus(finish.color),
-            "back": _diffuus(finish.color),
-        }
+        # buiten: de verf in lucht
+        return verf_twosided(finish)
     if isinstance(finish, MatteClearCoat):
         return {**epoxy_bsdf(config), "type": "roughdielectric", "distribution": "ggx", "alpha": finish.roughness}
     raise TypeError(finish)
@@ -175,9 +244,8 @@ def build_scene(config: TableConfig) -> dict:
         scene[naam] = _mesh(naam, geo[naam], afwerking_bsdf(finish[naam], config))
     if plaat:
         for naam, g in plaat_geometrie(config, plaat.gap_mm).items():
-            if plaat.kind != "matte":
-                raise NotImplementedError(f"verfsoort {plaat.kind!r} komt in T05")
-            scene[f"plaat_{naam}"] = _mesh(f"plaat_{naam}", g, _diffuus(plaat.color))
+            # de plaat staat in lucht: beide zijden zijn "buiten"
+            scene[f"plaat_{naam}"] = _mesh(f"plaat_{naam}", g, {"type": "twosided", "bsdf": verf_bsdf(plaat, binnen=False)})
     if config.layers:
         from carbonne.core.inhoud import inhoud_meshes
 
