@@ -29,7 +29,7 @@ Omdat de epoxy kleurloos is, komt bijna alle kleur uit de optica: hoe licht via 
 terug naar het oog geraakt. Elke implementatiekeuze moet deze effecten correct laten ontstaan; ze worden
 **niet** nagebootst met trucs.
 
-1. **Breking en Fresnel-reflectie** aan het bovenvlak: n ≈ 1,50–1,55 met dispersie (Cauchy of Sellmeier).
+1. **Breking en Fresnel-reflectie** aan het bovenvlak: n ≈ 1,50–1,55. Mitsuba 3.9.1 ondersteunt geen dispersie in `dielectric`, dus de scène gebruikt een vaste IOR van 1,530 bij 589 nm; dispersie (Cauchy, staat in `EpoxyMaterial`) is een bekende beperking (n ≈ 1,54 bij 400 nm tegen 1,52 bij 700 nm).
    Bij loodrechte inval wordt ongeveer 4 % teruggekaatst.
 2. **Totale interne reflectie (TIR)**: van binnen naar lucht vanaf de kritische hoek, arcsin(1/n) ≈ 41–42°.
 3. **Verf in optisch contact**: het bindmiddel van de verf heeft ongeveer dezelfde index als de epoxy, dus er is
