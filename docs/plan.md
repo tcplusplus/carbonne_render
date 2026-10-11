@@ -5,6 +5,9 @@ Een persoonlijk hulpmiddel dat **voorspelt** hoe een rond epoxy bijzettafeltje v
 afwerking van zijkant en onderkant, de inhoud, de dikte, de omgeving en de kijkhoek. Hij stelt de belichting
 in met een realtime preview en vraagt daarna een spectrale render in hoge kwaliteit aan.
 
+Naast **voorspellen** helpt het hulpmiddel ook **begrijpen** (§2b): waar komt de kleur op een plek vandaan, en
+wat verandert er als je één instelling aanpast? Dan weet je gericht welke knop je moet draaien.
+
 Dit document is de bron voor de taakdossiers in [`tasks/`](tasks/). Wijzig je het plan, werk dan ook de
 geraakte dossiers bij (zie `/plan-bij`).
 
@@ -47,6 +50,32 @@ terug naar het oog geraakt. Elke implementatiekeuze moet deze effecten correct l
 **Geen ruisonderdrukking (denoiser) op een render die voor voorspelling dient.** Een HQ-render convergeert
 echt; de preview mag benaderend zijn.
 
+## 2b. Begrijpen: herkomst en wat-als
+
+De gebruiker wil weten **waarom** een plek een bepaalde kleur heeft, om gericht te kunnen bijsturen. Daarvoor zijn
+er twee hulpmiddelen. Ze tonen **enkel getallen en kleurstalen**, geen uitlegzinnen.
+
+1. **Herkomst** ([T13](tasks/T13.md), [T15](tasks/T15.md), [T16](tasks/T16.md)). Klik op een plek in een
+   HQ-render en zie welk deel van het licht daar kwam via:
+   - de zijkant;
+   - de onderkant (verf, lak of plaat);
+   - een combinatie van zijkant en onderkant;
+   - de inhoud;
+   - de vloer;
+   - of enkel glans en omgeving.
+
+   Per bron zie je het percentage en de kleur van die bijdrage alleen, plus de kerngetallen: het aantal interne
+   reflecties, het aandeel met TIR en de weglengte in de epoxy. Dit komt uit een eigen Mitsuba-integrator die
+   elk lichtpad labelt met de vlakken die het raakte. De categorieën sluiten elkaar uit en tellen samen op tot
+   de gewone render; dat is de kerncontrole.
+2. **Wat-als-reeks** ([T14](tasks/T14.md), [T15](tasks/T15.md), [T16](tasks/T16.md)). Laat één instelling
+   variëren (dikte, afwerking van de onderkant, kleur van de zijkant, luchtspleet, ...) met hetzelfde zaad. Op een
+   gekozen plek zie je per waarde de kleur (L\*, C\*, h°, ΔE) en de herkomstaandelen. Een verschil binnen de ruis
+   wordt als zodanig gemarkeerd.
+
+Daarnaast zijn er **uitlegschetsen** ([T11](tasks/T11.md)): statische, berekende 2D-stralendoorsneden per
+afwerking, als hulp bij de keuzes in de interface.
+
 ## 3. Architectuur
 
 ```text
@@ -72,7 +101,7 @@ echt; de preview mag benaderend zijn.
 
 - **Eén configuratiemodel** (`TableConfig`) beschrijft het hele tafeltje en de scène. De Mitsuba-scène en
   de three.js-preview worden er allebei uit afgeleid; ze krijgen nooit elk een eigen waarheid.
-- **Pakketindeling**: `src/carbonne/core/` (fysica en scène-opbouw), `src/carbonne/render/` (renderpijplijn),
+- **Pakketindeling**: `src/carbonne/core/` (fysica en scène-opbouw), `src/carbonne/render/` (renderpijplijn), `src/carbonne/analyse/` (wat-als-reeksen),
   `src/carbonne/server/` (FastAPI), `web/` (frontend, zonder buildstap: ES-modules en three.js via importmap),
   `assets/` (gedownloade HDRI's en texturen, niet in git, ophaalbaar met een script), `tests/`.
 - **Eenheden**: meter in de scène, golflengte in nm. Python ≥ 3.12; pin een versie waarvoor Mitsuba-wheels
@@ -105,8 +134,12 @@ Bewijs komt in `docs/evidence/TNN.md` met kleine PNG's in `docs/evidence/img/` (
 | [T08](tasks/T08.md) | HQ-renderpijplijn: convergentie, cache, uitvoer | T04 |
 | [T09](tasks/T09.md) | Webbackend (FastAPI) | T08 |
 | [T10](tasks/T10.md) | Webfrontend met realtime preview en HQ-paneel | T09, T07 |
-| [T11](tasks/T11.md) | 2D-stralendoorsnede: zie waar het licht heen gaat | T03 |
+| [T11](tasks/T11.md) | Uitlegschetsen per afwerking (statische stralendoorsneden) | T03 |
 | [T12](tasks/T12.md) | Kalibratie met een gsm-foto (gratis) | T10 |
+| [T13](tasks/T13.md) | Herkomst-integrator: waar komt de kleur van een pixel vandaan | T04, T06 |
+| [T14](tasks/T14.md) | Wat-als-reeks: één instelling variëren, effect op een plek meten | T08, T13 |
+| [T15](tasks/T15.md) | API voor herkomst en wat-als-reeksen | T09, T14 |
+| [T16](tasks/T16.md) | Klik-herkomst en reekspaneel in de webinterface | T10, T15 |
 
 Later, nog niet als dossier: metalen poten, een webinterface buiten de laptop, andere vormen.
 
