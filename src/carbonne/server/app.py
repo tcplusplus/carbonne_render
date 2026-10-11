@@ -61,6 +61,23 @@ class ConfigOpslaan(BaseModel):
     config: TableConfig
 
 
+def plaats_of_422(config: TableConfig, loc: tuple[str, ...]) -> list[list]:
+    """Plaats de inhoud; past een laag niet (te hoog of laag in het blok, te groot, te vol), dan 422 in het
+    Pydantic-formaat (`loc` wijst de laag aan) in plaats van een 500 of een render die achteraf faalt."""
+    from carbonne.core.inhoud import plaats_laag
+
+    totaal: list = []
+    uit = []
+    for li, laag in enumerate(config.layers):
+        try:
+            its = plaats_laag(config, laag, totaal)
+        except ValueError as e:
+            raise HTTPException(422, [{"type": "inhoud_past_niet", "loc": [*loc, "layers", li], "msg": str(e)}]) from e
+        totaal += its
+        uit.append(its)
+    return uit
+
+
 def maak_app(
     renderer: Renderer | None = None,
     cache_map: Path | None = None,
@@ -105,7 +122,6 @@ def maak_app(
     @app.post("/api/geometrie")
     def geometrie(config: TableConfig) -> dict:
         """Mesh van het blok en de inhoud voor de three.js-preview (meter, onderkant op y = 0)."""
-        from carbonne.core.inhoud import plaats_alles
         from carbonne.core.scene import cilinder_geometrie
 
         def plat(v, n, f) -> dict:
@@ -123,7 +139,7 @@ def maak_app(
             return None
 
         inhoud = [{"laag": li, "soort": it.soort, "kleur": kleur(it.bsdf), **plat(it.posities(), it.n, it.f)}
-                  for li, its in enumerate(plaats_alles(config)) for it in its]
+                  for li, its in enumerate(plaats_of_422(config, ("body",))) for it in its]
         return {"diameter": config.diameter, "hoogte": config.hoogte, "vlakken": vlakken, "inhoud": inhoud}
 
     @app.get("/api/hdri/{naam}")
@@ -142,6 +158,7 @@ def maak_app(
 
     @app.post("/api/render", status_code=202)
     def render_start(aanvraag: RenderAanvraag) -> dict:
+        plaats_of_422(aanvraag.config, ("body", "config"))
         job = jobs.indienen(aanvraag.config, aanvraag.opties, aanvraag.herkomst)
         return {"id": job.id, "status": job.status}
 
@@ -247,6 +264,7 @@ def maak_app(
     def reeks_start(a: ReeksAanvraag) -> dict:
         if len(a.gebied) not in (2, 4):
             raise HTTPException(422, "gebied is [x, y] of [x0, y0, x1, y1]")
+        plaats_of_422(a.config, ("body", "config"))
         try:  # valideer pad en alle waarden vooraf: geen job voor een reeks die toch faalt
             for w in a.waarden:
                 zet_pad(a.config, a.parameter, w)

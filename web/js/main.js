@@ -6,7 +6,9 @@ import { Preview } from "./preview.js";
 import { HerkomstPaneel } from "./herkomst.js";
 import { Reeks } from "./reeks.js";
 import { koppelSelectie, zetMarkering } from "./selectie.js";
-import { hqAanvraag, normaliseerGeladen, standaardConfig, standaardOpties } from "./staat.js";
+import { begrens, hqAanvraag, leidLimietenAf, normaliseerGeladen, standaardConfig, standaardOpties } from "./staat.js";
+import { valideer } from "./schema.js";
+import { detailNaarTekst } from "./fout.js";
 import { Vergelijk } from "./vergelijk.js";
 import { VerfPaneel } from "./verf.js";
 
@@ -22,6 +24,13 @@ function leesLokaal() {
 
 async function start() {
   const presets = await api.presets();
+  const schema = await api.schema().catch(() => null); // zonder schema valt de UI terug op de eigen bereiken en de backend-controle
+  if (schema) leidLimietenAf(schema);
+  /** Controle van de config tegen het schema vóór verzenden; geeft een leesbare tekst of null. */
+  const schemaFouten = (config) => {
+    const f = schema ? valideer(schema, config) : [];
+    return f.length ? detailNaarTekst(f) : null;
+  };
   const ral = Object.fromEntries(presets.ral.map((r) => [r.code, r.hex]));
   const bewaard = leesLokaal();
   let cfg = bewaard?.cfg ?? standaardConfig();
@@ -43,6 +52,8 @@ async function start() {
     timer = setTimeout(async () => {
       document.body.dataset.preview = "bezig";
       try {
+        const fouten = schemaFouten(cfg);
+        if (fouten) throw new Error(fouten);
         await preview.update(cfg);
         meld("");
       } catch (e) { meld(`Preview: ${e.message}`, true); }
@@ -67,6 +78,7 @@ async function start() {
 
   async function laad(nieuw, nieuweOpties = opties) {
     cfg = normaliseerGeladen(structuredClone(nieuw), (c) => lineairNaarHex(c));
+    begrens(cfg); // een oude bewaarde of geladen config kan waarden buiten het huidige bereik hebben (zou een 422 geven)
     opties = { ...nieuweOpties };
     paneel.zet(cfg, opties);
     frame();
@@ -77,7 +89,11 @@ async function start() {
   await laad(cfg, opties);
 
   // --- HQ ---
-  hq.bijKnop = () => hq.start(hqAanvraag(cfg, opties, preview.getCamera(), $("hq-herkomst").checked));
+  hq.bijKnop = () => {
+    const aanvraag = hqAanvraag(cfg, opties, preview.getCamera(), $("hq-herkomst").checked);
+    const fouten = schemaFouten(aanvraag.config);
+    if (fouten) hq.melding(`Render niet gestart: ${fouten}`, true); else hq.start(aanvraag);
+  };
   hq.zetFrame(cfg.render.breedte, cfg.render.hoogte);
 
   // --- herkomst en reeks: een gekozen plek (fracties van het beeld) hoort bij beide ---
@@ -126,7 +142,7 @@ async function start() {
     catch (e) { meld(`Laden mislukt: ${e.message}`, true); }
   });
 
-  window.carbonne = { cfg: () => cfg, preview, hq, vergelijk, laad, ververs, reeks, herkomstPaneel, verfPaneel, plek: () => plek };
+  window.carbonne = { schemaFouten, cfg: () => cfg, preview, hq, vergelijk, laad, ververs, reeks, herkomstPaneel, verfPaneel, plek: () => plek };
   document.body.dataset.app = "klaar";
 }
 
