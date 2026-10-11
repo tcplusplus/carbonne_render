@@ -107,8 +107,22 @@ def afwerking_bsdf(finish: EdgeFinish, config: TableConfig) -> dict:
     raise TypeError(finish)
 
 
+RAY_EPS_FACTOR = 2e-3  # veilige onder-spleet als fractie van de plaatstraal, zie effectieve_gap_mm
+
+
+def effectieve_gap_mm(config: TableConfig, gap_mm: float) -> float:
+    """Spleet zoals gerenderd. Mitsuba (float32) verschuift het startpunt van een straal na een botsing met
+    ~1e-3 x de grootste coordinaat; is de spleet kleiner (0,1 mm bij straal > ~0,11 m), dan springt de straal
+    over het grensvlak epoxy/lucht heen en is de plaat ineens in optisch contact (ontdekt in T03, zichtbaar als
+    donker vierkant-gebied). Voor geometrische optiek maakt de dikte van een luchtspleet >> golflengte niets uit,
+    dus we renderen minstens `RAY_EPS_FACTOR * straal` (0,35 m: ~0,37 mm; 0,5 m: ~0,52 mm)."""
+    r = config.diameter / 2 + PLAAT_OVERMAAT
+    return max(gap_mm, RAY_EPS_FACTOR * r * 1000.0)
+
+
 def plaat_geometrie(config: TableConfig, gap_mm: float) -> dict[str, dict[str, np.ndarray]]:
-    """Dunne ronde plaat met de bovenkant `gap_mm` onder het blok (y = 0)."""
+    """Dunne ronde plaat met de bovenkant `gap_mm` (effectief) onder het blok (y = 0)."""
+    gap_mm = effectieve_gap_mm(config, gap_mm)
     geo = cilinder_geometrie(config.diameter + 2 * PLAAT_OVERMAAT, PLAAT_DIKTE, config.segmenten)
     y0 = -gap_mm / 1000.0 - PLAAT_DIKTE
     return {k: {**g, "v": g["v"] + np.array([0.0, y0, 0.0])} for k, g in geo.items()}
@@ -121,7 +135,7 @@ def build_scene(config: TableConfig) -> dict:
     sc, rs = config.scene, config.render
     geo = cilinder_geometrie(config.diameter, config.hoogte, config.segmenten)
     plaat = config.onderkant if isinstance(config.onderkant, PlateBelow) else None
-    vloer_y = -(plaat.gap_mm / 1000.0 + PLAAT_DIKTE) if plaat else 0.0
+    vloer_y = -(effectieve_gap_mm(config, plaat.gap_mm) / 1000.0 + PLAAT_DIKTE) if plaat else 0.0
     scene: dict = {
         "type": "scene",
         "integrator": {"type": "path", "max_depth": rs.max_depth},

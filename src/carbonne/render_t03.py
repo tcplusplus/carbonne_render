@@ -44,7 +44,9 @@ def main() -> None:
     beelden = []
     for titel, z, o in COMBINATIES:
         img = render_combinatie(z, o, a.res, a.spp)
-        print(f"{titel}: gemiddelde {img.mean():.4f}")
+        h, w = img.shape[:2]
+        mid = img[int(h * 0.42) : int(h * 0.75), int(w * 0.35) : int(w * 0.65), :3].mean(axis=(0, 1))
+        print(f"{titel}: beeldgemiddelde {img.mean():.4f}; midden-van-schijf R,G,B = {mid.round(3).tolist()}")
         beelden.append(img[..., :3])
     rijen = [np.concatenate(beelden[i : i + 3], axis=1) for i in (0, 3)]
     raster = np.concatenate(rijen, axis=0)

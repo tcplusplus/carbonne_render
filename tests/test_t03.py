@@ -5,7 +5,7 @@ import pytest
 from pydantic import ValidationError
 
 from carbonne.core.config import Bare, MatteClearCoat, Paint, PlateBelow, TableConfig
-from carbonne.core.scene import VLAKKEN, afwerking_bsdf, build_scene
+from carbonne.core.scene import VLAKKEN, afwerking_bsdf, build_scene, effectieve_gap_mm
 from carbonne.core.variant import select_variant
 
 ROOD = (0.8, 0.05, 0.05)
@@ -48,7 +48,8 @@ def test_scenedict_per_afwerking():
 
     scene = mi.load_dict(sc)
     ys = {s.id(): s.bbox().max.y for s in scene.shapes()}
-    assert ys["plaat_boven"] == pytest.approx(-0.0001, abs=1e-7)
+    assert ys["plaat_boven"] == pytest.approx(-effectieve_gap_mm(_cfg(), 0.1) / 1000, abs=1e-7)
+    assert effectieve_gap_mm(_cfg(), 5.0) == 5.0  # grote spleten blijven zoals ingesteld
 
 
 def _sample(bsdf_dict: dict, wi_z_teken: int, hoek_deg: float, n: int = 4000):
@@ -139,3 +140,17 @@ def test_ab_witte_plaat_tegenover_witte_verf_en_onbehandeld():
     b = _lum(_cfg(onderkant=Paint(color=wit)))
     p = _lum(_cfg(onderkant=PlateBelow(color=wit)))
     assert abs(a - b) > 0.002 and abs(b - p) > 0.0005
+
+
+def test_plaat_gelijkmatig_zichtbaar_geen_ray_epsilon_artefact():
+    """Van boven gezien is de plaat overal even helder (geen donker gebied bij kleine spleet)."""
+    select_variant()
+    import mitsuba as mi
+
+    c = _cfg(onderkant=PlateBelow(color=(0.2, 0.9, 0.2), gap_mm=0.1))
+    c.scene.camera.positie = (0.0, 0.7, 0.02)
+    c.render.breedte = c.render.hoogte = 96
+    img = np.array(mi.render(mi.load_dict(build_scene(c)), spp=64))
+    midden = img[44:52, 44:52, 1].mean()
+    rand = img[44:52, 73:79, 1].mean()  # ~0,14-0,16 m van het midden (buiten het L-oneindig-vlak van 0,11 m)
+    assert rand > 0.8 * midden
