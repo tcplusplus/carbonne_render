@@ -39,3 +39,7 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 ## Inhoud (T06)
 - Mitsuba 3.9 heeft geen `difftrans`; doorschijnend dun materiaal = `principledthin` met `diff_trans` (tweezijdig; `eta` 1 schakelt de glans uit). `principledthin` kent geen `specular`-parameter.
 - Inhoudsmeshes: `core/inhoud.py`, render `uv run python scripts/render_t06.py` (560 px, 640 spp, 2 beelden: 79 s CPU).
+## Validatie (T04)
+- `tests/test_physics.py`: minischenes met `volpath` en een homogeen medium (`sigma_t` uniform x `scale`; een rgb-waarde > 1 wordt geweigerd). Een enkel grensvlak met zwart erachter geeft direct de Fresnelreflectie; een `cube` met `interior`-medium geeft Beer-Lambert.
+- Vloer op dezelfde hoogte als de onderkant van het blok (Bare of lak): door ray-epsilon lopen stralen door de vloer en zie je de omgeving erdoorheen. Zet de vloer lager (`vloer_omlaag` in `scripts/ab_experiment.py`), of gebruik een plaat.
+- `uv run python scripts/ab_experiment.py --res 256 --spp 1024 --schaal 0.7` (11 varianten x 2 zaden, ~3 min op 12 threads).
