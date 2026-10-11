@@ -100,6 +100,75 @@ OnderkantFinish = Annotated[Bare | Paint | MatteClearCoat | PlateBelow, Field(di
 EdgeFinish = Bare | Paint | MatteClearCoat | PlateBelow
 
 
+class _Item(_Model):
+    count: int = Field(1, ge=1, le=500, description="aantal exemplaren van dit item in de laag")
+
+
+class WoodSlice(_Item):
+    """Onregelmatig houtschijfje: plat, diffuus, met een houtkleur. Elk exemplaar krijgt een eigen straal,
+    omtrek en een lichte helderheidsvariatie (via de seed van de laag)."""
+
+    type: Literal["wood"] = "wood"
+    color: RGB = (0.45, 0.28, 0.13)
+    radius_mm: tuple[float, float] = Field((8.0, 14.0), description="straal van het schijfje, (min, max)")
+    thickness_mm: float = Field(3.0, gt=0.0, le=20.0)
+    irregularity: float = Field(0.12, ge=0.0, le=0.4, description="relatieve afwijking van de ronde omtrek")
+
+    @field_validator("color")
+    @classmethod
+    def _kleur(cls, v: RGB) -> RGB:
+        if any(not 0.0 <= x <= 1.0 for x in v):
+            raise ValueError("kleur moet binnen 0..1 liggen")
+        return v
+
+    @field_validator("radius_mm")
+    @classmethod
+    def _bereik(cls, v: tuple[float, float]) -> tuple[float, float]:
+        if not 0 < v[0] <= v[1]:
+            raise ValueError("radius_mm moet (min, max) zijn met 0 < min <= max")
+        return v
+
+
+class Flower(_Item):
+    """Eenvoudige bloem: een rozet van gebogen, dunne blaadjes, licht doorschijnend (Disney thin: diffuse
+    reflectie plus diffuse transmissie). `petals=1` geeft een los bloemblaadje."""
+
+    type: Literal["flower"] = "flower"
+    color: RGB = (0.9, 0.3, 0.45)
+    petals: int = Field(6, ge=1, le=24)
+    radius_mm: tuple[float, float] = Field((8.0, 12.0), description="lengte van de blaadjes, (min, max)")
+    cup_mm: float = Field(2.5, ge=0.0, le=20.0, description="hoeveel de blaadjes aan de top omhoog buigen")
+    tilt_deg: float = Field(15.0, ge=0.0, le=90.0, description="maximale willekeurige kanteling")
+    translucency: float = Field(0.4, ge=0.0, le=1.0, description="fractie van het licht dat doorgelaten wordt")
+
+    @field_validator("color")
+    @classmethod
+    def _kleur(cls, v: RGB) -> RGB:
+        if any(not 0.0 <= x <= 1.0 for x in v):
+            raise ValueError("kleur moet binnen 0..1 liggen")
+        return v
+
+    @field_validator("radius_mm")
+    @classmethod
+    def _bereik(cls, v: tuple[float, float]) -> tuple[float, float]:
+        if not 0 < v[0] <= v[1]:
+            raise ValueError("radius_mm moet (min, max) zijn met 0 < min <= max")
+        return v
+
+
+Item = Annotated[WoodSlice | Flower, Field(discriminator="type")]
+
+
+class Layer(_Model):
+    """Een gietlaag: inhoud die op `height_m` boven de onderkant van het blok zweeft (hoogte van het
+    middenvlak van de items). Plaatsing is willekeurig maar reproduceerbaar via `seed`."""
+
+    height_m: float = Field(gt=0.0, le=0.06)
+    items: list[Item] = Field(default_factory=list)
+    seed: int = 0
+    edge_margin_mm: float = Field(3.0, ge=0.0, le=50.0, description="minimale afstand tot de rand van het blok")
+
+
 class CameraConfig(_Model):
     positie: tuple[float, float, float] = (0.0, 0.55, 0.62)
     doel: tuple[float, float, float] = (0.0, 0.02, 0.0)
@@ -133,5 +202,6 @@ class TableConfig(_Model):
     epoxy: EpoxyMaterial = Field(default_factory=EpoxyMaterial)
     zijkant: ZijkantFinish = Field(default_factory=Bare)
     onderkant: OnderkantFinish = Field(default_factory=Bare)
+    layers: list[Layer] = Field(default_factory=list, description="gietlagen met inhoud (T06)")
     scene: SceneConfig = Field(default_factory=SceneConfig)
     render: RenderSettings = Field(default_factory=RenderSettings)

@@ -178,6 +178,10 @@ def build_scene(config: TableConfig) -> dict:
             if plaat.kind != "matte":
                 raise NotImplementedError(f"verfsoort {plaat.kind!r} komt in T05")
             scene[f"plaat_{naam}"] = _mesh(f"plaat_{naam}", g, _diffuus(plaat.color))
+    if config.layers:
+        from carbonne.core.inhoud import inhoud_meshes
+
+        scene.update(inhoud_meshes(config))
     if sc.omgeving is not None or sc.camera_preset is not None or sc.spot:
         from carbonne.core.environments import pas_omgeving_toe
 
