@@ -92,3 +92,11 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - `uv run python scripts/maak_t16_evidence.py` (ca. 4,5 min): echte renders met herkomst (640x360 Normaal: 55-88 s), A/B-klik en reeks; schrijft `docs/evidence/img/T16-*.png`.
 - Een reeks met 5 afwerkingen op 256 px / 256 spp duurt ca. 1 min. Reeksbeelden die binnen de ruis vallen worden grijs (CSS `grayscale`), dat is geen render-fout.
 - `uv run pytest tests/test_t16.py -q` (ca. 20 s, headless Chrome met nep-herkomstrenderer uit test_t15).
+## Verstrooiing en ruw bovenvlak (T17)
+- `EpoxyMaterial.scattering_coeff` (1/m, standaard 0), `scattering_g` (Henyey-Greenstein, 0 = isotroop) en de bestaande `absorptie_*` vormen samen een homogeen medium (`scene.epoxy_medium`, spectrale sigma_t en albedo) op boven/mantel/onder. `TableConfig.top_roughness` (GGX-alpha, 0 = glad) maakt het bovenvlak een `roughdielectric`. Zonder absorptie, verstrooiing en ruwheid is de scene (en het beeld) identiek aan die van voor T17.
+- Met een medium gebruikt `build_scene` de `volpath`-integrator en zet de pijplijn `integrator="path"` om naar `volpath` (`path` negeert media). In Mitsuba 3.9 is `volpath` de `VolumetricSimplePathIntegrator`.
+- **De herkomst-integrator (T13) ondersteunt geen medium**: hij volgt alleen oppervlakken. De pijplijn weigert `integrator="herkomst"` met een ValueError zodra de epoxy absorbeert of verstrooit.
+- **max_depth**: elke verstrooiingsgebeurtenis telt als diepte. Bij 100 /m geeft diepte 64 een te donker beeld (midden 0,71 tegen 0,87 bij diepte 200); de pijplijnstandaard 32 is dan te laag. Gebruik >= 128 bij verstrooiing >= 20 /m (metingen deden 200).
+- Mitsuba-spectrum met alleen nullen wordt geweigerd ("no probability mass"); `epoxy_medium` gebruikt dan `uniform`.
+- Een `mi.Mesh` krijgt een medium via `mi.Properties()["interior"] = medium_object` in de constructor; er is geen `set_medium`.
+- Rendertijd volpath met medium: 2-3x die van `path` (128x96, 1024 spp: 2,5 s zonder, 5-8 s met verstrooiing). `uv run python scripts/t17_meting.py` (48 configuraties x 2 zaden, ca. 12 min op 12 threads, gedeeld met andere agents).

@@ -1,0 +1,1626 @@
+[
+ {
+  "camera": "boven",
+  "onderkant": "contact",
+  "variant": "s0",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 2.7,
+  "mantel": {
+   "lum": 0.1865,
+   "rood": 0.5108,
+   "ruis": 0.00136
+  },
+  "rand_voor": {
+   "lum": 0.24649,
+   "rood": 0.4952,
+   "ruis": 0.00189
+  },
+  "midden": {
+   "lum": 0.58487,
+   "rood": 0.3838,
+   "ruis": 0.00217
+  },
+  "rand_achter": {
+   "lum": 0.26969,
+   "rood": 0.5239,
+   "ruis": 0.00024
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "contact",
+  "variant": "s5",
+  "s": 5.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 5.98,
+  "mantel": {
+   "lum": 0.18091,
+   "rood": 0.5228,
+   "ruis": 0.00023
+  },
+  "rand_voor": {
+   "lum": 0.23682,
+   "rood": 0.509,
+   "ruis": 0.00031
+  },
+  "midden": {
+   "lum": 0.5919,
+   "rood": 0.3831,
+   "ruis": 0.00045
+  },
+  "rand_achter": {
+   "lum": 0.26443,
+   "rood": 0.5339,
+   "ruis": 0.00161
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "contact",
+  "variant": "s20",
+  "s": 20.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 7.05,
+  "mantel": {
+   "lum": 0.17944,
+   "rood": 0.5272,
+   "ruis": 0.00134
+  },
+  "rand_voor": {
+   "lum": 0.23373,
+   "rood": 0.5141,
+   "ruis": 0.00091
+  },
+  "midden": {
+   "lum": 0.66185,
+   "rood": 0.3626,
+   "ruis": 0.00092
+  },
+  "rand_achter": {
+   "lum": 0.26802,
+   "rood": 0.5273,
+   "ruis": 0.00056
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "contact",
+  "variant": "s100",
+  "s": 100.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 8.81,
+  "mantel": {
+   "lum": 0.22514,
+   "rood": 0.4653,
+   "ruis": 0.0067
+  },
+  "rand_voor": {
+   "lum": 0.29696,
+   "rood": 0.4527,
+   "ruis": 0.01106
+  },
+  "midden": {
+   "lum": 0.80418,
+   "rood": 0.3351,
+   "ruis": 0.00562
+  },
+  "rand_achter": {
+   "lum": 0.34362,
+   "rood": 0.447,
+   "ruis": 0.00093
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "contact",
+  "variant": "s20_g0.7",
+  "s": 20.0,
+  "g": 0.7,
+  "ruw": 0.0,
+  "tijd_s": 7.24,
+  "mantel": {
+   "lum": 0.17495,
+   "rood": 0.5378,
+   "ruis": 0.00067
+  },
+  "rand_voor": {
+   "lum": 0.22945,
+   "rood": 0.5226,
+   "ruis": 0.00092
+  },
+  "midden": {
+   "lum": 0.58694,
+   "rood": 0.3844,
+   "ruis": 0.00192
+  },
+  "rand_achter": {
+   "lum": 0.25884,
+   "rood": 0.5442,
+   "ruis": 0.00061
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "contact",
+  "variant": "r0.02",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.02,
+  "tijd_s": 3.05,
+  "mantel": {
+   "lum": 0.18659,
+   "rood": 0.5098,
+   "ruis": 0.00124
+  },
+  "rand_voor": {
+   "lum": 0.24662,
+   "rood": 0.4942,
+   "ruis": 0.00169
+  },
+  "midden": {
+   "lum": 0.58406,
+   "rood": 0.3838,
+   "ruis": 0.0019
+  },
+  "rand_achter": {
+   "lum": 0.26902,
+   "rood": 0.5238,
+   "ruis": 0.00058
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "contact",
+  "variant": "r0.05",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.05,
+  "tijd_s": 2.9,
+  "mantel": {
+   "lum": 0.18471,
+   "rood": 0.5091,
+   "ruis": 0.00121
+  },
+  "rand_voor": {
+   "lum": 0.24404,
+   "rood": 0.4935,
+   "ruis": 0.00159
+  },
+  "midden": {
+   "lum": 0.57953,
+   "rood": 0.3828,
+   "ruis": 0.00193
+  },
+  "rand_achter": {
+   "lum": 0.26654,
+   "rood": 0.5223,
+   "ruis": 0.00063
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "contact",
+  "variant": "s20_r0.05",
+  "s": 20.0,
+  "g": 0.0,
+  "ruw": 0.05,
+  "tijd_s": 7.62,
+  "mantel": {
+   "lum": 0.17669,
+   "rood": 0.5263,
+   "ruis": 0.0018
+  },
+  "rand_voor": {
+   "lum": 0.2301,
+   "rood": 0.5133,
+   "ruis": 0.00136
+  },
+  "midden": {
+   "lum": 0.65291,
+   "rood": 0.3609,
+   "ruis": 0.00038
+  },
+  "rand_achter": {
+   "lum": 0.26686,
+   "rood": 0.5238,
+   "ruis": 0.00217
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "plaat",
+  "variant": "s0",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 2.74,
+  "mantel": {
+   "lum": 0.34202,
+   "rood": 0.4009,
+   "ruis": 0.0011
+  },
+  "rand_voor": {
+   "lum": 0.43905,
+   "rood": 0.3908,
+   "ruis": 0.00117
+  },
+  "midden": {
+   "lum": 0.89144,
+   "rood": 0.3334,
+   "ruis": 0.00161
+  },
+  "rand_achter": {
+   "lum": 0.37267,
+   "rood": 0.4131,
+   "ruis": 0.00189
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "plaat",
+  "variant": "s5",
+  "s": 5.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 5.7,
+  "mantel": {
+   "lum": 0.311,
+   "rood": 0.4492,
+   "ruis": 0.00111
+  },
+  "rand_voor": {
+   "lum": 0.38931,
+   "rood": 0.4397,
+   "ruis": 0.00085
+  },
+  "midden": {
+   "lum": 0.72005,
+   "rood": 0.3639,
+   "ruis": 0.00096
+  },
+  "rand_achter": {
+   "lum": 0.32912,
+   "rood": 0.481,
+   "ruis": 0.00109
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "plaat",
+  "variant": "s20",
+  "s": 20.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 7.21,
+  "mantel": {
+   "lum": 0.28497,
+   "rood": 0.4842,
+   "ruis": 0.0001
+  },
+  "rand_voor": {
+   "lum": 0.34754,
+   "rood": 0.4801,
+   "ruis": 0.00103
+  },
+  "midden": {
+   "lum": 0.69616,
+   "rood": 0.3738,
+   "ruis": 0.00171
+  },
+  "rand_achter": {
+   "lum": 0.30031,
+   "rood": 0.526,
+   "ruis": 0.00209
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "plaat",
+  "variant": "s100",
+  "s": 100.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 8.24,
+  "mantel": {
+   "lum": 0.3012,
+   "rood": 0.4483,
+   "ruis": 0.00345
+  },
+  "rand_voor": {
+   "lum": 0.36911,
+   "rood": 0.4428,
+   "ruis": 0.00361
+  },
+  "midden": {
+   "lum": 0.86978,
+   "rood": 0.3328,
+   "ruis": 0.01708
+  },
+  "rand_achter": {
+   "lum": 0.35714,
+   "rood": 0.457,
+   "ruis": 0.00766
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "plaat",
+  "variant": "s20_g0.7",
+  "s": 20.0,
+  "g": 0.7,
+  "ruw": 0.0,
+  "tijd_s": 7.4,
+  "mantel": {
+   "lum": 0.291,
+   "rood": 0.4783,
+   "ruis": 0.00025
+  },
+  "rand_voor": {
+   "lum": 0.35821,
+   "rood": 0.4717,
+   "ruis": 0.00041
+  },
+  "midden": {
+   "lum": 0.65128,
+   "rood": 0.3851,
+   "ruis": 0.00161
+  },
+  "rand_achter": {
+   "lum": 0.30809,
+   "rood": 0.521,
+   "ruis": 0.00063
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "plaat",
+  "variant": "r0.02",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.02,
+  "tijd_s": 2.99,
+  "mantel": {
+   "lum": 0.34049,
+   "rood": 0.4058,
+   "ruis": 0.00117
+  },
+  "rand_voor": {
+   "lum": 0.43647,
+   "rood": 0.3951,
+   "ruis": 0.00136
+  },
+  "midden": {
+   "lum": 0.87632,
+   "rood": 0.3348,
+   "ruis": 0.00144
+  },
+  "rand_achter": {
+   "lum": 0.37118,
+   "rood": 0.42,
+   "ruis": 0.00059
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "plaat",
+  "variant": "r0.05",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.05,
+  "tijd_s": 2.88,
+  "mantel": {
+   "lum": 0.3369,
+   "rood": 0.4098,
+   "ruis": 0.00178
+  },
+  "rand_voor": {
+   "lum": 0.43098,
+   "rood": 0.3991,
+   "ruis": 0.00202
+  },
+  "midden": {
+   "lum": 0.85198,
+   "rood": 0.3373,
+   "ruis": 0.0016
+  },
+  "rand_achter": {
+   "lum": 0.36632,
+   "rood": 0.4268,
+   "ruis": 0.00044
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "plaat",
+  "variant": "s20_r0.05",
+  "s": 20.0,
+  "g": 0.0,
+  "ruw": 0.05,
+  "tijd_s": 7.96,
+  "mantel": {
+   "lum": 0.28356,
+   "rood": 0.4853,
+   "ruis": 0.00145
+  },
+  "rand_voor": {
+   "lum": 0.34521,
+   "rood": 0.4809,
+   "ruis": 0.00171
+  },
+  "midden": {
+   "lum": 0.68782,
+   "rood": 0.3728,
+   "ruis": 0.00322
+  },
+  "rand_achter": {
+   "lum": 0.29752,
+   "rood": 0.5233,
+   "ruis": 0.00383
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "bare",
+  "variant": "s0",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 2.0,
+  "mantel": {
+   "lum": 0.0568,
+   "rood": 0.4386,
+   "ruis": 0.0004
+  },
+  "rand_voor": {
+   "lum": 0.06823,
+   "rood": 0.421,
+   "ruis": 0.00031
+  },
+  "midden": {
+   "lum": 0.10699,
+   "rood": 0.3338,
+   "ruis": 0.00123
+  },
+  "rand_achter": {
+   "lum": 0.07184,
+   "rood": 0.4833,
+   "ruis": 0.00088
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "bare",
+  "variant": "s5",
+  "s": 5.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 4.33,
+  "mantel": {
+   "lum": 0.0686,
+   "rood": 0.4909,
+   "ruis": 0.00061
+  },
+  "rand_voor": {
+   "lum": 0.08251,
+   "rood": 0.4769,
+   "ruis": 0.00057
+  },
+  "midden": {
+   "lum": 0.13225,
+   "rood": 0.3844,
+   "ruis": 0.00198
+  },
+  "rand_achter": {
+   "lum": 0.09297,
+   "rood": 0.5326,
+   "ruis": 0.00072
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "bare",
+  "variant": "s20",
+  "s": 20.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 5.39,
+  "mantel": {
+   "lum": 0.10466,
+   "rood": 0.4927,
+   "ruis": 0.00026
+  },
+  "rand_voor": {
+   "lum": 0.13001,
+   "rood": 0.4831,
+   "ruis": 0.0004
+  },
+  "midden": {
+   "lum": 0.28127,
+   "rood": 0.3655,
+   "ruis": 0.00058
+  },
+  "rand_achter": {
+   "lum": 0.15172,
+   "rood": 0.5042,
+   "ruis": 0.00215
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "bare",
+  "variant": "s100",
+  "s": 100.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 8.14,
+  "mantel": {
+   "lum": 0.18939,
+   "rood": 0.4461,
+   "ruis": 0.00111
+  },
+  "rand_voor": {
+   "lum": 0.24649,
+   "rood": 0.4358,
+   "ruis": 0.00111
+  },
+  "midden": {
+   "lum": 0.62534,
+   "rood": 0.3353,
+   "ruis": 0.00189
+  },
+  "rand_achter": {
+   "lum": 0.3033,
+   "rood": 0.4316,
+   "ruis": 0.00365
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "bare",
+  "variant": "s20_g0.7",
+  "s": 20.0,
+  "g": 0.7,
+  "ruw": 0.0,
+  "tijd_s": 5.5,
+  "mantel": {
+   "lum": 0.07355,
+   "rood": 0.5269,
+   "ruis": 0.00019
+  },
+  "rand_voor": {
+   "lum": 0.08824,
+   "rood": 0.5164,
+   "ruis": 0.0006
+  },
+  "midden": {
+   "lum": 0.15478,
+   "rood": 0.3964,
+   "ruis": 0.00037
+  },
+  "rand_achter": {
+   "lum": 0.10158,
+   "rood": 0.5602,
+   "ruis": 0.00102
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "bare",
+  "variant": "r0.02",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.02,
+  "tijd_s": 2.1,
+  "mantel": {
+   "lum": 0.05714,
+   "rood": 0.4408,
+   "ruis": 0.0006
+  },
+  "rand_voor": {
+   "lum": 0.0686,
+   "rood": 0.4228,
+   "ruis": 0.00046
+  },
+  "midden": {
+   "lum": 0.10684,
+   "rood": 0.3337,
+   "ruis": 0.00096
+  },
+  "rand_achter": {
+   "lum": 0.07273,
+   "rood": 0.4906,
+   "ruis": 0.00059
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "bare",
+  "variant": "r0.05",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.05,
+  "tijd_s": 1.93,
+  "mantel": {
+   "lum": 0.05737,
+   "rood": 0.4472,
+   "ruis": 0.00076
+  },
+  "rand_voor": {
+   "lum": 0.06871,
+   "rood": 0.4287,
+   "ruis": 0.00054
+  },
+  "midden": {
+   "lum": 0.10624,
+   "rood": 0.3343,
+   "ruis": 0.00073
+  },
+  "rand_achter": {
+   "lum": 0.07358,
+   "rood": 0.4984,
+   "ruis": 0.00024
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "bare",
+  "variant": "s20_r0.05",
+  "s": 20.0,
+  "g": 0.0,
+  "ruw": 0.05,
+  "tijd_s": 5.84,
+  "mantel": {
+   "lum": 0.10452,
+   "rood": 0.4938,
+   "ruis": 0.00101
+  },
+  "rand_voor": {
+   "lum": 0.12947,
+   "rood": 0.4833,
+   "ruis": 0.00085
+  },
+  "midden": {
+   "lum": 0.27588,
+   "rood": 0.3623,
+   "ruis": 0.00251
+  },
+  "rand_achter": {
+   "lum": 0.15432,
+   "rood": 0.5022,
+   "ruis": 0.00085
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "contact",
+  "variant": "s0",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 1.93,
+  "mantel": {
+   "lum": 0.09859,
+   "rood": 0.9049,
+   "ruis": 0.00021
+  },
+  "rand_voor": {
+   "lum": 0.3528,
+   "rood": 0.4859,
+   "ruis": 0.00059
+  },
+  "midden": {
+   "lum": 0.60116,
+   "rood": 0.3813,
+   "ruis": 0.00131
+  },
+  "rand_achter": {
+   "lum": 0.2011,
+   "rood": 0.5515,
+   "ruis": 0.00052
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "contact",
+  "variant": "s5",
+  "s": 5.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 3.98,
+  "mantel": {
+   "lum": 0.09871,
+   "rood": 0.9052,
+   "ruis": 0.00014
+  },
+  "rand_voor": {
+   "lum": 0.33621,
+   "rood": 0.4989,
+   "ruis": 0.00097
+  },
+  "midden": {
+   "lum": 0.6036,
+   "rood": 0.3815,
+   "ruis": 0.00248
+  },
+  "rand_achter": {
+   "lum": 0.21008,
+   "rood": 0.5433,
+   "ruis": 0.00132
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "contact",
+  "variant": "s20",
+  "s": 20.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 5.02,
+  "mantel": {
+   "lum": 0.09871,
+   "rood": 0.9051,
+   "ruis": 0.00016
+  },
+  "rand_voor": {
+   "lum": 0.31673,
+   "rood": 0.5156,
+   "ruis": 0.00106
+  },
+  "midden": {
+   "lum": 0.67112,
+   "rood": 0.3624,
+   "ruis": 0.00131
+  },
+  "rand_achter": {
+   "lum": 0.23613,
+   "rood": 0.5069,
+   "ruis": 6e-05
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "contact",
+  "variant": "s100",
+  "s": 100.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 5.6,
+  "mantel": {
+   "lum": 0.09871,
+   "rood": 0.9051,
+   "ruis": 0.00012
+  },
+  "rand_voor": {
+   "lum": 0.3372,
+   "rood": 0.4959,
+   "ruis": 0.00422
+  },
+  "midden": {
+   "lum": 0.85265,
+   "rood": 0.3337,
+   "ruis": 0.0453
+  },
+  "rand_achter": {
+   "lum": 0.34685,
+   "rood": 0.4186,
+   "ruis": 0.00534
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "contact",
+  "variant": "s20_g0.7",
+  "s": 20.0,
+  "g": 0.7,
+  "ruw": 0.0,
+  "tijd_s": 4.57,
+  "mantel": {
+   "lum": 0.09872,
+   "rood": 0.9052,
+   "ruis": 0.00016
+  },
+  "rand_voor": {
+   "lum": 0.33044,
+   "rood": 0.5036,
+   "ruis": 0.00174
+  },
+  "midden": {
+   "lum": 0.5945,
+   "rood": 0.3859,
+   "ruis": 0.00242
+  },
+  "rand_achter": {
+   "lum": 0.20704,
+   "rood": 0.5503,
+   "ruis": 0.00037
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "contact",
+  "variant": "r0.02",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.02,
+  "tijd_s": 2.01,
+  "mantel": {
+   "lum": 0.09859,
+   "rood": 0.9049,
+   "ruis": 0.00021
+  },
+  "rand_voor": {
+   "lum": 0.35262,
+   "rood": 0.4857,
+   "ruis": 0.00067
+  },
+  "midden": {
+   "lum": 0.60048,
+   "rood": 0.3812,
+   "ruis": 0.00102
+  },
+  "rand_achter": {
+   "lum": 0.20057,
+   "rood": 0.5514,
+   "ruis": 0.00047
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "contact",
+  "variant": "r0.05",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.05,
+  "tijd_s": 2.02,
+  "mantel": {
+   "lum": 0.09858,
+   "rood": 0.9049,
+   "ruis": 0.00021
+  },
+  "rand_voor": {
+   "lum": 0.35088,
+   "rood": 0.4852,
+   "ruis": 0.00055
+  },
+  "midden": {
+   "lum": 0.59549,
+   "rood": 0.3801,
+   "ruis": 0.00067
+  },
+  "rand_achter": {
+   "lum": 0.1971,
+   "rood": 0.552,
+   "ruis": 0.00057
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "contact",
+  "variant": "s20_r0.05",
+  "s": 20.0,
+  "g": 0.0,
+  "ruw": 0.05,
+  "tijd_s": 4.92,
+  "mantel": {
+   "lum": 0.09871,
+   "rood": 0.9051,
+   "ruis": 0.00015
+  },
+  "rand_voor": {
+   "lum": 0.31448,
+   "rood": 0.5149,
+   "ruis": 0.00044
+  },
+  "midden": {
+   "lum": 0.66311,
+   "rood": 0.3615,
+   "ruis": 0.001
+  },
+  "rand_achter": {
+   "lum": 0.23517,
+   "rood": 0.5032,
+   "ruis": 0.00075
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "plaat",
+  "variant": "s0",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 1.97,
+  "mantel": {
+   "lum": 0.12286,
+   "rood": 0.8754,
+   "ruis": 0.00039
+  },
+  "rand_voor": {
+   "lum": 0.55755,
+   "rood": 0.3967,
+   "ruis": 0.00095
+  },
+  "midden": {
+   "lum": 0.90003,
+   "rood": 0.3338,
+   "ruis": 0.00055
+  },
+  "rand_achter": {
+   "lum": 0.22283,
+   "rood": 0.4652,
+   "ruis": 0.00066
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "plaat",
+  "variant": "s5",
+  "s": 5.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 4.24,
+  "mantel": {
+   "lum": 0.12273,
+   "rood": 0.8774,
+   "ruis": 0.00019
+  },
+  "rand_voor": {
+   "lum": 0.4479,
+   "rood": 0.4413,
+   "ruis": 0.00113
+  },
+  "midden": {
+   "lum": 0.72145,
+   "rood": 0.3647,
+   "ruis": 0.00227
+  },
+  "rand_achter": {
+   "lum": 0.22703,
+   "rood": 0.5251,
+   "ruis": 0.00062
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "plaat",
+  "variant": "s20",
+  "s": 20.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 5.08,
+  "mantel": {
+   "lum": 0.12209,
+   "rood": 0.8798,
+   "ruis": 0.00023
+  },
+  "rand_voor": {
+   "lum": 0.35196,
+   "rood": 0.5058,
+   "ruis": 0.00163
+  },
+  "midden": {
+   "lum": 0.7003,
+   "rood": 0.3741,
+   "ruis": 0.00054
+  },
+  "rand_achter": {
+   "lum": 0.25073,
+   "rood": 0.5181,
+   "ruis": 0.00073
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "plaat",
+  "variant": "s100",
+  "s": 100.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 5.19,
+  "mantel": {
+   "lum": 0.12098,
+   "rood": 0.8831,
+   "ruis": 0.00031
+  },
+  "rand_voor": {
+   "lum": 0.33733,
+   "rood": 0.5028,
+   "ruis": 0.00168
+  },
+  "midden": {
+   "lum": 0.86653,
+   "rood": 0.3379,
+   "ruis": 0.02265
+  },
+  "rand_achter": {
+   "lum": 0.36082,
+   "rood": 0.4174,
+   "ruis": 0.00318
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "plaat",
+  "variant": "s20_g0.7",
+  "s": 20.0,
+  "g": 0.7,
+  "ruw": 0.0,
+  "tijd_s": 5.09,
+  "mantel": {
+   "lum": 0.12242,
+   "rood": 0.8786,
+   "ruis": 0.00015
+  },
+  "rand_voor": {
+   "lum": 0.39466,
+   "rood": 0.4777,
+   "ruis": 0.00107
+  },
+  "midden": {
+   "lum": 0.63139,
+   "rood": 0.3943,
+   "ruis": 0.00063
+  },
+  "rand_achter": {
+   "lum": 0.2212,
+   "rood": 0.5537,
+   "ruis": 0.00151
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "plaat",
+  "variant": "r0.02",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.02,
+  "tijd_s": 2.21,
+  "mantel": {
+   "lum": 0.12282,
+   "rood": 0.8756,
+   "ruis": 0.00037
+  },
+  "rand_voor": {
+   "lum": 0.55065,
+   "rood": 0.3985,
+   "ruis": 0.00092
+  },
+  "midden": {
+   "lum": 0.88425,
+   "rood": 0.3354,
+   "ruis": 0.00092
+  },
+  "rand_achter": {
+   "lum": 0.22313,
+   "rood": 0.4766,
+   "ruis": 0.00102
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "plaat",
+  "variant": "r0.05",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.05,
+  "tijd_s": 2.27,
+  "mantel": {
+   "lum": 0.12273,
+   "rood": 0.8758,
+   "ruis": 0.00039
+  },
+  "rand_voor": {
+   "lum": 0.53671,
+   "rood": 0.4017,
+   "ruis": 0.0003
+  },
+  "midden": {
+   "lum": 0.85073,
+   "rood": 0.3387,
+   "ruis": 0.00045
+  },
+  "rand_achter": {
+   "lum": 0.21794,
+   "rood": 0.4869,
+   "ruis": 0.00088
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "plaat",
+  "variant": "s20_r0.05",
+  "s": 20.0,
+  "g": 0.0,
+  "ruw": 0.05,
+  "tijd_s": 9.27,
+  "mantel": {
+   "lum": 0.12212,
+   "rood": 0.8797,
+   "ruis": 0.00017
+  },
+  "rand_voor": {
+   "lum": 0.35054,
+   "rood": 0.5055,
+   "ruis": 0.00099
+  },
+  "midden": {
+   "lum": 0.69369,
+   "rood": 0.3727,
+   "ruis": 0.00204
+  },
+  "rand_achter": {
+   "lum": 0.24765,
+   "rood": 0.5168,
+   "ruis": 0.00109
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "bare",
+  "variant": "s0",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 2.6,
+  "mantel": {
+   "lum": 0.09884,
+   "rood": 0.904,
+   "ruis": 0.00019
+  },
+  "rand_voor": {
+   "lum": 0.12018,
+   "rood": 0.5789,
+   "ruis": 0.00047
+  },
+  "midden": {
+   "lum": 0.16544,
+   "rood": 0.3342,
+   "ruis": 0.00032
+  },
+  "rand_achter": {
+   "lum": 0.09552,
+   "rood": 0.4895,
+   "ruis": 0.0004
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "bare",
+  "variant": "s5",
+  "s": 5.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 5.54,
+  "mantel": {
+   "lum": 0.09894,
+   "rood": 0.9043,
+   "ruis": 0.00016
+  },
+  "rand_voor": {
+   "lum": 0.12866,
+   "rood": 0.5943,
+   "ruis": 0.00042
+  },
+  "midden": {
+   "lum": 0.18291,
+   "rood": 0.3742,
+   "ruis": 0.00109
+  },
+  "rand_achter": {
+   "lum": 0.11906,
+   "rood": 0.5178,
+   "ruis": 0.00097
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "bare",
+  "variant": "s20",
+  "s": 20.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 6.35,
+  "mantel": {
+   "lum": 0.09887,
+   "rood": 0.9046,
+   "ruis": 0.00015
+  },
+  "rand_voor": {
+   "lum": 0.17858,
+   "rood": 0.5636,
+   "ruis": 0.00112
+  },
+  "midden": {
+   "lum": 0.33115,
+   "rood": 0.3632,
+   "ruis": 0.00014
+  },
+  "rand_achter": {
+   "lum": 0.17114,
+   "rood": 0.4768,
+   "ruis": 0.00102
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "bare",
+  "variant": "s100",
+  "s": 100.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 8.27,
+  "mantel": {
+   "lum": 0.09875,
+   "rood": 0.905,
+   "ruis": 0.00013
+  },
+  "rand_voor": {
+   "lum": 0.29317,
+   "rood": 0.4952,
+   "ruis": 0.00108
+  },
+  "midden": {
+   "lum": 0.64494,
+   "rood": 0.3349,
+   "ruis": 0.00544
+  },
+  "rand_achter": {
+   "lum": 0.30673,
+   "rood": 0.3959,
+   "ruis": 0.00305
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "bare",
+  "variant": "s20_g0.7",
+  "s": 20.0,
+  "g": 0.7,
+  "ruw": 0.0,
+  "tijd_s": 6.36,
+  "mantel": {
+   "lum": 0.09892,
+   "rood": 0.9045,
+   "ruis": 0.00016
+  },
+  "rand_voor": {
+   "lum": 0.15012,
+   "rood": 0.5809,
+   "ruis": 0.00058
+  },
+  "midden": {
+   "lum": 0.21807,
+   "rood": 0.3979,
+   "ruis": 0.00031
+  },
+  "rand_achter": {
+   "lum": 0.12468,
+   "rood": 0.5338,
+   "ruis": 0.00213
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "bare",
+  "variant": "r0.02",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.02,
+  "tijd_s": 2.72,
+  "mantel": {
+   "lum": 0.09883,
+   "rood": 0.904,
+   "ruis": 0.0002
+  },
+  "rand_voor": {
+   "lum": 0.12022,
+   "rood": 0.579,
+   "ruis": 0.00054
+  },
+  "midden": {
+   "lum": 0.16632,
+   "rood": 0.335,
+   "ruis": 0.00072
+  },
+  "rand_achter": {
+   "lum": 0.09657,
+   "rood": 0.495,
+   "ruis": 0.00036
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "bare",
+  "variant": "r0.05",
+  "s": 0.0,
+  "g": 0.0,
+  "ruw": 0.05,
+  "tijd_s": 2.48,
+  "mantel": {
+   "lum": 0.09884,
+   "rood": 0.904,
+   "ruis": 0.00022
+  },
+  "rand_voor": {
+   "lum": 0.12065,
+   "rood": 0.5788,
+   "ruis": 0.0003
+  },
+  "midden": {
+   "lum": 0.16816,
+   "rood": 0.3391,
+   "ruis": 0.00057
+  },
+  "rand_achter": {
+   "lum": 0.09743,
+   "rood": 0.5041,
+   "ruis": 0.00061
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "bare",
+  "variant": "s20_r0.05",
+  "s": 20.0,
+  "g": 0.0,
+  "ruw": 0.05,
+  "tijd_s": 6.67,
+  "mantel": {
+   "lum": 0.09886,
+   "rood": 0.9047,
+   "ruis": 0.00015
+  },
+  "rand_voor": {
+   "lum": 0.1801,
+   "rood": 0.562,
+   "ruis": 0.00168
+  },
+  "midden": {
+   "lum": 0.33233,
+   "rood": 0.3607,
+   "ruis": 0.00057
+  },
+  "rand_achter": {
+   "lum": 0.17148,
+   "rood": 0.4752,
+   "ruis": 0.00121
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "plaat",
+  "variant": "s1",
+  "s": 1.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 11.23,
+  "mantel": {
+   "lum": 0.33355,
+   "rood": 0.4147,
+   "ruis": 0.00044
+  },
+  "rand_voor": {
+   "lum": 0.42549,
+   "rood": 0.4042,
+   "ruis": 0.00064
+  },
+  "midden": {
+   "lum": 0.84214,
+   "rood": 0.3396,
+   "ruis": 0.00067
+  },
+  "rand_achter": {
+   "lum": 0.3604,
+   "rood": 0.4336,
+   "ruis": 0.00036
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "plaat",
+  "variant": "s2",
+  "s": 2.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 14.04,
+  "mantel": {
+   "lum": 0.3262,
+   "rood": 0.4252,
+   "ruis": 0.00068
+  },
+  "rand_voor": {
+   "lum": 0.41396,
+   "rood": 0.4148,
+   "ruis": 0.00087
+  },
+  "midden": {
+   "lum": 0.80231,
+   "rood": 0.3458,
+   "ruis": 0.0005
+  },
+  "rand_achter": {
+   "lum": 0.35103,
+   "rood": 0.4494,
+   "ruis": 0.00086
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "bare",
+  "variant": "s1",
+  "s": 1.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 10.06,
+  "mantel": {
+   "lum": 0.05878,
+   "rood": 0.4573,
+   "ruis": 0.00047
+  },
+  "rand_voor": {
+   "lum": 0.07052,
+   "rood": 0.4402,
+   "ruis": 0.00064
+  },
+  "midden": {
+   "lum": 0.11039,
+   "rood": 0.3463,
+   "ruis": 0.00044
+  },
+  "rand_achter": {
+   "lum": 0.07621,
+   "rood": 0.5053,
+   "ruis": 0.00047
+  }
+ },
+ {
+  "camera": "boven",
+  "onderkant": "bare",
+  "variant": "s2",
+  "s": 2.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 8.96,
+  "mantel": {
+   "lum": 0.06097,
+   "rood": 0.4713,
+   "ruis": 0.00019
+  },
+  "rand_voor": {
+   "lum": 0.07305,
+   "rood": 0.4553,
+   "ruis": 0.00045
+  },
+  "midden": {
+   "lum": 0.11396,
+   "rood": 0.3582,
+   "ruis": 0.00082
+  },
+  "rand_achter": {
+   "lum": 0.08064,
+   "rood": 0.5195,
+   "ruis": 0.00044
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "plaat",
+  "variant": "s1",
+  "s": 1.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 5.87,
+  "mantel": {
+   "lum": 0.12298,
+   "rood": 0.8764,
+   "ruis": 0.0002
+  },
+  "rand_voor": {
+   "lum": 0.52849,
+   "rood": 0.4056,
+   "ruis": 0.00108
+  },
+  "midden": {
+   "lum": 0.84556,
+   "rood": 0.3398,
+   "ruis": 0.00077
+  },
+  "rand_achter": {
+   "lum": 0.2244,
+   "rood": 0.4873,
+   "ruis": 0.00149
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "plaat",
+  "variant": "s2",
+  "s": 2.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 6.95,
+  "mantel": {
+   "lum": 0.12291,
+   "rood": 0.8767,
+   "ruis": 0.00021
+  },
+  "rand_voor": {
+   "lum": 0.50273,
+   "rood": 0.4147,
+   "ruis": 0.00083
+  },
+  "midden": {
+   "lum": 0.80307,
+   "rood": 0.3463,
+   "ruis": 0.00087
+  },
+  "rand_achter": {
+   "lum": 0.2242,
+   "rood": 0.5017,
+   "ruis": 0.00098
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "bare",
+  "variant": "s1",
+  "s": 1.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 5.61,
+  "mantel": {
+   "lum": 0.09896,
+   "rood": 0.9043,
+   "ruis": 0.00015
+  },
+  "rand_voor": {
+   "lum": 0.12019,
+   "rood": 0.585,
+   "ruis": 0.00058
+  },
+  "midden": {
+   "lum": 0.16522,
+   "rood": 0.3444,
+   "ruis": 0.00104
+  },
+  "rand_achter": {
+   "lum": 0.10098,
+   "rood": 0.5037,
+   "ruis": 0.00093
+  }
+ },
+ {
+  "camera": "schuin35",
+  "onderkant": "bare",
+  "variant": "s2",
+  "s": 2.0,
+  "g": 0.0,
+  "ruw": 0.0,
+  "tijd_s": 5.73,
+  "mantel": {
+   "lum": 0.09895,
+   "rood": 0.9043,
+   "ruis": 0.00015
+  },
+  "rand_voor": {
+   "lum": 0.12178,
+   "rood": 0.5895,
+   "ruis": 0.00058
+  },
+  "midden": {
+   "lum": 0.16745,
+   "rood": 0.3544,
+   "ruis": 0.00127
+  },
+  "rand_achter": {
+   "lum": 0.1054,
+   "rood": 0.5092,
+   "ruis": 0.00067
+  }
+ }
+]

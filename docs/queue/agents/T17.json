@@ -1,0 +1,5 @@
+{"taak": "T17", "status": "klaar (wacht op merge)", "nu": "afgerond",
+ "gedaan": ["core/config.py: scattering_coeff, scattering_g, heeft_medium, top_roughness", "core/scene.py: epoxy_medium/maak_medium, volpath bij medium, roughdielectric bovenvlak", "render/pipeline.py: path -> volpath bij medium, herkomst weigert medium", "tests/test_t17.py (10)", "scripts/t17_meting.py", "docs/evidence/T17.md + img/T17-verstrooiing.png + T17-metingen.json", "omgeving.md bijgewerkt"],
+ "next": ["Orkestrator: merge task/T17 en zet status in dossierkop", "Optioneel: herkomst-integrator met volpath/medium; wavelengte-afhankelijke verstrooiing; T12 foto vergelijken met 2-5 /m"],
+ "tests": "volledige suite 134 passed, 4 skipped (voor de laatste test); tests/test_t17.py 10 groen",
+ "kosten": "n.v.t."}

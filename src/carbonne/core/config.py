@@ -23,6 +23,17 @@ class EpoxyMaterial(_Model):
     # absorptiecoefficient (1/m) op een rij golflengten (nm); standaard ~0 (kleurloos)
     absorptie_nm: list[float] = Field(default_factory=lambda: [400.0, 700.0])
     absorptie_per_m: list[float] = Field(default_factory=lambda: [0.0, 0.0])
+    # T17: verstrooiing in het volume (microbelletjes, stof). Vereenvoudigd model, geen gemeten materiaal:
+    # een homogeen medium met een golflengte-onafhankelijke verstrooiingscoefficient en een Henyey-Greenstein-
+    # fasefunctie (g = 0 is isotroop). De enkelvoudige-verstrooiingsalbedo volgt uit absorptie en verstrooiing.
+    scattering_coeff: float = Field(0.0, ge=0.0, le=1e4, description="1/m; 0 = geen verstrooiing")
+    scattering_g: float = Field(0.0, gt=-1.0, lt=1.0, description="asymmetrie van Henyey-Greenstein; 0 = isotroop")
+
+    @property
+    def heeft_medium(self) -> bool:
+        """Is er volumetransport nodig (absorptie of verstrooiing in de epoxy)? Zo niet, dan is de scene
+        identiek aan die van voor T17 (path-integrator, geen medium)."""
+        return self.scattering_coeff > 0 or any(a > 0 for a in self.absorptie_per_m)
 
     @field_validator("absorptie_per_m")
     @classmethod
@@ -233,6 +244,9 @@ class TableConfig(_Model):
     epoxy: EpoxyMaterial = Field(default_factory=EpoxyMaterial)
     zijkant: ZijkantFinish = Field(default_factory=Bare)
     onderkant: OnderkantFinish = Field(default_factory=Bare)
+    top_roughness: float = Field(
+        0.0, ge=0.0, le=0.5, description="T17: GGX-alpha van het bovenvlak; 0 = glad (roughdielectric vanaf > 0)"
+    )
     layers: list[Layer] = Field(default_factory=list, description="gietlagen met inhoud (T06)")
     scene: SceneConfig = Field(default_factory=SceneConfig)
     render: RenderSettings = Field(default_factory=RenderSettings)
