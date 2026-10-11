@@ -6,7 +6,7 @@ from pydantic import ValidationError
 
 from carbonne.core.config import Paint, PlateBelow, TableConfig
 from carbonne.core.kleur import hex_naar_lineair, lineair_naar_srgb, parse_kleur, ral_tabel
-from carbonne.core.scene import afwerking_bsdf, build_scene, candy_kleur, verf_bsdf
+from carbonne.core.scene import afwerking_bsdf, build_scene, candy_kleur, verf_bsdf, verf_twosided
 from carbonne.core.variant import select_variant
 
 GRIJS = (0.5, 0.5, 0.5)
@@ -110,10 +110,10 @@ def test_gewichten_komen_uit_de_kleur():
     g, t = _enkel(verf_bsdf(Paint(color=k, kind="candy"), binnen=False), +1, 20.0)
     assert t < 0.1 and g == pytest.approx(0.36, abs=0.04)
     # candy op wit, epoxykant: diffuus met kleur^2
-    g, t = _enkel(verf_bsdf(Paint(color=k, kind="candy", candy_base="white"), binnen=True), -1, 50.0)
+    g, t = _enkel(verf_twosided(Paint(color=k, kind="candy", candy_base="white")), -1, 50.0)
     assert t == 0.0 and g == pytest.approx(0.36, abs=0.01)
     # gloss, epoxykant: pigment alleen, zoals matte (geen lak/lucht-grensvlak in contact)
-    g, t = _enkel(verf_bsdf(Paint(color=k, kind="glossy"), binnen=True), -1, 50.0)
+    g, t = _enkel(verf_twosided(Paint(color=k, kind="glossy")), -1, 50.0)
     assert t == 0.0 and g == pytest.approx(0.6, abs=0.01)
 
 
