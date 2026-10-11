@@ -54,3 +54,12 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - Tijd tot drempel 0,02 voor de zwaarste preset (verf onder epoxy, 12 threads): 480x270 110 s, **1280x720 753 s**; tijd is evenredig met het aantal pixels. Meet convergentie op ~320x180 en schaal.
 - Cache in `cache/<hash>/` (beeld.exr, beeld.npz, beeld.png, meta.json); de hash bevat een hash van `core/` en `render/`.
 - Mitsuba `aov`-integrator zet AOV-kanalen vooraan; de pijplijn neemt kanalen 0-2 aan als RGB.
+
+## Herkomst-integrator (T13)
+- `carbonne-herkomst config.json --punt x,y [--straal --max-spp --ev --json -o]`; in code `herkomst_opties(config)` en `herkomst_van(resultaat, gebied)`. De pijplijn registreert hem bij `integrator="herkomst"`.
+- **~2x trager dan `path`** (320x180, 64 spp, 6 items: 0,6 s tegen 1,2 s). Geheugen 0,4 GB (320x180), 0,9 GB (640x360); 52 filmkanalen.
+- Valkuil: in een Python-integrator met `dr.while_loop` moet de **sampler in de lusstatus**, anders herhalen de toevalsgetallen elke iteratie en is het beeld 1-23 % te donker.
+- Spectrale AOV's: deel door `mi.pdf_rgb_spectrum(wl)` voor `mi.spectrum_to_srgb(spec, wl, active)`, anders ~375x te klein.
+- Filmkanaalvolgorde bij een Python-integrator: eerst RGB, dan de AOV's (`aov_names()`).
+- Shape-id's: `dr.gather` op een tabel met de 1-gebaseerde instantie-id; BSDF-klassenamen zijn `smoothdielectric`, `roughdielectric`, `twosided`, `smoothdiffuse` (niet `dielectric`).
+- Bij Bare/verf valt de vloer (y=0) in float32 samen met de onderkant (vloer-lek).
