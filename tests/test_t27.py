@@ -50,7 +50,7 @@ const lagen = {{}};
 for (const h of [0.02, 0.03, 0.04, 0.05, 0.06]) lagen[h] = s.nieuweLaag(h);
 const afw = {{}};
 for (const t of ["bare", "paint", "paintstack", "clearcoat", "plate"]) afw[t] = s.nieuweAfwerking(t, {{ color: "#b22222", kind: "glossy" }});
-console.log(JSON.stringify({{ cfg: s.standaardConfig(), lagen, afw, wood: s.nieuwItem("wood"), flower: s.nieuwItem("flower"),
+console.log(JSON.stringify({{ cfg: s.standaardConfig(), lagen, afw, poten: s.nieuwePoten(), wood: s.nieuwItem("wood"), flower: s.nieuwItem("flower"),
   lim: s.LIMIETEN, bereik: Object.fromEntries([0.02, 0.04, 0.06].map((h) => [h, s.laagBereik(h)])),
   wit: k.hexNaarLineair("#ffffff"), zwart: k.hexNaarLineair("#000000"), kamers: Object.keys(s.KWALITEIT), res: s.RESOLUTIES }}));
 """)
@@ -186,6 +186,19 @@ def test_slidergrenzen_blok_en_scene(client, ui):
             cfg = met(ui)
             cfg["scene"].update(omgeving=omg, spot=spot)
             aanvaard(client, cfg, f"omgeving {omg} spot {spot}")
+
+
+def test_poten_op_min_en_max(client, ui):
+    """T26: elke combinatie van de slidergrenzen van de poten, in het kleinste en het grootste blok, en alle metaalsoorten."""
+    lim = ui["lim"]
+    g = lambda k: (lim[k]["min"], lim[k]["max"])  # noqa: E731
+    aanvaard(client, met(ui, poten=ui["poten"]), "standaardpoten")
+    for d, n, vorm, afm, rand, lengte in itertools.product(g("diameter"), g("potenAantal"), ["rond", "vierkant"], g("potenAfmeting"),
+                                                           g("potenRand"), g("potenHoogte")):
+        poten = {**ui["poten"], "aantal": n, "vorm": vorm, "afmeting_mm": afm, "rand_mm": rand, "hoogte_m": lengte}
+        aanvaard(client, met(ui, diameter=d, poten=poten), f"poten d {d} n {n} {vorm} afm {afm} rand {rand} lengte {lengte}")
+    for metaal in ["geborsteld", "gepoetst", "zwart"]:
+        aanvaard(client, met(ui, poten={**ui["poten"], "metaal": metaal}, onderkant=ui["afw"]["plate"]), f"poten {metaal} onder plaat")
 
 
 def test_inhoud_op_min_en_max(client, ui):

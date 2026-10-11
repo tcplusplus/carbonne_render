@@ -110,3 +110,10 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - `uv run carbonne-kalibreer raster|meet|vergelijk` (zie `docs/kalibratie.md`); synthetische demonstratie `uv run python scripts/render_t12.py` (4 renders van 320x240, ~15 s).
 - Foto's lezen gaat via `mi.Bitmap` (PNG/JPEG); `convert(..., srgb_gamma=False)` geeft al lineaire waarden (Mitsuba decodeert de sRGB-curve zelf). Er is geen Pillow in het project.
 - `ruff check --fix` over `src/` past ook bestanden van andere taken aan; beperk het tot je eigen bestanden.
+
+## Poten (T26)
+- Mitsuba is niet bit-deterministisch: twee runs met hetzelfde zaad verschillen in de laatste bit van de film. Vergelijk renders met `allclose` (rtol 1e-5), nooit met gelijkheid.
+- Basislijn van voor T26 voor de test "zonder poten onveranderd": `tests/data/t26_basis.npz` (32x24, 16 spp, zaad 3, sleutels `constant` en `studio`). Opnieuw maken met de code van voor T26 en `CARBONNE_ASSETS` naar de echte assets (anders is de HDRI synthetisch en past de studio-basislijn niet).
+- Een poot mag het blok niet raken (float32-epsilon): bovenkant `effectieve_gap_mm` onder het ophangpunt, onderkant 1 mm in de vloer.
+- Bewijsbeelden: `uv run python scripts/render_t26.py --res 224 --spp 512` (ca. 25 s op 12 threads). Een PNG van 320 px per cel bij 256 spp is ~450 kB; 224 px blijft onder 300 kB. Er is geen Pillow om te verkleinen.
+- Browsertest van de UI: fixture `live` uit `tests/test_t27.py`, Chrome via Playwright met swiftshader; wacht op `document.body.dataset.preview==='klaar'` voor elke meting (direct na het laden is `preview.blok` nog leeg).

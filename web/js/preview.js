@@ -106,7 +106,7 @@ export class Preview {
     const vloerKleur = om ? lin(om.vloer.albedo) : lin(cfg.scene.vloer_albedo ?? [0.75, 0.75, 0.72]);
     const vloer = new THREE.Mesh(new THREE.PlaneGeometry(40, 40).rotateX(-Math.PI / 2),
       new THREE.MeshStandardMaterial({ color: vloerKleur, roughness: 0.85 }));
-    vloer.position.y = hoogte - this.presets.tafel_hoogte;
+    vloer.position.y = cfg.poten ? -cfg.poten.hoogte_m : hoogte - this.presets.tafel_hoogte; // T26: met poten op de poothoogte
     this.vloer = vloer;
     this.scene.add(vloer);
     if (om) {
@@ -160,15 +160,25 @@ export class Preview {
     }
   }
 
+  /** Materiaal van een poot (benadering van het Mitsuba-materiaal: Al, Cr, zwarte poedercoating). */
+  pootMateriaal(metaal) {
+    switch (metaal) {
+      case "gepoetst": return new THREE.MeshStandardMaterial({ color: lin([0.55, 0.56, 0.55]), metalness: 1, roughness: Math.sqrt(0.02) });
+      case "zwart": return new THREE.MeshStandardMaterial({ color: lin([0.02, 0.02, 0.02]), metalness: 0, roughness: Math.sqrt(0.3) });
+      default: return new THREE.MeshStandardMaterial({ color: lin([0.91, 0.92, 0.92]), metalness: 1, roughness: Math.sqrt(0.2) });
+    }
+  }
+
   async zetTafel(cfg) {
-    const sleutel = JSON.stringify([cfg.diameter, cfg.hoogte, cfg.segmenten, cfg.layers]);
-    const kleurSleutel = JSON.stringify([cfg.zijkant, cfg.onderkant, cfg.epoxy]);
+    const sleutel = JSON.stringify([cfg.diameter, cfg.hoogte, cfg.segmenten, cfg.layers, cfg.poten, cfg.poten && cfg.onderkant.gap_mm]);
+    const kleurSleutel = JSON.stringify([cfg.zijkant, cfg.onderkant, cfg.epoxy, cfg.poten?.metaal]);
     if (sleutel !== this.geoSleutel) {
       const g = await geometrie(cfg); // kan een fout geven (bv. inhoud past niet)
       this.geoSleutel = sleutel;
       this.geo = g;
       this.matSleutel = null;
     }
+    if (cfg.poten && this.vloer && this.geo.vloer_y != null) this.vloer.position.y = this.geo.vloer_y; // met een plaat hangen de poten lager
     if (kleurSleutel === this.matSleutel) return;
     this.matSleutel = kleurSleutel;
     for (const k of [...this.blok.children]) { this.blok.remove(k); k.geometry?.dispose(); }
@@ -185,6 +195,10 @@ export class Preview {
         this.afwerkingMateriaal(cfg.onderkant, cfg));
       plaat.position.y = -gap - dik / 2;
       this.blok.add(plaat);
+    }
+    if (cfg.poten) { // T26: de meshes komen van de backend (zelfde plaatsing als de render)
+      const m = this.pootMateriaal(cfg.poten.metaal);
+      for (const pg of g.poten ?? []) this.blok.add(new THREE.Mesh(bufGeo(pg), m));
     }
     // inhoud: per soort samengevoegd tot één mesh; de albedo (per exemplaar iets anders) gaat als vertexkleur mee
     for (const soort of ["wood", "flower"]) {
@@ -207,7 +221,7 @@ export class Preview {
   }
 
   async update(cfg) {
-    const omKey = JSON.stringify([cfg.scene.omgeving, cfg.hoogte, cfg.scene.spot]);
+    const omKey = JSON.stringify([cfg.scene.omgeving, cfg.hoogte, cfg.scene.spot, cfg.poten?.hoogte_m ?? null]);
     const omTaak = this._omKey !== omKey ? this.zetOmgeving(cfg) : null;
     this._omKey = omKey;
     await Promise.all([omTaak, this.zetTafel(cfg)]);

@@ -9,6 +9,7 @@ export const standaardConfig = () => ({
   zijkant: { type: "bare" },
   onderkant: { type: "bare" },
   layers: [],
+  poten: null,
   scene: { omgeving: "woonkamer", camera_preset: "kamer", spot: false,
            camera: { positie: [0, 0.55, 0.62], doel: [0, 0.02, 0], fov: 40 } },
   render: { breedte: 960, hoogte: 540, spp: 64, max_depth: 24 },
@@ -41,7 +42,17 @@ export const LIMIETEN = {
   spleet: { min: 0.01, max: 5, schema: [["PlateBelow", "gap_mm"]] },
   dekking: { min: 0, max: 1, schema: [["Paint", "dekking"]] },
   verflagen: { min: 1, max: 8, schema: [["PaintStack", "lagen"]] }, // aantal lagen in een stapel
+  // T26: poten. De UI-grenzen zijn zo gekozen dat elke combinatie past in het kleinste blok (diameter 0,2 m): 6 vierkante
+  // poten van 30 mm op 40 mm van de rand raken elkaar niet (zie Legs.poten_overlappen en tests/test_t26.py).
+  potenAantal: { min: 3, max: 6, schema: [["Legs", "aantal"]] },
+  potenAfmeting: { min: 6, max: 30, schema: [["Legs", "afmeting_mm"]] },
+  potenRand: { min: 0, max: 40, schema: [["Legs", "rand_mm"]] },
+  potenHoogte: { min: 0.05, max: 0.8, schema: [["Legs", "hoogte_m"]] },
 };
+export const POTEN_VORMEN = [["rond", "rond"], ["vierkant", "vierkant"]];
+export const POTEN_METALEN = [["geborsteld", "geborsteld aluminium"], ["gepoetst", "gepoetst chroom"], ["zwart", "zwart gepoederlakt"]];
+/** Standaardpoten: vier ronde, geborstelde poten (zelfde als `Legs()` in core/config.py). */
+export const nieuwePoten = (aantal = 4) => ({ aantal, vorm: "rond", afmeting_mm: 25, rand_mm: 30, hoogte_m: 0.41, metaal: "geborsteld" });
 /** Soorten verf uit het schema (GET /api/schema); gevuld door `leidLimietenAf`. Leeg = nog niet geladen. */
 export const ENUMS = { verfsoort: null, candyBasis: null };
 export const VERFSOORTEN = [["matte", "mat"], ["glossy", "glanzend"], ["metallic", "metallic"], ["candy", "candy"]];
@@ -85,6 +96,13 @@ export function begrens(cfg) {
       if (Array.isArray(it.radius_mm)) it.radius_mm.forEach((_, i) => zet(it.radius_mm, i, LIMIETEN.straal));
       if (it.type === "flower") zet(it, "petals", LIMIETEN.bloemblaadjes);
     }
+  }
+  if (cfg.poten) {
+    zet(cfg.poten, "aantal", LIMIETEN.potenAantal);
+    if (!Number.isInteger(cfg.poten.aantal)) { cfg.poten.aantal = Math.round(cfg.poten.aantal); veranderd = true; }
+    zet(cfg.poten, "afmeting_mm", LIMIETEN.potenAfmeting);
+    zet(cfg.poten, "rand_mm", LIMIETEN.potenRand);
+    zet(cfg.poten, "hoogte_m", LIMIETEN.potenHoogte);
   }
   return veranderd;
 }

@@ -47,6 +47,10 @@ def zet_pad(config: TableConfig, pad: str, waarde: Any) -> TableConfig:
         raise ValueError("parameterpad is leeg")
     data = config.model_dump(mode="python")
     delen = pad.split(".")
+    if delen[0] == "poten" and len(delen) > 1 and data.get("poten") is None:
+        from carbonne.core.config import Legs
+
+        data["poten"] = Legs().model_dump()  # T26: een wat-als over de poten zet ze aan met de standaardwaarden
     huidig: Any = data
     for i, d in enumerate(delen):
         waar = ".".join(delen[: i + 1])

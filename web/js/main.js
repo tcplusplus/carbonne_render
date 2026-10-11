@@ -61,7 +61,7 @@ async function start() {
     }, 120);
   };
   const zetCameraPreset = async (naam) => {
-    try { preview.zetCamera(await api.cameraPreset(naam, cfg.diameter, cfg.hoogte)); } catch (e) { meld(e.message, true); }
+    try { preview.zetCamera(await api.cameraPreset(naam, cfg.diameter, cfg.hoogte, cfg.poten?.hoogte_m)); } catch (e) { meld(e.message, true); }
   };
 
   const bijWijziging = (soort) => {

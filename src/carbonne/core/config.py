@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+import math
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from carbonne.core.kleur import als_kleur
 
@@ -228,6 +229,58 @@ class Layer(_Model):
     edge_margin_mm: float = Field(3.0, ge=0.0, le=50.0, description="minimale afstand tot de rand van het blok")
 
 
+PotenVorm = Literal["rond", "vierkant"]
+PotenMetaal = Literal["geborsteld", "gepoetst", "zwart"]
+
+
+class Legs(_Model):
+    """T26: metalen poten onder het blok (alleen als `TableConfig.poten` gezet is; standaard geen poten).
+
+    Plaatsing: `aantal` poten gelijkmatig op een cirkel, de buitenkant van elke poot op `rand_mm` van de rand van
+    het blok. De poot hangt `hoogte_m` onder het blok (de vloer ligt daar). Metaal: geborsteld = aluminium (ruw),
+    gepoetst = chroom (bijna glad), zwart = gepoederlakt (zwart pigment onder een dielectrische lak)."""
+
+    aantal: int = Field(4, ge=3, le=6)
+    vorm: PotenVorm = "rond"
+    afmeting_mm: float = Field(25.0, ge=6.0, le=60.0, description="diameter (rond) of zijde (vierkant)")
+    rand_mm: float = Field(30.0, ge=0.0, le=100.0, description="afstand van de buitenkant van de poot tot de rand van het blok")
+    hoogte_m: float = Field(0.41, ge=0.05, le=0.8, description="lengte van de poot = hoogte van het blok boven de vloer minus de blokdikte")
+    metaal: PotenMetaal = "geborsteld"
+
+    def midden_straal_mm(self, diameter_m: float) -> float:
+        """Straal (mm) van de cirkel door de poot-middens. Rond: de buitenkant van de poot ligt op `rand_mm` van de rand.
+        Vierkant: de buitenste hoek ligt op `rand_mm` van de rand (de zijde die naar buiten wijst ligt iets verder)."""
+        r, h = diameter_m / 2 * 1000 - self.rand_mm, self.afmeting_mm / 2
+        if self.vorm == "rond":
+            return r - h
+        return math.sqrt(max(r * r - h * h, 0.0)) - h
+
+    def poten_overlappen(self, diameter_m: float) -> bool:
+        """Raken buurpoten elkaar (of steken ze uit het blok)? Rond: afstand van de middens < diameter; vierkant:
+        scheidingsas-test (SAT) van twee even grote vierkanten."""
+        rc = self.midden_straal_mm(diameter_m)
+        if rc < 0:
+            return True
+        h = self.afmeting_mm / 2
+        d_hoek = 2 * math.pi / self.aantal
+        if self.vorm == "rond":
+            return 2 * rc * math.sin(d_hoek / 2) < self.afmeting_mm - 1e-9
+        start = -math.pi / 2 if self.aantal % 2 else math.pi / 4
+        # twee buurvierkanten: hoek a en a + d_hoek, elk met de zijde naar buiten gedraaid over zijn eigen hoek
+        mid = [(rc * math.cos(a), rc * math.sin(a), a) for a in (start, start + d_hoek)]
+        for _, _, a in mid:
+            for ax in ((math.cos(a), math.sin(a)), (-math.sin(a), math.cos(a))):
+                proj = []
+                for cx, cz, ang in mid:
+                    c, s = math.cos(ang), math.sin(ang)
+                    hoeken = [(cx + c * i - s * j, cz + s * i + c * j) for i in (-h, h) for j in (-h, h)]
+                    p = [x * ax[0] + z * ax[1] for x, z in hoeken]
+                    proj.append((min(p), max(p)))
+                if proj[0][1] <= proj[1][0] + 1e-9 or proj[1][1] <= proj[0][0] + 1e-9:
+                    return False  # scheidingsas gevonden
+        return True
+
+
 class CameraConfig(_Model):
     positie: tuple[float, float, float] = (0.0, 0.55, 0.62)
     doel: tuple[float, float, float] = (0.0, 0.02, 0.0)
@@ -265,5 +318,17 @@ class TableConfig(_Model):
         0.0, ge=0.0, le=0.5, description="T17: GGX-alpha van het bovenvlak; 0 = glad (roughdielectric vanaf > 0)"
     )
     layers: list[Layer] = Field(default_factory=list, description="gietlagen met inhoud (T06)")
+    poten: Legs | None = Field(None, description="T26: metalen poten onder het blok; None = geen poten (vloer op TAFEL_HOOGTE)")
     scene: SceneConfig = Field(default_factory=SceneConfig)
     render: RenderSettings = Field(default_factory=RenderSettings)
+
+    @model_validator(mode="after")
+    def _poten_passen(self) -> TableConfig:
+        p = self.poten
+        if p is None:
+            return self
+        if p.midden_straal_mm(self.diameter) < 0:
+            raise ValueError("poten passen niet: afstand tot de rand plus afmeting is groter dan het blok")
+        if p.poten_overlappen(self.diameter):
+            raise ValueError("poten passen niet naast elkaar: kleinere afmeting, minder poten of meer afstand tot de rand")
+        return self

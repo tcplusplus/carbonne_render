@@ -8,7 +8,7 @@ Bronnen (bitmasker, 4 bits) volgens de shape-id's van `build_scene`:
   bit 0 (1)  zijkant    `mantel`
   bit 1 (2)  onderkant  `onder` en `plaat_*`
   bit 2 (4)  inhoud     `inhoud_*`
-  bit 3 (8)  vloer      `floor`
+  bit 3 (8)  vloer      `floor` en `poot_*` (T26: de poten tellen als omgeving onder het blok, geen eigen categorie)
 Het bovenvlak is nooit een bron.
 
 Een vlak telt als "geraakt" zodra een straal van het pad (camerastraal of BSDF-gesampelde straal) het
@@ -68,8 +68,8 @@ def bron_bits(naam: str, bsdf_type: str) -> int:
         return 2
     if naam.startswith("inhoud_"):
         return 4
-    if naam == "floor":
-        return 8
+    if naam == "floor" or naam.startswith("poot_"):
+        return 8  # T26: de poten horen bij de omgeving onder het blok, bron "vloer"
     return 0
 
 

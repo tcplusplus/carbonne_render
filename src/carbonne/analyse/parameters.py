@@ -48,6 +48,10 @@ PARAMETERS: list[dict] = [
     _p("scene.omgeving", "keuze", "omgeving (HDRI)", list(OMGEVINGEN)),
     _p("scene.camera_preset", "keuze", "camerastandpunt", list(CAMERA_PRESETS)),
     _p("scene.spot", "waar/onwaar", "extra spot boven het tafeltje", [False, True]),
+    _p("poten.hoogte_m", "getal", "lengte van de poten (zet poten aan met de standaardwaarden als er nog geen zijn; "
+       "de vloer ligt op die hoogte)", [0.2, 0.41, 0.6], "m", 0.05, 0.8),
+    _p("poten.metaal", "keuze", "metaalsoort van de poten (zet poten aan als er nog geen zijn)",
+       ["geborsteld", "gepoetst", "zwart"]),
     _p("layers.n.height_m", "getal", "hoogte van gietlaag n (0 is de onderste; laag moet bestaan)",
        [0.01, 0.02, 0.03], "m", 0.0, 0.06, patroon=True),
 ]
