@@ -80,3 +80,22 @@ def test_rendert():
     c.render.breedte, c.render.hoogte, c.render.spp = 48, 36, 8
     img = np.array(mi.render(mi.load_dict(build_scene(c)), spp=8))
     assert np.isfinite(img).all() and img.std() > 0
+
+
+
+
+def test_api_geometrie_en_schema_met_stapel(tmp_path):
+    from fastapi.testclient import TestClient
+
+    from carbonne.server.app import maak_app
+
+    app = maak_app(renderer=None, cache_map=tmp_path / "cache", configs_map=tmp_path / "configs", web_map=tmp_path / "web")
+    with TestClient(app) as client:
+        _api(client)
+
+
+def _api(client):
+    c = TableConfig(zijkant=PaintStack(lagen=[Paint(color=WIT), Paint(color=BLAUW, dekking=0.5)]))
+    r = client.post("/api/geometrie", json=c.model_dump(mode="json"))
+    assert r.status_code == 200 and "mantel" in r.json()["vlakken"]
+    assert "PaintStack" in str(client.get("/api/schema").json())
