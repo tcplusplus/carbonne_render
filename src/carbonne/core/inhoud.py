@@ -151,12 +151,12 @@ def _hout_bsdf(kleur) -> dict:
 def _bloem_bsdf(kleur, doorlaat: float) -> dict:
     """Dun, licht doorschijnend blaadje: `principledthin` (Disney thin) is tweezijdig en kent diffuse
     transmissie (`diff_trans`: 0 = alles diffuus teruggekaatst, 1 = alles diffuus doorgelaten). Mitsuba 3.9 heeft
-    geen aparte `difftrans`-plugin. Glans uit (`specular` 0): het gaat om kleur en doorschijnendheid."""
+    geen aparte `difftrans`-plugin. `eta` 1 schakelt de spiegelglans uit: een blaadje in epoxy (n ~ 1,5) heeft bijna geen indexcontrast."""
     return {
         "type": "principledthin",
         "base_color": {"type": "rgb", "value": [float(x) for x in kleur]},
         "roughness": 1.0,
-        "specular": 0.0,
+        "eta": 1.0,  # geen spiegelende glans: een blaadje in epoxy heeft nauwelijks indexcontrast
         "diff_trans": float(doorlaat),
     }
 

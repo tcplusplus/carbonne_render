@@ -35,3 +35,7 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - Mitsuba (float32) verschuift het startpunt van een straal na een botsing met ~1e-3 x max(|coordinaat|). Dunne spleten (< ~0,2 mm bij straal 0,18 m) worden daardoor overgeslagen; `effectieve_gap_mm` in `scene.py` dwingt een veilige minimale spleet af (T03). Geldt ook voor andere dunne structuren.
 - `twosided`: eerste kind = voorkant (kant van de normaal, luchtkant), tweede = achterkant (epoxykant); meshnormalen wijzen naar buiten. NEE (next event estimation) dringt niet door het `dielectric`; licht in het blok komt alleen via BSDF-bemonstering, dus beelden van verf onder epoxy zijn korreliger (meer spp nodig).
 - Eenstraals-BSDF-test: `tests/test_t03.py::_sample` (vectorieel, SurfaceInteraction3f met `wi`, `sh_frame`, `wavelengths`).
+
+## Inhoud (T06)
+- Mitsuba 3.9 heeft geen `difftrans`; doorschijnend dun materiaal = `principledthin` met `diff_trans` (tweezijdig; `eta` 1 schakelt de glans uit). `principledthin` kent geen `specular`-parameter.
+- Inhoudsmeshes: `core/inhoud.py`, render `uv run python scripts/render_t06.py` (560 px, 640 spp, 2 beelden: 79 s CPU).
