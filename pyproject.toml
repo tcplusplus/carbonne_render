@@ -18,6 +18,7 @@ carbonne-t03 = "carbonne.render_t03:main"
 carbonne-render = "carbonne.render.cli:main"
 carbonne-app = "carbonne.server.app:main"
 carbonne-herkomst = "carbonne.core.herkomst_cli:main"
+carbonne-reeks = "carbonne.analyse.cli:main"
 
 [dependency-groups]
 dev = [
