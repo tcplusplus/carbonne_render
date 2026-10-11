@@ -8,6 +8,7 @@ import { Reeks } from "./reeks.js";
 import { koppelSelectie, zetMarkering } from "./selectie.js";
 import { hqAanvraag, normaliseerGeladen, standaardConfig, standaardOpties } from "./staat.js";
 import { Vergelijk } from "./vergelijk.js";
+import { VerfPaneel } from "./verf.js";
 
 const $ = (id) => document.getElementById(id);
 const OPSLAG = "carbonne.laatste";
@@ -99,6 +100,10 @@ async function start() {
     herkomstPaneel.toon([["A", a], ["B", b]].filter(([, it]) => it?.herkomst).map(([t, it]) => bron(`${t} ${it.label}`, it.id, it.cfg.render)), p);
   }, (e) => (e.target.tagName === "IMG" ? e.target.getBoundingClientRect() : null));
 
+  // --- verven: bibliotheek en formulier (T20) ---
+  const verfPaneel = new VerfPaneel($("verven"), { bijLijst: (lijst) => paneel.zetVerven(lijst), meld });
+  await verfPaneel.ververs().catch(() => {});
+
   // --- configs ---
   const vulLijst = async () => {
     const namen = await api.configsLijst();
@@ -121,7 +126,7 @@ async function start() {
     catch (e) { meld(`Laden mislukt: ${e.message}`, true); }
   });
 
-  window.carbonne = { cfg: () => cfg, preview, hq, vergelijk, laad, ververs, reeks, herkomstPaneel, plek: () => plek };
+  window.carbonne = { cfg: () => cfg, preview, hq, vergelijk, laad, ververs, reeks, herkomstPaneel, verfPaneel, plek: () => plek };
   document.body.dataset.app = "klaar";
 }
 
