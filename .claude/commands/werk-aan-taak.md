@@ -38,6 +38,8 @@ Bestaat er al een `docs/queue/agents/TNN.json` met `next`, dan ben je een hervat
 - **Renders**: houd testrenders klein (≤ 256 px, weinig spp). Neem voor een render die langer duurt dan ongeveer
   een minuut de GPU-lock: `mkdir /home/tomc/git/carbonne_render/.locks/gpu` (lukt dat niet, doe dan ander werk en
   probeer later opnieuw), en na afloop altijd `rmdir`. Lange runs start je met `timeout`.
+  Metingen (ROI-luminantie, verhoudingen, ruis per pixel) doe je op lage resolutie met meer spp; die hangen af van
+  het aantal samples, niet van de resolutie. Eén bevestigende run op eindformaat is genoeg. Tijden schaal je op pixels.
 - **Bekijk je eigen beelden** met het Read-gereedschap voordat je een conclusie trekt. Wat je niet zelf gezien
   hebt, noem je niet goed.
 - Wacht nooit met `sleep` op een achtergrondproces; gebruik `Monitor` met een tijdsgrens, of doe intussen ander werk.
