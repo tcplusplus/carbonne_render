@@ -53,6 +53,10 @@ class SceneConfig(_Model):
     vloer_rastercel: float = Field(0.05, gt=0.0, description="cel van het rasterpatroon, m")
     vloer_albedo: tuple[float, float, float] = (0.75, 0.75, 0.72)
     vloer_lijn_albedo: tuple[float, float, float] = (0.03, 0.03, 0.03)
+    # T07: naam uit environments.OMGEVINGEN (HDRI + vloer); None = constante omgeving met raster
+    omgeving: str | None = None
+    camera_preset: str | None = None  # boven, schuin30, schuin60, zittend, staand; overschrijft `camera`
+    spot: bool = False  # extra spot boven het tafeltje (los te combineren met een HDRI)
 
 
 class RenderSettings(_Model):

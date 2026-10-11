@@ -121,4 +121,8 @@ def build_scene(config: TableConfig) -> dict:
     }
     for naam in VLAKKEN:
         scene[naam] = _mesh(naam, geo[naam], epoxy_bsdf(config))
+    if sc.omgeving is not None or sc.camera_preset is not None or sc.spot:
+        from carbonne.core.environments import pas_omgeving_toe
+
+        pas_omgeving_toe(scene, config)
     return scene
