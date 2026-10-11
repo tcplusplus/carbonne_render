@@ -15,6 +15,12 @@ export function h(tag, attrs = {}, ...kinderen) {
   return e;
 }
 
+/** Geavanceerde instellingen: standaard ingeklapt, zodat de zijbalk kort blijft. */
+const geavanceerd = (...inhoud) => h("details", { class: "geavanceerd" }, h("summary", {}, "geavanceerd"), ...inhoud);
+
+const CAMERA_NAMEN = { kamer: "kamer (zicht op de ruimte)", boven: "van boven", schuin30: "schuin 30 graden", schuin60: "schuin 60 graden",
+  zittend: "zittend (oog 1,10 m)", staand: "staand (oog 1,65 m)" };
+
 const veld = (label, ...inhoud) => h("label", { class: "veld" }, h("span", { class: "lbl" }, label), ...inhoud);
 
 export class Paneel {
@@ -109,8 +115,8 @@ export class Paneel {
       velden.push(this.sel("Verftype", [["matte", "mat"], ["glossy", "glanzend"], ["metallic", "metallic"], ["candy", "candy"]],
         () => f.kind, (v) => { f.kind = v; }, "materiaal", true));
       if (f.kind === "candy") velden.push(this.sel("Ondergrond candy", [["metallic", "metallic"], ["white", "wit"]], () => f.candy_base, (v) => { f.candy_base = v; }));
-      velden.push(this.num("Ruwheid (alpha, leeg = standaard)", () => f.roughness ?? 0, (v) => { f.roughness = v > 0 ? v : null; },
-        { min: 0, max: 1, step: 0.01, soort: "materiaal" }));
+      velden.push(geavanceerd(this.num("Ruwheid (alpha, 0 = standaard)", () => f.roughness ?? 0, (v) => { f.roughness = v > 0 ? v : null; },
+        { min: 0, max: 1, step: 0.01, soort: "materiaal" })));
     }
     if (f.type === "clearcoat") velden.push(this.num("Ruwheid (alpha)", () => f.roughness, (v) => { f.roughness = Math.max(v, 0.01); }, { min: 0.01, max: 1, step: 0.01, soort: "materiaal" }));
     if (f.type === "plate") velden.push(this.num("Luchtspleet", () => f.gap_mm, (v) => { f.gap_mm = Math.max(v, 0.01); }, { min: 0.01, max: 5, step: 0.01, eenheid: "mm", soort: "materiaal" }));
@@ -126,7 +132,7 @@ export class Paneel {
         h("button", { class: "klein", onclick: () => { c.layers.splice(li, 1); this.bouw(); this.wijzig("geometrie"); } }, "Verwijder")),
       this.num("Hoogte in het blok", () => laag.height_m, (v) => { laag.height_m = Math.min(Math.max(v, 0.001), Math.min(0.06, c.hoogte - 0.002)); },
         { min: 0.002, max: 0.058, step: 0.5, schaal: 1000, eenheid: "mm" }),
-      this.num("Seed", () => laag.seed, (v) => { laag.seed = Math.round(v); }, { min: 0, max: 999, slider: false }),
+      geavanceerd(this.num("Seed (willekeurige plaatsing)", () => laag.seed, (v) => { laag.seed = Math.round(v); }, { min: 0, max: 999, slider: false })),
       laag.items.map((it, ii) => this.item(laag, it, ii)),
       h("div", { class: "rij" },
         h("button", { class: "klein", onclick: () => { laag.items.push(nieuwItem("wood")); this.bouw(); this.wijzig("geometrie"); } }, "+ houtschijfje"),
@@ -157,24 +163,23 @@ export class Paneel {
       zijkant: (f) => (f.type === "paint" ? ["zijkant-geverfd-luchtspleet.svg", "Doorsnede: geverfde zijkant met luchtspleet onderaan"] : null),
     };
     const lijst = h("datalist", { id: "ral-lijst" }, p.ral.map((r) => h("option", { value: `RAL ${r.code}` }, r.naam)));
-    const camKeuzes = [["vrij", "vrij (eigen draaiing)"], ...p.camera_presets.map((n) => [n, n])];
+    const camKeuzes = [["vrij", "vrij (eigen draaiing)"], ...p.camera_presets.map((n) => [n, CAMERA_NAMEN[n] ?? n])];
     const res = RESOLUTIES.map(([b, hh]) => [`${b}x${hh}`, `${b} x ${hh}`]);
     const resHuidig = `${c.render.breedte}x${c.render.hoogte}`;
     if (!res.some(([k]) => k === resHuidig)) res.push([resHuidig, `${c.render.breedte} x ${c.render.hoogte}`]);
     this.root.replaceChildren(lijst,
       h("details", { open: true }, h("summary", {}, "Tafeltje"),
         this.num("Diameter", () => c.diameter, (v) => { c.diameter = v; }, { min: 0.2, max: 0.7, step: 5, schaal: 1000, eenheid: "mm" }),
-        this.num("Dikte (hoogte)", () => c.hoogte, (v) => { c.hoogte = v; }, { min: 0.02, max: 0.06, step: 1, schaal: 1000, eenheid: "mm" }),
-        this.num("Brekingsindex epoxy (A)", () => c.epoxy.cauchy_a, (v) => { c.epoxy.cauchy_a = v; }, { min: 1.4, max: 1.65, step: 0.001, soort: "materiaal" })),
-      this.afwerking("Zijkant", "zijkant", [["bare", "onbehandeld"], ["paint", "verf"], ["clearcoat", "matte lak"]], afwSchets.zijkant),
-      this.afwerking("Onderkant", "onderkant", [["bare", "onbehandeld"], ["paint", "verf"], ["clearcoat", "matte lak"], ["plate", "plaat met luchtspleet"]], afwSchets.onderkant),
+        this.num("Dikte (hoogte)", () => c.hoogte, (v) => { c.hoogte = v; }, { min: 0.02, max: 0.06, step: 1, schaal: 1000, eenheid: "mm" })),
+      this.afwerking("Zijkant (rand van het blok)", "zijkant", [["bare", "onbehandeld"], ["paint", "verf"], ["clearcoat", "matte lak"]], afwSchets.zijkant),
+      this.afwerking("Onderkant (onder het blok)", "onderkant", [["bare", "onbehandeld"], ["paint", "verf"], ["clearcoat", "matte lak"], ["plate", "plaat met luchtspleet"]], afwSchets.onderkant),
       this.lagen(),
       h("details", { open: true }, h("summary", {}, "Omgeving en camera"),
         this.sel("Omgeving", [["", "geen (witte constante omgeving)"], ...p.omgevingen.map((x) => [x.naam, `${x.naam} - ${x.omschrijving}`])],
           () => c.scene.omgeving ?? "", (v) => { c.scene.omgeving = v || null; }, "omgeving"),
         this.sel("Camera", camKeuzes, () => c.scene.camera_preset ?? "vrij", (v) => { c.scene.camera_preset = v === "vrij" ? null : v; if (v !== "vrij") this.bijCameraPreset(v); }, "camera"),
-        h("label", { class: "veld" }, h("span", { class: "lbl" }, "Extra spot boven het tafeltje"),
-          h("input", { type: "checkbox", checked: !!c.scene.spot, onchange: (e) => { c.scene.spot = e.target.checked; this.wijzig("omgeving"); } }))),
+        geavanceerd(h("label", { class: "veld" }, h("span", { class: "lbl" }, "Extra spot boven het tafeltje"),
+          h("input", { type: "checkbox", checked: !!c.scene.spot, onchange: (e) => { c.scene.spot = e.target.checked; this.wijzig("omgeving"); } })))),
       h("details", { open: true }, h("summary", {}, "Belichting en kwaliteit"),
         this.num("Belichting (EV)", () => o.ev, (v) => { o.ev = v; }, { min: -4, max: 4, step: 0.1, eenheid: "stops", soort: "ev" }),
         this.sel("Resolutie", res, () => resHuidig, (v) => { const [b, hh] = v.split("x").map(Number); c.render.breedte = b; c.render.hoogte = hh; }, "frame"),

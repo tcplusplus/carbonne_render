@@ -16,6 +16,9 @@ from pydantic import BaseModel, ConfigDict, Field
 from carbonne.core.config import CameraConfig, TableConfig
 
 TAFEL_HOOGTE = 0.45  # m, bovenkant blad boven de vloer
+KAMER_OOGHOOGTE = 0.80  # m boven de vloer (camerapreset "kamer")
+KAMER_NEIGING = 9.0  # graden onder de horizon waarmee "kamer" kijkt; de horizon valt dan net boven het midden van het beeld
+KAMER_FOV = 55.0  # horizontaal, graden
 VLOER_GROOTTE = 40.0  # m; groot genoeg dat de rand nooit in beeld komt
 
 
@@ -109,7 +112,7 @@ OMGEVINGEN: dict[str, Omgeving] = {
 
 
 def camera_preset(naam: str, diameter: float, hoogte: float) -> CameraConfig:
-    """Camera voor een preset: bovenaanzicht, schuin30, schuin60, zittend, staand (kijkt naar het midden van het blad)."""
+    """Camera voor een preset: kamer (bijna horizontaal), boven, schuin30, schuin60, zittend, staand (kijkt naar het midden van het blad)."""
     doel = (0.0, hoogte, 0.0)
     afstand = max(0.9, 2.4 * diameter)
     if naam == "boven":
@@ -124,10 +127,16 @@ def camera_preset(naam: str, diameter: float, hoogte: float) -> CameraConfig:
         return CameraConfig(positie=(0.0, 1.10 - TAFEL_HOOGTE + hoogte, 1.6), doel=doel, fov=40.0)
     if naam == "staand":  # oog op 1,65 m boven de vloer, 1,2 m van het tafeltje
         return CameraConfig(positie=(0.0, 1.65 - TAFEL_HOOGTE + hoogte, 1.2), doel=doel, fov=40.0)
+    if naam == "kamer":  # kijkt bijna horizontaal: de ruimte (HDRI) achter het tafeltje is zichtbaar, niet alleen de vloer
+        afstand = max(1.0, 2.8 * diameter)
+        oog = KAMER_OOGHOOGTE - TAFEL_HOOGTE + hoogte  # oog boven y = 0 (onderkant van het blok)
+        return CameraConfig(
+            positie=(0.0, oog, afstand), doel=(0.0, oog - afstand * math.tan(math.radians(KAMER_NEIGING)), 0.0), fov=KAMER_FOV
+        )
     raise KeyError(f"onbekende camerapreset {naam!r}; kies uit {CAMERA_PRESETS}")
 
 
-CAMERA_PRESETS = ("boven", "schuin30", "schuin60", "zittend", "staand")
+CAMERA_PRESETS = ("kamer", "boven", "schuin30", "schuin60", "zittend", "staand")
 
 
 def synthetische_hdri(breedte: int = 256, hoogte: int = 128) -> np.ndarray:

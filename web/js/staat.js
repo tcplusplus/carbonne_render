@@ -7,7 +7,7 @@ export const standaardConfig = () => ({
   zijkant: { type: "bare" },
   onderkant: { type: "bare" },
   layers: [],
-  scene: { omgeving: "woonkamer", camera_preset: "schuin30", spot: false,
+  scene: { omgeving: "woonkamer", camera_preset: "kamer", spot: false,
            camera: { positie: [0, 0.55, 0.62], doel: [0, 0.02, 0], fov: 40 } },
   render: { breedte: 960, hoogte: 540, spp: 64, max_depth: 24 },
 });
