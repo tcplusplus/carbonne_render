@@ -45,12 +45,17 @@
         <div class="hq-bediening">
           <button id="hq-start" class="primair">Render HQ</button>
           <button id="hq-annuleer" disabled>Annuleer</button>
+          <label class="vink" title="Rekent per pad de herkomst van de kleur mee (ongeveer 2x trager)"><input id="hq-herkomst" type="checkbox"> met herkomst</label>
           <progress id="hq-balk" value="0" max="1"></progress>
         </div>
         <p id="hq-status" class="status" aria-live="polite"></p>
         <p id="hq-links" hidden><a id="hq-png" download="render.png">PNG</a> &middot; <a id="hq-exr" download="render.exr">EXR (lineair, alle kanalen)</a></p>
       </div>
     </div>
+    <section id="herkomst-sectie" class="sectie">
+      <h2>Herkomst <span class="hint">klik of sleep op een render</span></h2>
+      <div id="herkomst"></div>
+    </section>
     <section id="vergelijken">
       <h2>Vergelijken (A/B)</h2>
       <div id="geschiedenis" class="geschiedenis"></div>
@@ -62,6 +67,10 @@
       </div>
       <div id="vergelijk-beeld" class="vergelijk-beeld"></div>
       <p id="verschil" class="hint"></p>
+    </section>
+    <section id="reeks-sectie" class="sectie">
+      <h2>Reeks (wat-als)</h2>
+      <div id="reeks"></div>
     </section>
   </section>
 </main>

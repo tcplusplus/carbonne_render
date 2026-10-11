@@ -71,3 +71,50 @@ button:disabled { opacity: .5; cursor: default; }
 .tag-b { right: 6px; background: #7a3fe0; }
 @media (max-width: 1100px) { .stage-rij { grid-template-columns: 1fr; } }
 @media (max-width: 760px) { main { grid-template-columns: 1fr; padding: 12px 16px; } #zijbalk { position: static; max-height: none; } .veld { grid-template-columns: 1fr; } }
+
+/* herkomst, reeks (T16) */
+.vink { display: inline-flex; gap: 4px; align-items: center; white-space: nowrap; }
+.sectie { margin-top: 16px; background: var(--paneel); border: 1px solid var(--rand); border-radius: 8px; padding: 10px 12px; }
+.getallen { font-variant-numeric: tabular-nums; font-size: 12px; }
+.staal { display: inline-block; width: 18px; height: 18px; border-radius: 3px; border: 1px solid var(--rand); vertical-align: middle; flex: none; }
+.staal.groot { width: 34px; height: 24px; }
+.markering { position: absolute; pointer-events: none; }
+.markering.punt { width: 18px; height: 18px; margin: -9px 0 0 -9px; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #000, inset 0 0 0 1px #000; }
+.markering.gebied { border: 2px solid #fff; box-shadow: 0 0 0 1px #000, inset 0 0 0 1px #000; }
+.wikkel { position: relative; }
+.wikkel img { display: block; width: 100%; height: auto; }
+.hk-rij { display: flex; flex-wrap: wrap; gap: 24px; }
+.hk { flex: 1 1 340px; min-width: 300px; max-width: 560px; }
+.hk-kop { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
+.balk { display: flex; height: 30px; border-radius: 4px; overflow: hidden; border: 1px solid var(--rand); }
+.balk .seg { display: grid; place-items: center; font-size: 12px; font-weight: 600; color: #fff; text-shadow: 0 0 3px #000, 0 0 2px #000; min-width: 1px; }
+.balk .seg + .seg { border-left: 1px solid var(--paneel); }
+.hk-tabel { border-collapse: collapse; margin: 8px 0; font-size: 13px; width: 100%; }
+.hk-tabel th { font-weight: 400; color: var(--zacht); font-size: 11px; text-align: left; }
+.hk-tabel td, .hk-tabel th { padding: 2px 8px 2px 0; }
+.hk-tabel .r { text-align: right; font-variant-numeric: tabular-nums; }
+.kern { display: grid; grid-template-columns: max-content max-content; gap: 2px 16px; margin: 6px 0 0; font-size: 13px; }
+.kern dt { color: var(--zacht); } .kern dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 600; }
+.reeks-bediening { display: grid; gap: 8px; }
+.reeks-bediening .rij { align-items: center; flex-wrap: wrap; gap: 12px; }
+.keuzes { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.kleuren { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-bottom: 4px; }
+.kleuren .kleurtekst { width: 8em; }
+.reeks-uit { margin-top: 10px; }
+.reeks-rij { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; }
+.reeks-item { margin: 0; flex: 0 0 150px; font-size: 12px; cursor: pointer; border: 2px solid transparent; border-radius: 6px; padding: 3px; }
+.reeks-item:hover, .reeks-item:focus { border-color: var(--accent); outline: none; }
+.reeks-item img { width: 100%; height: auto; display: block; border-radius: 3px; background: var(--kader); }
+.reeks-item.ruis { filter: grayscale(1); opacity: .6; }
+.grafieken { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 6px; }
+.grafieken > div { flex: 1 1 360px; min-width: 300px; max-width: 560px; }
+.grafiek { width: 100%; height: auto; font-size: 10px; }
+.grafiek .as { stroke: var(--rand); } .grafiek .tik { fill: var(--zacht); }
+.grafiek .lijn { fill: none; stroke-width: 2; }
+.grafiek .reeks-L { stroke: var(--accent); } .grafiek .reeks-C { stroke: #e07b00; stroke-dasharray: 5 3; }
+.grafiek .punt.reeks-L { fill: var(--accent); stroke: none; } .grafiek .punt.reeks-C { fill: #e07b00; stroke: none; }
+.grafiek .punt.ruis { fill: var(--paneel); stroke: var(--zacht); stroke-width: 1.5; }
+.grafiek .lab.reeks-L { fill: var(--accent); stroke: none; stroke-dasharray: none; } .grafiek .lab.reeks-C { fill: #e07b00; stroke: none; stroke-dasharray: none; }
+.grafiek .seg { stroke: var(--paneel); stroke-width: 1; }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; }
+.legenda .staal { width: 12px; height: 12px; margin-right: 4px; }

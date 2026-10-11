@@ -24,13 +24,14 @@ export class HQ {
   async start(aanvraag) {
     if (this.bezig()) return;
     this.aanvraag = aanvraag;
+    this.laatste = null;
     this.dom.knop.disabled = true;
     this.dom.annuleer.disabled = false;
     this.dom.balk.value = 0;
     this.dom.links.hidden = true;
     this.melding("Aanvraag verstuurd...");
     try {
-      const { id } = await startRender(aanvraag.config, aanvraag.opties);
+      const { id } = await startRender(aanvraag.config, aanvraag.opties, aanvraag.herkomst);
       this.id = id;
     } catch (e) {
       this.melding(`Render niet gestart: ${e.message}`, true);
@@ -74,9 +75,10 @@ export class HQ {
       this.dom.png.href = resultaatUrl(id, "png");
       this.dom.exr.href = resultaatUrl(id, "exr");
       this.dom.links.hidden = false;
+      this.laatste = { id, herkomst: !!this.aanvraag.herkomst, render: this.aanvraag.config.render };
       try {
         const blob = await (await fetch(resultaatUrl(id, "png"))).blob();
-        this.bijKlaar({ id, blob, resultaat: r, aanvraag: this.aanvraag });
+        this.bijKlaar({ id, blob, resultaat: r, aanvraag: this.aanvraag, herkomst: !!this.aanvraag.herkomst });
       } catch { /* de afbeelding blijft in het paneel staan */ }
     } else if (m.status === "geannuleerd") this.melding("Geannuleerd (het tussenbeeld blijft staan)");
     else this.melding(`Fout: ${m.fout}`, true);

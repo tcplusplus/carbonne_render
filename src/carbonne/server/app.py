@@ -255,6 +255,13 @@ def maak_app(
         r = job.resultaat
         if r is not None and r.metingen:
             d["resultaat"] = r.naar_dict()
+            from carbonne.core.herkomst_cli import staal_rgb8
+
+            hx = lambda rgb: "#%02x%02x%02x" % staal_rgb8(rgb)  # noqa: E731
+            for m, dm in zip(r.metingen, d["resultaat"]["metingen"], strict=True):  # stalen zoals in de PNG's
+                dm["hex"] = hx(m.rgb)
+                for c, dc in zip(m.herkomst.categorieen, dm["herkomst"]["categorieen"], strict=True):
+                    dc["hex"], dc["hex_per_pad"] = hx(c.rgb), hx(c.rgb_per_pad)
             basis = f"/api/reeks/{job.id}"
             d["urls"] = {"beelden": [f"{basis}/beeld/{i}.png" for i in range(len(r.metingen))],
                          "contact": f"{basis}/contact.png", "grafiek": f"{basis}/grafiek.png"}
