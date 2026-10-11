@@ -18,10 +18,11 @@ import mitsuba as mi
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
-import ab_experiment as ab  # noqa: E402
-from carbonne.core.config import PlateBelow  # noqa: E402
-from carbonne.core.scene import build_scene  # noqa: E402
-from carbonne.core.variant import select_variant  # noqa: E402
+import ab_experiment as ab
+
+from carbonne.core.config import PlateBelow
+from carbonne.core.scene import build_scene
+from carbonne.core.variant import select_variant
 
 DIEPTEN = (4, 8, 16, 32, 64, 128)
 CODES = ("0", "W1", "W2", "WB1")

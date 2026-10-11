@@ -96,7 +96,7 @@ def test_cachesleutel_gevoeligheid(tmp_path):
 
 def test_zelfde_zaad_reproduceerbaar_ander_zaad_niet(tmp_path):
     cfg = klein_config()
-    kw = dict(max_spp=16, ruisdrempel=1e-9, cache=False)
+    kw = {"max_spp": 16, "ruisdrempel": 1e-9, "cache": False}
     a = render(cfg, opties(tmp_path, **kw))
     b = render(cfg, opties(tmp_path, **kw))
     c = render(cfg, opties(tmp_path, seed=5, **kw))

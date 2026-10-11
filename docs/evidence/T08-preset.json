@@ -1,0 +1,117 @@
+{
+ "diameter": 0.35,
+ "hoogte": 0.04,
+ "segmenten": 128,
+ "epoxy": {
+  "cauchy_a": 1.517,
+  "cauchy_b": 0.0045,
+  "absorptie_nm": [
+   400.0,
+   700.0
+  ],
+  "absorptie_per_m": [
+   0.0,
+   0.0
+  ]
+ },
+ "zijkant": {
+  "type": "paint",
+  "color": [
+   0.75,
+   0.04,
+   0.04
+  ],
+  "kind": "matte"
+ },
+ "onderkant": {
+  "type": "paint",
+  "color": [
+   0.9,
+   0.9,
+   0.9
+  ],
+  "kind": "matte"
+ },
+ "layers": [
+  {
+   "height_m": 0.02,
+   "items": [
+    {
+     "count": 4,
+     "type": "wood",
+     "color": [
+      0.45,
+      0.28,
+      0.13
+     ],
+     "radius_mm": [
+      8.0,
+      14.0
+     ],
+     "thickness_mm": 3.0,
+     "irregularity": 0.12
+    },
+    {
+     "count": 3,
+     "type": "flower",
+     "color": [
+      0.9,
+      0.3,
+      0.45
+     ],
+     "petals": 6,
+     "radius_mm": [
+      8.0,
+      12.0
+     ],
+     "cup_mm": 2.5,
+     "tilt_deg": 15.0,
+     "translucency": 0.4
+    }
+   ],
+   "seed": 4,
+   "edge_margin_mm": 3.0
+  }
+ ],
+ "scene": {
+  "camera": {
+   "positie": [
+    0.0,
+    0.55,
+    0.62
+   ],
+   "doel": [
+    0.0,
+    0.02,
+    0.0
+   ],
+   "fov": 40.0
+  },
+  "omgeving_radiantie": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "vloer_grootte": 2.0,
+  "vloer_rastercel": 0.05,
+  "vloer_albedo": [
+   0.75,
+   0.75,
+   0.72
+  ],
+  "vloer_lijn_albedo": [
+   0.03,
+   0.03,
+   0.03
+  ],
+  "omgeving": "woonkamer",
+  "camera_preset": "schuin30",
+  "spot": false
+ },
+ "render": {
+  "breedte": 1280,
+  "hoogte": 720,
+  "spp": 64,
+  "max_depth": 24
+ }
+}

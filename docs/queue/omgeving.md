@@ -43,3 +43,10 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - `tests/test_physics.py`: minischenes met `volpath` en een homogeen medium (`sigma_t` uniform x `scale`; een rgb-waarde > 1 wordt geweigerd). Een enkel grensvlak met zwart erachter geeft direct de Fresnelreflectie; een `cube` met `interior`-medium geeft Beer-Lambert.
 - Vloer op dezelfde hoogte als de onderkant van het blok (Bare of lak): door ray-epsilon lopen stralen door de vloer en zie je de omgeving erdoorheen. Zet de vloer lager (`vloer_omlaag` in `scripts/ab_experiment.py`), of gebruik een plaat.
 - `uv run python scripts/ab_experiment.py --res 256 --spp 1024 --schaal 0.7` (11 varianten x 2 zaden, ~3 min op 12 threads).
+
+## Renderpijplijn (T08)
+- `uv run carbonne-render config.json -o out/ [--ruisdrempel 0.02 --tijdslimiet 600 --max-depth 32 --preview]`; voorbeeld-config `docs/evidence/T08-preset.json`.
+- Standaard: path, max_depth 32, 16 spp per pass, drempel 0,02 (relatieve ruis), max 4096 spp.
+- Tijd tot drempel 0,02 voor de zwaarste preset (verf onder epoxy, 12 threads): 480x270 110 s, **1280x720 753 s**; tijd is evenredig met het aantal pixels. Meet convergentie op ~320x180 en schaal.
+- Cache in `cache/<hash>/` (beeld.exr, beeld.npz, beeld.png, meta.json); de hash bevat een hash van `core/` en `render/`.
+- Mitsuba `aov`-integrator zet AOV-kanalen vooraan; de pijplijn neemt kanalen 0-2 aan als RGB.
