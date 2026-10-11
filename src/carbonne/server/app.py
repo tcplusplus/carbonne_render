@@ -88,7 +88,14 @@ def maak_app(
 
         vlakken = {k: plat(g["v"], g["n"], g["f"]) for k, g in
                    cilinder_geometrie(config.diameter, config.hoogte, config.segmenten).items()}
-        inhoud = [{"laag": li, "soort": it.soort, **plat(it.posities(), it.n, it.f)}
+        def kleur(b) -> list[float] | None:  # eerste rgb-waarde in de bsdf: de albedo van het item
+            if isinstance(b, dict):
+                if b.get("type") == "rgb":
+                    return list(b["value"])
+                return next((k for v in b.values() if (k := kleur(v))), None)
+            return None
+
+        inhoud = [{"laag": li, "soort": it.soort, "kleur": kleur(it.bsdf), **plat(it.posities(), it.n, it.f)}
                   for li, its in enumerate(plaats_alles(config)) for it in its]
         return {"diameter": config.diameter, "hoogte": config.hoogte, "vlakken": vlakken, "inhoud": inhoud}
 
@@ -189,14 +196,14 @@ def maak_app(
 
 
 def main(argv: list[str] | None = None) -> None:
-    """`carbonne-app [start] [--port N]`: alleen 127.0.0.1 (standaard poort 8000); serveert ook web/."""
+    """`carbonne-app [start] [--port N]`: alleen 127.0.0.1 (standaard poort 8011); serveert ook web/."""
     import argparse
 
     import uvicorn
 
     p = argparse.ArgumentParser(prog="carbonne-app", description=main.__doc__)
     p.add_argument("opdracht", nargs="?", default="start", choices=["start"])
-    p.add_argument("--port", type=int, default=8000)
+    p.add_argument("--port", type=int, default=8011)
     a = p.parse_args(argv)
     uvicorn.run(maak_app(), host="127.0.0.1", port=a.port)
 

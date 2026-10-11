@@ -56,8 +56,8 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - Mitsuba `aov`-integrator zet AOV-kanalen vooraan; de pijplijn neemt kanalen 0-2 aan als RGB.
 
 ## Webbackend (T09)
-- Start: `uv run carbonne-app start` (127.0.0.1:8000, serveert ook `web/`; `--port N` als 8000 bezet is). Opslag: `configs/` (benoemde configs), `cache/` (render- en HDRI-cache), `out/server/` (losse EXR's).
+- Start: `uv run carbonne-app start` (127.0.0.1:8011, serveert ook `web/`; `--port N` als 8011 bezet is). Opslag: `configs/` (benoemde configs), `cache/` (render- en HDRI-cache), `out/server/` (losse EXR's).
 - API: `GET /api/schema|presets|camera/{naam}|hdri/{omgeving}`, `POST /api/geometrie` (mesh blok + inhoud voor three.js), `POST /api/render` (202 + id), `GET|DELETE /api/render/{id}`, `WS /api/render/{id}` (momentopnamen met `png_base64`, sluit bij klaar/fout/geannuleerd), `GET /api/render/{id}/result.png|.exr`, `GET /api/configs[/naam]`, `POST /api/configs`.
 - `maak_app(renderer=..., cache_map=..., configs_map=..., web_map=...)` voor tests; een nep-renderer heeft de signatuur van `carbonne.render.render`. `uv run pytest tests/test_t09.py -q` (2 s, incl. een echte render van 64x48).
-- Valkuil: poort 8000 kan door iets anders bezet zijn; `ss -ltnp | grep 8000`.
+- Valkuil: poort 8000 is op deze machine bezet door een ander programma, daarom is de standaard 8011; `ss -ltnp | grep 8011`.
 - 1k-HDRI's: RGBE `.hdr` (1024x512, blokgemiddelde van de 2k-bron), in `cache/hdri/`.
