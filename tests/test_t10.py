@@ -30,26 +30,23 @@ def test_standaardpoort_is_8011(monkeypatch):
     assert gezien == {"host": "127.0.0.1", "port": 8011}
 
 
-def test_index_en_modules_worden_geserveerd(tmp_path):
+def test_index_en_bundel_worden_geserveerd(tmp_path):
+    """De backend serveert de gebouwde frontend (web/dist, T28): index, gebundelde js/css (met three.js erin) en de schetsen."""
     with TestClient(maak_app(cache_map=tmp_path / "c", configs_map=tmp_path / "k")) as c:
         html = c.get("/").text
-        assert "importmap" in html and "js/main.js" in html
+        assert 'type="module"' in html and "importmap" not in html
         assert "benadering" in html  # de preview is zichtbaar als benadering gemarkeerd
-        # elk relatief geimporteerd modulebestand bestaat en wordt geserveerd
-        todo, gezien = ["js/main.js"], set()
-        while todo:
-            m = todo.pop()
-            if m in gezien:
-                continue
-            gezien.add(m)
-            r = c.get("/" + m)
-            assert r.status_code == 200, m
-            for imp in re.findall(r'from "\./([\w./-]+)"', r.text):
-                todo.append(str(Path(m).parent / imp))
-        assert {"js/hq.js", "js/preview.js", "js/paneel.js", "js/vergelijk.js"} <= gezien
-        for pad in ("vendor/three/three.module.js", "vendor/three/addons/controls/OrbitControls.js",
-                    "vendor/three/addons/loaders/RGBELoader.js", "uitleg/matte-lak.svg"):
+        # elk bestand dat de index aanwijst bestaat en wordt geserveerd
+        assets = re.findall(r'(?:src|href)="\./(assets/[\w.-]+)"', html)
+        assert any(a.endswith(".js") for a in assets) and any(a.endswith(".css") for a in assets)
+        for pad in [*assets, "uitleg/matte-lak.svg"]:
             assert c.get("/" + pad).status_code == 200, pad
+        js = c.get("/" + next(a for a in assets if a.endswith(".js"))).text
+        assert "WebGLRenderer" in js  # three.js zit in de bundel: de app werkt zonder internet
+        # de index laadt niets van buiten (de URL's in de bundel zijn commentaar of namespace-URI's van three.js)
+        assert not re.findall(r'(?:src|href)="https?://', html)
+        for m in ("hq", "preview", "paneel", "vergelijk", "main"):  # de bronmodules bestaan nog als TypeScript
+            assert (WEB / "src" / f"{m}.ts").exists(), m
 
 
 def test_geometrie_geeft_kleur_van_inhoud(tmp_path):
@@ -62,7 +59,7 @@ def test_geometrie_geeft_kleur_van_inhoud(tmp_path):
 @pytest.mark.skipif(shutil.which("node") is None, reason="node ontbreekt")
 def test_kleurfuncties_js():
     code = f"""
-import {{ hexNaarLineair, lineairNaarHex, tekstNaarHex, waardeNaarHex }} from "{(WEB / 'js/kleur.js').as_uri()}";
+import {{ hexNaarLineair, lineairNaarHex, tekstNaarHex, waardeNaarHex }} from "{(WEB / 'src/kleur.ts').as_uri()}";
 const ral = {{ "9005": "131516" }};
 console.log(JSON.stringify([hexNaarLineair("#ffffff"), lineairNaarHex(hexNaarLineair("#336699")), tekstNaarHex("RAL 9005", ral),
   tekstNaarHex("#abc", ral), tekstNaarHex("RAL 1", ral), waardeNaarHex([1, 1, 1], ral), waardeNaarHex("RAL 9005", ral)]));

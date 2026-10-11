@@ -64,7 +64,7 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 
 ## Webfrontend (T10)
 - Interface op `http://127.0.0.1:8011/` (standaardpoort sinds T10; 8000 is door een ander programma bezet). Zie `docs/gebruik.md`.
-- three.js r170 is gevendored in `web/vendor/three/` (module, OrbitControls, RGBELoader), via een importmap; geen buildstap, geen CDN.
+- Sinds T28: TypeScript + Vite; three.js uit npm (geen `web/vendor/`), de gebouwde `web/dist/` staat in git en wordt door de backend geserveerd. Zie het kopje T28.
 - Playwright (dev-afhankelijkheid) gebruikt het systeem-Chrome: `p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist", "--no-sandbox"])`; er is geen GPU nodig voor WebGL (software). `uv run python scripts/maak_ui_screenshot.py` maakt de bewijsbeelden (ca. 70 s, twee HQ-renders van 640x360 op Normaal: 19 s en 41 s).
 - `uv run pytest tests/test_t10.py -q` (ca. 15 s) start een echte server met een nep-renderer en loopt de hele UI door in Chrome; hij slaat zichzelf over als `/usr/bin/google-chrome` ontbreekt.
 - Valkuil: in three.js komen transparante objecten (`transparent: true`) niet in de transmissie-pass; inhoud binnen het transmissieve blok moet dus ondoorzichtig zijn om zichtbaar te blijven. Verf op de onderkant moet `DoubleSide` zijn (normalen wijzen omlaag).
@@ -117,3 +117,11 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - Een poot mag het blok niet raken (float32-epsilon): bovenkant `effectieve_gap_mm` onder het ophangpunt, onderkant 1 mm in de vloer.
 - Bewijsbeelden: `uv run python scripts/render_t26.py --res 224 --spp 512` (ca. 25 s op 12 threads). Een PNG van 320 px per cel bij 256 spp is ~450 kB; 224 px blijft onder 300 kB. Er is geen Pillow om te verkleinen.
 - Browsertest van de UI: fixture `live` uit `tests/test_t27.py`, Chrome via Playwright met swiftshader; wacht op `document.body.dataset.preview==='klaar'` voor elke meting (direct na het laden is `preview.blok` nog leeg).
+
+## Frontend-build (T28)
+- Node v24.14 en npm 11.9 staan op de machine; `npm install` in de repo (devDependencies: vite 8, typescript 7, three, @types/three, json-schema-to-typescript). `node_modules/` staat niet in git.
+- `npm run build` = `types` (uv-schema-dump + generator) + `tsc --noEmit` + `vite build` (ca. 1 s). Zorg dat `uv` op het PATH staat (`export PATH=$HOME/snap/code/264/.local/bin:$PATH`).
+- Node 24 strip types zelf: de node-tests (T16, T20, T26, T27) importeren `web/src/*.ts` direct. Daarom in de bronnen: `import type`, geen enums of parameter properties, imports met `.ts`-extensie.
+- `vite.config.ts` staat in de repowortel (root `web`); een config in `web/` vond de ingang niet.
+- Na elke wijziging in `web/src/` of `web/css/`: `npm run build` en `web/dist/` committen (`tests/test_t28.py::test_dist_is_actueel` bewaakt dit).
+- Bundel: ca. 630 kB js (165 kB gzip), vooral three.js; Vite meldt daar een chunkgrootte-waarschuwing, die negeren we bewust.

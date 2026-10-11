@@ -88,7 +88,7 @@ def maak_app(
     """App-fabriek; tests geven een nep-`renderer` en tijdelijke mappen mee."""
     cache_map = cache_map or Path(os.environ.get("CARBONNE_CACHE", ROOT / "cache"))
     configs_map = configs_map or Path(os.environ.get("CARBONNE_CONFIGS", ROOT / "configs"))
-    web_map = web_map or ROOT / "web"
+    web_map = web_map or ROOT / "web" / "dist"  # de gebouwde frontend (T28); `npm run build` maakt hem
     verven_map = bib.verf_map(verven_map)
     kw = {"renderer": renderer} if renderer is not None else {}
     jobs = JobManager(cache_map=cache_map, uit_map=cache_map / "server", **kw)

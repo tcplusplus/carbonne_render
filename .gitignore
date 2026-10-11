@@ -6,7 +6,7 @@ __pycache__/
 *.egg-info/
 
 # grote of gegenereerde bestanden
-assets/
+/assets/
 cache/
 out/
 *.exr
@@ -14,3 +14,4 @@ out/
 # looptoestand van de wachtrij
 docs/queue/state.json
 .locks/
+node_modules/

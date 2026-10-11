@@ -6,9 +6,23 @@ export PATH=$HOME/snap/code/264/.local/bin:$PATH   # alleen op deze machine, zod
 uv sync
 uv run carbonne-app start --port 8011               # 8011 is de standaard; 8000 is hier door een ander programma bezet
 ```
-Open daarna <http://127.0.0.1:8011/>. De server luistert alleen op 127.0.0.1 en serveert de interface (`web/`) en
-de API. Stoppen: Ctrl+C. Geen buildstap: de interface is gewone ES-modules; three.js staat in `web/vendor/three/`
-(versie r170), dus er is geen internet nodig. Hij werkt in een moderne browser met WebGL.
+Open daarna <http://127.0.0.1:8011/>. De server luistert alleen op 127.0.0.1 en serveert de interface (`web/dist/`) en
+de API. Stoppen: Ctrl+C. De interface is TypeScript (Vite, geen framework) en de **gebouwde versie `web/dist/` staat
+in git**, dus voor gewoon gebruik is `uv run carbonne-app start` genoeg: geen Node en geen internet nodig. three.js
+zit in de bundel (uit npm). Hij werkt in een moderne browser met WebGL.
+
+### Frontend ontwikkelen (alleen als je `web/src/` wijzigt)
+Vereist Node (getest met v24) en npm. Eenmalig `npm install` (zet alles in `node_modules/`, dat niet in git staat).
+- `npm run build`: genereert de types, draait `tsc --noEmit` en schrijft `web/dist/`. **Commit `web/dist/` mee**;
+  `tests/test_t28.py` faalt als `web/dist/` achterloopt op de bronnen.
+- `npm run dev`: Vite-ontwikkelserver met herladen op <http://127.0.0.1:5173/>; hij stuurt `/api` door naar de
+  backend op poort 8011 (start die apart met `uv run carbonne-app start`).
+- `npm run types`: schrijft het Pydantic-schema (`scripts/schema_dump.py`) naar `web/src/types/*.schema.json` en
+  genereert daaruit `web/src/types/config.ts` en `verf.ts` (`scripts/maak-types.mjs`, json-schema-to-typescript). Draai dit
+  na elke wijziging in `core/config.py` of `core/verf.py`; de test controleert dat de bestanden bij elkaar passen.
+- `npm run typecheck`: alleen `tsc --noEmit` (strikt). Een verkeerde waarde, zoals `count: "veel"`, compileert niet.
+- Broncode: `web/src/*.ts` (de oude modules van `web/js/`), stijl `web/css/app.css`, uitlegschetsen `web/public/uitleg/`,
+  handgeschreven API-types `web/src/types/api.ts`.
 
 Opslag: benoemde configs in `configs/`, rendercache en 1k-HDRI's in `cache/`, losse EXR's in `out/server/`.
 
@@ -27,7 +41,7 @@ inkleuring van het tafeltje (bijvoorbeeld wat verf in contact met epoxy doet) mo
   verf kies je het verftype (mat, glanzend, metallic, candy) en de kleur met de kleurkiezer, als hex (`#b22222`) of
   als RAL Classic (`RAL 5010`; het tekstveld geeft suggesties). Een rode rand betekent: ongeldige invoer, de laatste
   geldige kleur blijft actief. Ruwheid (GGX alpha) leeg laten (0) geeft de standaard van het verftype. Rechts onder
-  de keuze staat de **uitlegschets** (doorsnede met stralen, uit `web/uitleg/`) van de gekozen afwerking.
+  de keuze staat de **uitlegschets** (doorsnede met stralen, uit `web/public/uitleg/`) van de gekozen afwerking.
 - **Inhoud (lagen)**: "+ laag" voegt een gietlaag toe op een hoogte in het blok; per laag houtschijfjes en bloemen met
   aantal, kleur en straal. "Seed" bepaalt de (reproduceerbare) plaatsing. Past de inhoud niet, dan staat er een
   melding rechtsboven en blijft de vorige preview staan.
