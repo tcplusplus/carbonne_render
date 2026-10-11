@@ -1,0 +1,1 @@
+{"taak":"T04","status":"af, met open vraag","nu":"klaar","gedaan":["tests/test_physics.py (7 tests)","scripts/ab_experiment.py + tests/test_ab.py","docs/evidence/T04.md + T04-ab.png","docs/queue/vragen/T04-1.md","omgeving.md"],"next":null,"tests":"42 passed, 4 skipped (assets), ruff schoon","kosten":"laag-middel (A/B-run ~3 min CPU)"}

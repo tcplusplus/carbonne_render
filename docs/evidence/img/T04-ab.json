@@ -1,0 +1,288 @@
+[
+ {
+  "rood_profiel": [
+   0.3333,
+   0.3336,
+   0.3331,
+   0.3334
+  ],
+  "lum_profiel": [
+   0.1069,
+   0.1073,
+   0.1075,
+   0.1082
+  ],
+  "code": "0",
+  "omschrijving": "referentie: zijkant onbehandeld, onder onbehandeld",
+  "rgb": [
+   0.10688000172376633,
+   0.10688000172376633,
+   0.10689999908208847
+  ],
+  "luminantie": 0.10688,
+  "ruis_luminantie": 0.00036,
+  "x": 0.3127,
+  "y": 0.329,
+  "rood_aandeel": 0.3333
+ },
+ {
+  "rood_profiel": [
+   0.3332,
+   0.3335,
+   0.3331,
+   0.3332
+  ],
+  "lum_profiel": [
+   0.0564,
+   0.057,
+   0.0578,
+   0.058
+  ],
+  "code": "A1",
+  "omschrijving": "onder zwart geverfd, zijkant onbehandeld",
+  "rgb": [
+   0.05640000104904175,
+   0.05640999972820282,
+   0.056449998170137405
+  ],
+  "luminantie": 0.05641,
+  "ruis_luminantie": 7e-05,
+  "x": 0.3127,
+  "y": 0.3289,
+  "rood_aandeel": 0.3332
+ },
+ {
+  "rood_profiel": [
+   0.3333,
+   0.3336,
+   0.3331,
+   0.3335
+  ],
+  "lum_profiel": [
+   0.1069,
+   0.1073,
+   0.1074,
+   0.108
+  ],
+  "code": "A2",
+  "omschrijving": "zwarte plaat met luchtspleet, zijkant onbehandeld",
+  "rgb": [
+   0.10688000172376633,
+   0.10687000304460526,
+   0.1068900004029274
+  ],
+  "luminantie": 0.10688,
+  "ruis_luminantie": 0.00036,
+  "x": 0.3127,
+  "y": 0.329,
+  "rood_aandeel": 0.3333
+ },
+ {
+  "rood_profiel": [
+   0.3345,
+   0.335,
+   0.3351,
+   0.3371
+  ],
+  "lum_profiel": [
+   0.0549,
+   0.0552,
+   0.0552,
+   0.0547
+  ],
+  "code": "B1",
+  "omschrijving": "onder zwart geverfd, zijkant rood",
+  "rgb": [
+   0.05516999959945679,
+   0.05486999824643135,
+   0.054910000413656235
+  ],
+  "luminantie": 0.05494,
+  "ruis_luminantie": 7e-05,
+  "x": 0.313,
+  "y": 0.3289,
+  "rood_aandeel": 0.3345
+ },
+ {
+  "rood_profiel": [
+   0.3333,
+   0.3336,
+   0.3332,
+   0.3367
+  ],
+  "lum_profiel": [
+   0.1069,
+   0.1073,
+   0.1073,
+   0.1036
+  ],
+  "code": "B2",
+  "omschrijving": "zwarte plaat met luchtspleet, zijkant rood",
+  "rgb": [
+   0.10685999691486359,
+   0.10684999823570251,
+   0.10687000304460526
+  ],
+  "luminantie": 0.10686,
+  "ruis_luminantie": 0.00035,
+  "x": 0.3127,
+  "y": 0.329,
+  "rood_aandeel": 0.3333
+ },
+ {
+  "rood_profiel": [
+   0.3333,
+   0.3336,
+   0.3332,
+   0.3334
+  ],
+  "lum_profiel": [
+   0.1029,
+   0.1055,
+   0.1086,
+   0.1078
+  ],
+  "code": "C",
+  "omschrijving": "onder kleurloze matte lak (zwarte vloer), zijkant onbehandeld",
+  "rgb": [
+   0.10287000238895416,
+   0.1028899997472763,
+   0.10288000106811523
+  ],
+  "luminantie": 0.10289,
+  "ruis_luminantie": 0.00043,
+  "x": 0.3127,
+  "y": 0.329,
+  "rood_aandeel": 0.3333
+ },
+ {
+  "rood_profiel": [
+   0.3506,
+   0.3515,
+   0.3532,
+   0.3598
+  ],
+  "lum_profiel": [
+   0.0844,
+   0.0847,
+   0.0845,
+   0.0818
+  ],
+  "code": "C-rood",
+  "omschrijving": "onder kleurloze matte lak (zwarte vloer), zijkant rood",
+  "rgb": [
+   0.08968000113964081,
+   0.0830100029706955,
+   0.08310999721288681
+  ],
+  "luminantie": 0.08443,
+  "ruis_luminantie": 0.00029,
+  "x": 0.3181,
+  "y": 0.3289,
+  "rood_aandeel": 0.3506
+ },
+ {
+  "rood_profiel": [
+   0.3334,
+   0.3333,
+   0.3334,
+   0.3335
+  ],
+  "lum_profiel": [
+   0.6972,
+   0.6958,
+   0.7478,
+   0.7744
+  ],
+  "code": "W1",
+  "omschrijving": "onder wit geverfd, zijkant onbehandeld",
+  "rgb": [
+   0.6972799897193909,
+   0.6971799731254578,
+   0.6968200206756592
+  ],
+  "luminantie": 0.69718,
+  "ruis_luminantie": 0.00026,
+  "x": 0.3128,
+  "y": 0.3291,
+  "rood_aandeel": 0.3334
+ },
+ {
+  "rood_profiel": [
+   0.3335,
+   0.3334,
+   0.3334,
+   0.3335
+  ],
+  "lum_profiel": [
+   0.8924,
+   0.8925,
+   0.8929,
+   0.8927
+  ],
+  "code": "W2",
+  "omschrijving": "witte plaat met luchtspleet, zijkant onbehandeld",
+  "rgb": [
+   0.892549991607666,
+   0.8924000263214111,
+   0.891700029373169
+  ],
+  "luminantie": 0.89238,
+  "ruis_luminantie": 0.00032,
+  "x": 0.3128,
+  "y": 0.3291,
+  "rood_aandeel": 0.3335
+ },
+ {
+  "rood_profiel": [
+   0.3839,
+   0.3876,
+   0.4001,
+   0.417
+  ],
+  "lum_profiel": [
+   0.5846,
+   0.5727,
+   0.5391,
+   0.4946
+  ],
+  "code": "WB1",
+  "omschrijving": "onder wit geverfd, zijkant rood",
+  "rgb": [
+   0.6929900050163269,
+   0.555109977722168,
+   0.5572500228881836
+  ],
+  "luminantie": 0.58458,
+  "ruis_luminantie": 0.00014,
+  "x": 0.3288,
+  "y": 0.3287,
+  "rood_aandeel": 0.3839
+ },
+ {
+  "rood_profiel": [
+   0.3335,
+   0.3335,
+   0.334,
+   0.3391
+  ],
+  "lum_profiel": [
+   0.8912,
+   0.8906,
+   0.8821,
+   0.806
+  ],
+  "code": "WB2",
+  "omschrijving": "witte plaat met luchtspleet, zijkant rood",
+  "rgb": [
+   0.8915500044822693,
+   0.8911399841308594,
+   0.8904100060462952
+  ],
+  "luminantie": 0.89117,
+  "ruis_luminantie": 0.00032,
+  "x": 0.3128,
+  "y": 0.3291,
+  "rood_aandeel": 0.3335
+ }
+]

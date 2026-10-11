@@ -35,3 +35,8 @@ Tijden zijn na de eerste JIT-compilatie (kernels worden gecachet); de allereerst
 - Mitsuba (float32) verschuift het startpunt van een straal na een botsing met ~1e-3 x max(|coordinaat|). Dunne spleten (< ~0,2 mm bij straal 0,18 m) worden daardoor overgeslagen; `effectieve_gap_mm` in `scene.py` dwingt een veilige minimale spleet af (T03). Geldt ook voor andere dunne structuren.
 - `twosided`: eerste kind = voorkant (kant van de normaal, luchtkant), tweede = achterkant (epoxykant); meshnormalen wijzen naar buiten. NEE (next event estimation) dringt niet door het `dielectric`; licht in het blok komt alleen via BSDF-bemonstering, dus beelden van verf onder epoxy zijn korreliger (meer spp nodig).
 - Eenstraals-BSDF-test: `tests/test_t03.py::_sample` (vectorieel, SurfaceInteraction3f met `wi`, `sh_frame`, `wavelengths`).
+
+## Validatie (T04)
+- `tests/test_physics.py`: minischenes met `volpath` en een homogeen medium (`sigma_t` uniform x `scale`; een rgb-waarde > 1 wordt geweigerd). Een enkel grensvlak met zwart erachter geeft direct de Fresnelreflectie; een `cube` met `interior`-medium geeft Beer-Lambert.
+- Vloer op dezelfde hoogte als de onderkant van het blok (Bare of lak): door ray-epsilon lopen stralen door de vloer en zie je de omgeving erdoorheen. Zet de vloer lager (`vloer_omlaag` in `scripts/ab_experiment.py`), of gebruik een plaat.
+- `uv run python scripts/ab_experiment.py --res 256 --spp 1024 --schaal 0.7` (11 varianten x 2 zaden, ~3 min op 12 threads).
